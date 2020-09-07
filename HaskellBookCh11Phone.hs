@@ -11,7 +11,7 @@ data KeyResult = R String | Caps deriving Show
 type DaPhone = [(KeyPress, KeyResult)]
 daPhone :: DaPhone
 daPhone = [
-    (K 1 , R ""),
+    (K 1 , R "1"),
     (K 2 , R "abc2"),
     (K 3 , R "def3"),
     (K 4 , R "ghi4"),
@@ -20,7 +20,7 @@ daPhone = [
     (K 7 , R "pqrs7"),
     (K 8 , R "tuv8"),
     (K 9 , R "wxyz9"),
-    (K 0 , R " "),
+    (K 0 , R "+ 0"),
     (K 12 , R ".,"),
     (KA , Caps)
     ]
