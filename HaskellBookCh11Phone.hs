@@ -1,4 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
+{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 import Data.Char (isUpper, toLower, toUpper)
 import Data.List (elemIndex, foldl')
 import Data.Maybe
@@ -34,12 +35,14 @@ reverseTaps c =
         key'count ((key , R chars):others) = case elemIndex ch chars of
             Just n -> (key, n+1)
             Nothing -> key'count others 
+        key'count _ = error "rip"
 encodeConvo string = reverseTaps <$> string
 
 makeTaps :: [(KeyPress, PressCount)] -> Char
 makeTaps = \case
     [(KA,1),(key, count)] -> toUpper $ getChar (key, count)
     [(key, count)] -> getChar (key, count)
+    _ -> error "rip"
     where
         getChar (key, count) =
             go key count daPhone
@@ -47,6 +50,7 @@ makeTaps = \case
                 go (K keyNum) c ((K keyNum', R string):others)
                     | keyNum == keyNum' =  string !! (c-1)
                     | otherwise = go (K keyNum) c others
+                go _ _ _ = error "rip"
 
 decodeConvo xs = makeTaps <$> xs
 
@@ -55,6 +59,7 @@ digitsPressedCount message = countDigits $ encodeConvo message
         countDigits encoded = sum $ getCount <$> encoded
         getCount [(KA,_),(key,count)] = count
         getCount [(key,count)] = count
+        getCount _ = error "rip"
 
 print' :: Show a => a -> IO ()
 print' = putStrLn . show
