@@ -20,7 +20,7 @@ daPhone = [
     (K 7 , R "pqrs7"),
     (K 8 , R "tuv8"),
     (K 9 , R "wxyz9"),
-    (K 0 , R "+ 0"),
+    (K 0 , R "+ _0"),
     (K 12 , R ".,"),
     (KA , Caps)
     ]
@@ -62,7 +62,7 @@ digitsPressedCount message = countDigits $ encodeConvo message
         getCount _ = error "rip"
 
 print' :: Show a => a -> IO ()
-print' = putStrLn . show
+print' = print
 main = do 
     print' "Hello World!"
     putStrLn ""
