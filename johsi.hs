@@ -25,13 +25,11 @@ reverseTaps :: DaPhone -> Char -> [(Digit, Presses)]
 reverseTaps (DaPhone tupList) char =
   foldr rf [] tupList
     where
-      rf (digit, letters) acc = case getPosition char letters of
+      (digit, letters) `rf` acc = case getPosition char letters of
         0 -> acc
-        charPos
-          | isUpper char -> ('*', 1) : digitPresses
-          | otherwise -> digitPresses
-          where
-            digitPresses = [(digit, charPos)]
+        charPos ->
+          [('*', 1) | isUpper char]
+          ++ [(digit, charPos)]
 getPosition :: Char -> String -> Int
 getPosition char str = go (toLower char) str 0
   where
