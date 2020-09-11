@@ -4,7 +4,7 @@ import Data.List (elemIndex)
 type Digit = Char -- any of "1234567890*#"
 type Letters = String -- "abc", "+ ", ".," etc
 type Presses = Int
-data DaPhone = DaPhone [(Digit, Letters)] deriving Show
+newtype DaPhone = DaPhone [(Digit, Letters)] deriving Show
 aPhone :: DaPhone
 aPhone = DaPhone [
   ('1', "1"),
