@@ -19,17 +19,19 @@ aPhone = DaPhone [
   ('0', "+ 0"),
   ('#', ".,#")
   ]
+
+-- modified by JT2
 reverseTaps :: DaPhone -> Char -> [(Digit, Presses)]
 reverseTaps (DaPhone tupList) char =
   foldr rf [] tupList
     where
-      rf (digit, letters) acc
-        | charPos == 0 = acc
-        | isUpper char = ('*', 1) : digitPresses
-        | otherwise = digitPresses
-        where
-          charPos = getPosition char letters
-          digitPresses = (digit, charPos) : acc
+      rf (digit, letters) acc = case getPosition char letters of
+        0 -> acc
+        charPos
+          | isUpper char -> ('*', 1) : digitPresses
+          | otherwise -> digitPresses
+          where
+            digitPresses = [(digit, charPos)]
 getPosition :: Char -> String -> Int
 getPosition char str = go (toLower char) str 0
   where
