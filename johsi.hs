@@ -1,4 +1,5 @@
 import Data.Char (isUpper, toLower)
+import Data.List (elemIndex)
 
 type Digit = Char -- any of "1234567890*#"
 type Letters = String -- "abc", "+ ", ".," etc
@@ -25,9 +26,9 @@ reverseTaps :: DaPhone -> Char -> [(Digit, Presses)]
 reverseTaps (DaPhone tupList) char =
   foldr rf [] tupList
     where
-      (digit, letters) `rf` acc = case getPosition char letters of
-        0 -> acc
-        charPos ->
+      (digit, letters) `rf` acc = case elemIndex char letters of
+        Nothing -> acc
+        Just charPos ->
           [('*', 1) | isUpper char]
           ++ [(digit, charPos)]
 getPosition :: Char -> String -> Int
