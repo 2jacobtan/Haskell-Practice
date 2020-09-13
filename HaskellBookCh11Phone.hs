@@ -3,6 +3,7 @@
 import Data.Char (isUpper, toLower, toUpper)
 import Data.List (elemIndex, foldl')
 import Data.Maybe
+import qualified Debug.Trace
 
 -- K is a normal key, KS is the * (star) key.
 data KeyPress = K Int  | KA deriving Show
@@ -62,16 +63,20 @@ digitsPressedCount message = countDigits $ encodeConvo message
         getCount _ = error "rip"
 
 print' :: Show a => a -> IO ()
-print' = print
+print' = putStrLn . show -- needs type annotation to please monomorphism restriction
+print'' a = putStrLn . show $ a
+plus a b = a + b
+plus' a b = Debug.Trace.trace "plus' is run once" $ a + b
+plus'' a b = Debug.Trace.trace (show a ++ " plus " ++ show b) $ a + b
 main = do 
-    print' "Hello World!"
+    print "Hello World!"
     putStrLn ""
-    print' $ reverseTaps 'e'
-    print' $ makeTaps [(KA, 1),(K 3,2)]
-    print' $ makeTaps . reverseTaps $ 'F'
+    print $ reverseTaps 'e'
+    print $ makeTaps [(KA, 1),(K 3,2)]
+    print $ makeTaps . reverseTaps $ 'F'
     putStrLn ""
-    print' $ encodeConvo "Hello, world."
-    print' $ decodeConvo . encodeConvo $ "Hello, world."
+    print $ encodeConvo "Hello, world."
+    print $ decodeConvo . encodeConvo $ "Hello, world."
     putStrLn ""
-    print' $ digitsPressedCount "Hello, world."
-    print' $ digitsPressedCount "hELLO, WORLD."
+    print $ digitsPressedCount "Hello, world."
+    print $ digitsPressedCount "hELLO, WORLD."
