@@ -94,10 +94,11 @@ tco (x:xs) y = tco xs (if x > y then x else y)
 
 compare2 :: (Ord a) => a -> a -> a
 compare2 = (\x y -> if x > y then x else y)
-tco' []  y = y
-tco' (x:xs) y =
+-- tco' :: Ord a => a -> [a] -> a
+tco' y [] = y
+tco' y (x:xs) =
     let z' =  compare2 x y
-    in z' `seq` tco xs z'
+    in z' `seq` tco' z' xs
 
 \end{code}
 
