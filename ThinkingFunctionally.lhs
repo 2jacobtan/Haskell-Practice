@@ -3,6 +3,8 @@ Thinking Functionally with Haskell, p249: State Monad
 \begin{code}
 import Control.Monad.State
 -- import Control.Monad.Fail
+import Control.Monad.ST
+import Data.STRef
 
 data BinTree a = Leaf a | Fork (BinTree a) (BinTree a)
 
@@ -33,5 +35,25 @@ instance Show a => Show (BinTree a) where
                     indent_string = "  "
                     indent h = do {[1..h]; indent_string}
         in show' 0
+
+\end{code}
+
+
+10.4 The ST monad
+\begin{code}
+
+fibST :: Int -> ST s Integer
+fibST n =
+    do  a <- newSTRef 0
+        b <- newSTRef 1
+        repeatFor n
+            (do x <- readSTRef a
+                y <- readSTRef b
+                writeSTRef a y
+                writeSTRef b $! (x+y))
+        readSTRef a
+
+repeatFor :: Monad m => Int -> m a -> m ()
+repeatFor n = foldr (>>) (pure ()) . replicate n
 
 \end{code}
