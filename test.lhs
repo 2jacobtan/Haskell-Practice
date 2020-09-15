@@ -121,3 +121,34 @@ merge' xs'@(x:xs) ys'@(y:ys)
     | otherwise = y:merge' xs' ys
 
 \end{code}
+
+
+\begin{code}
+
+data BinTree a = Leaf | Node a (BinTree a) (BinTree a)
+myTree =
+    Node 3
+        (Node 1
+            (Node 0 Leaf Leaf)
+            (Node 2 Leaf Leaf))
+        (Node 4 Leaf Leaf)
+
+f :: Show a => a -> String
+f = show
+
+traverseMap Leaf = Leaf
+traverseMap (Node x left right) =
+    Node (f x) (traverseMap left) (traverseMap right)
+
+instance Show a => Show (BinTree a) where
+    show =
+        let
+            show' h tree = case tree of
+                Leaf -> " Leaf"
+                Node x left right -> "\n" ++ indent h ++ "Node " ++ show x ++ show' (h+1) left ++ show' (h+1) right
+                where
+                    indent_string = "  "
+                    indent h = do {[1..h]; indent_string}
+        in show' 0
+
+\end{code}
