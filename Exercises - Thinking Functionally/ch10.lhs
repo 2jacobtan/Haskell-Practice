@@ -100,7 +100,7 @@ hangman_ :: IO ()
 hangman_ = do {
   putStrLn "To quit, type ':q'";
   wordsString <- readFile "Words";
-  putStrLn $ show $ words wordsString;
+  -- putStrLn $ show $ words wordsString;
   foldr hangman (pure ()) (words wordsString);
   putStrLn "Goodbye.";
   pure ()
