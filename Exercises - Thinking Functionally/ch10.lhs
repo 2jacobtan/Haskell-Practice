@@ -189,12 +189,12 @@ gcdST (x,y) = do {
         | x == y -> pure x
         | x < y -> do {
           let y'x = y - x in y'x `seq` do {
-            writeSTRef a x; writeSTRef b y'x
+            writeSTRef b y'x
           }; loop
         }
         | x > y -> do {
           let x'y = x - y in x'y `seq` do {
-            writeSTRef a x'y; writeSTRef b y
+            writeSTRef a x'y
           }; loop
         }
         | otherwise -> pure 0
