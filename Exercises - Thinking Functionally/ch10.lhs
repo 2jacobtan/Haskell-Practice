@@ -1,8 +1,11 @@
 \begin{code}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE MultiWayIf #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 import Control.Monad.State
 import Data.List ((\\), intersect)
+import Control.Monad.ST
+import Data.STRef
 
 \end{code}
 
@@ -132,8 +135,71 @@ hangman_ = do {
                 unguessed = word \\ intersection
           );
         }
+\end{code}
 
 
-    
+Exercise K
+\begin{code}
+
+fib n = runST $ fibST n
+
+fibST n = do {
+  a <- newSTRef (0,1);
+  foldr (>>) (pure()) (replicate n $ do {
+    (x,y) <- readSTRef a;
+    let x'y = x + y
+    in x'y `seq` writeSTRef a (y, x+y);
+  });
+  (ans,_) <- readSTRef a;
+  pure ans
+}
+\end{code}
+
+
+Exercise L
+\begin{code}
+
+gcd1 (x,y) = evalState gcdState (x,y)
+-- gcdState :: State (Int,Int) Int
+gcdState = do {
+  (x,y) <- get;
+  (if
+      | x == y -> pure x
+      | x < y -> do {
+        let y'x = y - x in y'x `seq` put (x, y'x);
+        gcdState
+      }
+      | x > y -> do {
+        let x'y = x - y in x'y `seq` put (x'y, y);
+        gcdState
+      }
+      | otherwise -> pure 0
+  )
+}
+
+gcd2 (x,y) = runST $ gcdST (x,y)
+-- gcdState :: State (Int,Int) Int
+gcdST (x,y) = do {
+  a <- newSTRef x;
+  b <- newSTRef y;
+  let loop = do {
+    x <- readSTRef a;
+    y <- readSTRef b;
+    (if
+        | x == y -> pure x
+        | x < y -> do {
+          let y'x = y - x in y'x `seq` do {
+            writeSTRef a x; writeSTRef b y'x
+          }; loop
+        }
+        | x > y -> do {
+          let x'y = x - y in x'y `seq` do {
+            writeSTRef a x'y; writeSTRef b y
+          }; loop
+        }
+        | otherwise -> pure 0
+    )
+  } in loop
+}
 
 \end{code}
