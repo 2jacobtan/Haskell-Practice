@@ -6,6 +6,7 @@ import Control.Monad.State
 import Data.List ((\\), intersect)
 import Control.Monad.ST
 import Data.STRef
+import Data.Array
 
 \end{code}
 
@@ -207,7 +208,22 @@ gcdST (x,y) = do {
 
 Exercise M
 \begin{code}
+newtype Grid = Grid [Int]
+instance Show Grid where
+  show (Grid xs) = foldr (\x acc -> x ++ "\n" ++ acc) ""
+    [ concat [if i `elem` xs then show i else "-" | i <- r] | r <- rows]
 
+initialState = array (0,8) $ zip [0..8] [0..8] -- 0 represents the blank space
+rows = [
+  [i..(i+2)] | i <- [0,3,6]
+  ]
+cols =[
+  [i,(i+3),(i+6)] | i <- [0..2]
+  ]
+
+getRowAdjacents i = intersect [i-1,i+1] $ rows !! (i `div` 3)
+getColAdjacents i = intersect [i-3,i+3] $ cols !! (i `mod` 3)
+getAdjacents i = Grid $ getRowAdjacents i ++ getColAdjacents i
 
 
 \end{code}
