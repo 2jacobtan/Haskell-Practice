@@ -9,6 +9,7 @@ import Data.STRef
 import Data.Array
 import qualified Data.Set as Set
 import qualified Debug.Trace
+import Data.Function ((&))
 
 \end{code}
 
@@ -219,7 +220,7 @@ instance Show Grid where
 
 type State_ = Array Int Int
 
-initialState = listArray (0,8) $ [0..8] :: State_ -- 0 represents the blank space
+initialState' = listArray (0,8) $ [0..8] :: State_ -- 0 represents the blank space
 winState = listArray (0,8) $ [1..8] ++ [0] :: State_
 solved = (== winState)
 
@@ -242,8 +243,8 @@ moves = getAdjacents
 move fromState fromI toI = fromState // [(toI,0),(fromI,fromState ! toI)] :: State_
 
 
-solve :: ST s (Maybe (State_, [Int]))
-solve = do {
+solve :: State_ -> ST s (Maybe (State_, [Int]))
+solve initialState = do {
   encounteredRef <- newSTRef Set.empty;
   frontierRef <- newSTRef [(initialState,[0])];
   nextFrontierRef <- newSTRef [];
@@ -253,23 +254,18 @@ solve = do {
     nextFront <- readSTRef nextFrontierRef;
     encountered <- readSTRef encounteredRef;
 
-    -- debug
-    Debug.Trace.trace ("front " ++ show (length front)) $ pure ();
-    Debug.Trace.trace ("nextFront " ++ show (length nextFront)) $ pure ();
-    Debug.Trace.trace ("encountered " ++ show (length encountered)) $ pure ();
-  
     case (front, nextFront) of
       ([],[]) -> return Nothing -- no possible solution
       _ -> do {
         -- replenish frontier if empty
-        if front == []
+        if Debug.Trace.trace (show $ front == []) $ front == []
         then do
           writeSTRef frontierRef (reverse nextFront)
           writeSTRef nextFrontierRef []
         else pure ();
         
         front <- readSTRef frontierRef;
-        nextFront <- readSTRef frontierRef;
+        nextFront <- readSTRef nextFrontierRef;
         case front of
           (s,m:ms):xs
             | solved s -> return $ Just (s,ms)
@@ -282,13 +278,26 @@ solve = do {
                   encountered `Set.union` (Set.fromList $ map fst nextMoves);
                 writeSTRef frontierRef $ xs;
                 writeSTRef nextFrontierRef $ nextMoves ++ nextFront;
+-- debug
+Debug.Trace.trace ("front " ++ show (length front)) $ pure ();
+Debug.Trace.trace ("nextFront " ++ show (length nextFront)) $ pure ();
+-- Debug.Trace.trace ("nextFront\n" ++ show (Grid $ elems $ fst $ head $ nextFront)) $ pure ();
+Debug.Trace.trace ("encountered " ++ show (length encountered)) $ pure ();
+                
                 solve1
               }
           _ -> error "rip"
       }
-          
+
   } in solve1;
 }
 
+solver = do
+  putStrLn "Starting positions separated by space:"
+  userInput <- getLine
+  let startState = userInput & words & map read & listArray (0,8)
+  case runST $ solve $ startState of
+    Nothing -> putStrLn "No solution found."
+    Just x -> print x
 
 \end{code}
