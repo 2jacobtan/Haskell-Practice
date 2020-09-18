@@ -247,7 +247,8 @@ move fromState fromI toI = fromState // [(toI,0),(fromI,fromState ! toI)] :: Sta
 solve :: State_ -> ST s (Maybe (State_, [Int]))
 solve initialState = do {
   encounteredRef <- newSTRef (Set.singleton initialState);
-  frontierRef <- newSTRef [(initialState,[0])];
+  frontierRef <- newSTRef [(initialState,
+    [let Just x = elemIndex 0 . elems $ initialState in x :: Int])];
   nextFrontierRef <- newSTRef [];
   
   let solve1 = do {
@@ -259,7 +260,8 @@ solve initialState = do {
       ([],[]) -> return Nothing -- no possible solution
       _ -> do {
         --  if frontier is empty, swap with nextFrontier
-        if Debug.Trace.trace (show $ front == []) $ front == []
+        if -- Debug.Trace.trace (show $ front == []) $
+        front == []
         then do
           writeSTRef frontierRef (reverse nextFront)
           writeSTRef nextFrontierRef []
@@ -302,8 +304,8 @@ solver = do
   case runST $ solve $ startState of
     Nothing -> do
       putStrLn "No solution found."
-      putStrLn $ "startState was " ++ show startState
     Just x -> print x
+  putStrLn $ "startState was " ++ (show . elems) startState
   solver
 
 main = solver
