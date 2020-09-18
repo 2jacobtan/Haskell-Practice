@@ -271,7 +271,8 @@ solve initialState = do {
         nextFront <- readSTRef nextFrontierRef;
         case front of
           (s,m:ms) : xs
-            | solved s -> return $ Just (s,m:ms)
+            | solved s -> Debug.Trace.trace (show $ length encountered) $
+                return $ Just (s,m:ms)
             | otherwise ->
               let nextMoves =
                     [(nextState, m1:m:ms)
@@ -284,10 +285,10 @@ solve initialState = do {
                 writeSTRef frontierRef $ xs;
                 writeSTRef nextFrontierRef $ nextMoves ++ nextFront;
 -- debug
-Debug.Trace.trace ("front " ++ show (length front)) $ pure ();
-Debug.Trace.trace ("nextFront " ++ show (length nextFront)) $ pure ();
--- Debug.Trace.trace ("nextFront\n" ++ show (Grid $ elems $ fst $ head $ nextFront)) $ pure ();
-Debug.Trace.trace ("encountered " ++ show (length encountered)) $ pure ();
+-- Debug.Trace.trace ("front " ++ show (length front)) $ pure ();
+-- Debug.Trace.trace ("nextFront " ++ show (length nextFront)) $ pure ();
+-- -- Debug.Trace.trace ("nextFront\n" ++ show (Grid $ elems $ fst $ head $ nextFront)) $ pure ();
+-- Debug.Trace.trace ("encountered " ++ show (length encountered)) $ pure ();
                 
                 solve1
               }
