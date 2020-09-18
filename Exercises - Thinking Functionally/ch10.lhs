@@ -7,6 +7,8 @@ import Data.List ((\\), intersect)
 import Control.Monad.ST
 import Data.STRef
 import Data.Array
+import qualified Data.Set as Set
+import qualified Debug.Trace
 
 \end{code}
 
@@ -237,7 +239,56 @@ showAdjacents = showAdjacentsList . getAdjacents
 
 moves :: Int -> [Int]
 moves = getAdjacents
-move fromState fromI toI = fromState // [(toI,0),(fromI,fromState ! toI)]
+move fromState fromI toI = fromState // [(toI,0),(fromI,fromState ! toI)] :: State_
+
+
+solve :: ST s (Maybe (State_, [Int]))
+solve = do {
+  encounteredRef <- newSTRef Set.empty;
+  frontierRef <- newSTRef [(initialState,[0])];
+  nextFrontierRef <- newSTRef [];
+  
+  let solve1 = do {
+    front <- readSTRef frontierRef;
+    nextFront <- readSTRef nextFrontierRef;
+    encountered <- readSTRef encounteredRef;
+
+    -- debug
+    Debug.Trace.trace ("front " ++ show (length front)) $ pure ();
+    Debug.Trace.trace ("nextFront " ++ show (length nextFront)) $ pure ();
+    Debug.Trace.trace ("encountered " ++ show (length encountered)) $ pure ();
+  
+    case (front, nextFront) of
+      ([],[]) -> return Nothing -- no possible solution
+      _ -> do {
+        -- replenish frontier if empty
+        if front == []
+        then do
+          writeSTRef frontierRef (reverse nextFront)
+          writeSTRef nextFrontierRef []
+        else pure ();
+        
+        front <- readSTRef frontierRef;
+        nextFront <- readSTRef frontierRef;
+        case front of
+          (s,m:ms):xs
+            | solved s -> return $ Just (s,ms)
+            | otherwise ->
+              let nextMoves = [(nextState, m1:m:ms)
+                    | m1 <- moves m, let nextState = move s m m1
+                    , not $ nextState `Set.member` encountered]
+              in do {
+                writeSTRef encounteredRef $
+                  encountered `Set.union` (Set.fromList $ map fst nextMoves);
+                writeSTRef frontierRef $ xs;
+                writeSTRef nextFrontierRef $ nextMoves ++ nextFront;
+                solve1
+              }
+          _ -> error "rip"
+      }
+          
+  } in solve1;
+}
 
 
 \end{code}
