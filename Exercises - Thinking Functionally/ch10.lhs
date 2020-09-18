@@ -299,5 +299,8 @@ solver = do
   case runST $ solve $ startState of
     Nothing -> putStrLn "No solution found."
     Just x -> print x
+  solver
+
+main = solver
 
 \end{code}
