@@ -271,7 +271,8 @@ solve initialState = do {
         nextFront <- readSTRef nextFrontierRef;
         case front of
           (s,m:ms) : xs
-            | solved s -> Debug.Trace.trace (show $ length encountered) $
+            | solved s -> Debug.Trace.trace
+                ("Positions covered: " ++ (show . length) encountered) $
                 return $ Just (s,m:ms)
             | otherwise ->
               let nextMoves =
