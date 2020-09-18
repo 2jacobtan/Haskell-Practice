@@ -211,19 +211,19 @@ Exercise M
 newtype Grid = Grid [Int]
 instance Show Grid where
   show (Grid xs) = foldr (\x acc -> x ++ "\n" ++ acc) ""
-    [ concat [if i `elem` xs then show i else "-" | i <- r] | r <- rows]
+    [ concat [if i `elem` xs then show i else "-" | i <- r] | r <- elems rows]
 
-initialState = array (0,8) $ zip [0..8] [0..8] -- 0 represents the blank space
-rows = [
+initialState = listArray (0,8) $ [0..8] -- 0 represents the blank space
+rows = listArray (0,3) [
   [i..(i+2)] | i <- [0,3,6]
   ]
-cols =[
+cols = listArray (0,3) [
   [i,(i+3),(i+6)] | i <- [0..2]
   ]
 
-getRowAdjacents i = intersect [i-1,i+1] $ rows !! (i `div` 3)
-getColAdjacents i = intersect [i-3,i+3] $ cols !! (i `mod` 3)
+getRowAdjacents i = intersect [i-1,i+1] $ rows ! (i `div` 3)
+getColAdjacents i = intersect [i-3,i+3] $ cols ! (i `mod` 3)
 getAdjacents i = Grid $ getRowAdjacents i ++ getColAdjacents i
-
+adjacents i = listArray (0,8) [getAdjacents i | i <- [0..8]]
 
 \end{code}
