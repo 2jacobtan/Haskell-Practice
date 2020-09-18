@@ -208,22 +208,36 @@ gcdST (x,y) = do {
 
 Exercise M
 \begin{code}
-newtype Grid = Grid [Int]
+newtype Grid = Grid {unGrid :: [Int]}
 instance Show Grid where
-  show (Grid xs) = foldr (\x acc -> x ++ "\n" ++ acc) ""
-    [ concat [if i `elem` xs then show i else "-" | i <- r] | r <- elems rows]
+  show (Grid xs) = go xs
+    where
+      go [] = ""
+      go xs = show (take 3 xs) ++ "\n" ++ go (drop 3 xs)
 
-initialState = listArray (0,8) $ [0..8] -- 0 represents the blank space
-rows = listArray (0,3) [
+type State_ = Array Int Int
+
+initialState = listArray (0,8) $ [0..8] :: State_ -- 0 represents the blank space
+winState = listArray (0,8) $ [1..8] ++ [0] :: State_
+solved = (== winState)
+
+rows = listArray (0,2) [
   [i..(i+2)] | i <- [0,3,6]
   ]
-cols = listArray (0,3) [
+cols = listArray (0,2) [
   [i,(i+3),(i+6)] | i <- [0..2]
   ]
 
 getRowAdjacents i = intersect [i-1,i+1] $ rows ! (i `div` 3)
 getColAdjacents i = intersect [i-3,i+3] $ cols ! (i `mod` 3)
-getAdjacents i = Grid $ getRowAdjacents i ++ getColAdjacents i
-adjacents i = listArray (0,8) [getAdjacents i | i <- [0..8]]
+getAdjacents i = getRowAdjacents i ++ getColAdjacents i
+showAdjacentsList xs = putStr $ foldr (\x acc -> x ++ "\n" ++ acc) ""
+    [ concat [if i `elem` xs then show i else "-" | i <- r] | r <- elems rows]
+showAdjacents = showAdjacentsList . getAdjacents
+
+moves :: Int -> [Int]
+moves = getAdjacents
+move fromState fromI toI = fromState // [(toI,0),(fromI,fromState ! toI)]
+
 
 \end{code}
