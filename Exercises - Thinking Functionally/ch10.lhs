@@ -3,7 +3,7 @@
 {-# LANGUAGE MultiWayIf #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 import Control.Monad.State
-import Data.List ((\\), intersect)
+import Data.List (elemIndex, (\\), intersect)
 import Control.Monad.ST
 import Data.STRef
 import Data.Array
@@ -222,7 +222,8 @@ type State_ = Array Int Int
 
 initialState' = listArray (0,8) $ [0..8] :: State_ -- 0 represents the blank space
 winState = listArray (0,8) $ [1..8] ++ [0] :: State_
-solved = (== winState)
+winState' = listArray (0,8) $ [1,2,3,4,5,6,8,7,0]
+solved = \x -> x == winState || x == winState'
 
 rows = listArray (0,2) [
   [i..(i+2)] | i <- [0,3,6]
@@ -270,9 +271,11 @@ solve initialState = do {
           (s,m:ms):xs
             | solved s -> return $ Just (s,ms)
             | otherwise ->
-              let nextMoves = [(nextState, m1:m:ms)
+              let nextMoves =
+                    [(nextState, m1:m:ms)
                     | m1 <- moves m, let nextState = move s m m1
-                    , not $ nextState `Set.member` encountered]
+                    , not $ nextState `Set.member` encountered
+                    ]
               in do {
                 writeSTRef encounteredRef $
                   encountered `Set.union` (Set.fromList $ map fst nextMoves);
@@ -297,7 +300,9 @@ solver = do
   userInput <- getLine
   let startState = userInput & words & map read & listArray (0,8)
   case runST $ solve $ startState of
-    Nothing -> putStrLn "No solution found."
+    Nothing -> do
+      putStrLn "No solution found."
+      putStrLn $ "startState was " ++ show startState
     Just x -> print x
   solver
 
