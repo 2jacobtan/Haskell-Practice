@@ -115,7 +115,7 @@ solver = do
       putStrLn "No solution found."
     Just x -> print x
   putStrLn $ "startState was " ++ (show . elems) startState
-  solver
+--  solver
 
 main = solver
 
