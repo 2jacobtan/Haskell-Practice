@@ -8,7 +8,7 @@ import Control.Monad.ST
 import Data.STRef
 import Data.Array
 import qualified Data.Set as Set
-import qualified Debug.Trace
+import Debug.Trace (trace)
 import Data.Function ((&))
 
 \end{code}
@@ -39,7 +39,9 @@ cols = listArray (0,2) [
 
 getRowAdjacents i = intersect [i-1,i+1] $ rows ! (i `div` 3)
 getColAdjacents i = intersect [i-3,i+3] $ cols ! (i `mod` 3)
-getAdjacents i = getRowAdjacents i ++ getColAdjacents i
+getAdjacents = (map f [0..8] !!)
+  where
+    f i = trace(show i) $ getRowAdjacents i ++ getColAdjacents i
 showAdjacentsList xs = putStr $ foldr (\x acc -> x ++ "\n" ++ acc) ""
     [ concat [if i `elem` xs then show i else "-" | i <- r] | r <- elems rows]
 showAdjacents = showAdjacentsList . getAdjacents
@@ -116,5 +118,19 @@ solver = do
   solver
 
 main = solver
+
+\end{code}
+
+memoisation test
+\begin{code}
+
+lindex = (map f [0..] !!)
+  where f n = trace(show n) n+1
+
+fib = (listArray (0,9) (map fib' [0 .. 9]) !)
+    where
+      fib' 0 = 0
+      fib' 1 = 1
+      fib' n =trace(show(n)) fib (n - 1) + fib (n - 2)
 
 \end{code}
