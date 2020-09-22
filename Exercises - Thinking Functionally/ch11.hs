@@ -3,8 +3,9 @@
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
 import Data.Fixed (mod')
-import Control.Applicative -- Otherwise you can't do the Applicative instance.
+-- import Control.Applicative -- Otherwise you can't do the Applicative instance.
 import Control.Monad (MonadPlus, liftM, ap)
+import Data.Char (isDigit)
 
 -- Exercise A
 
@@ -48,11 +49,12 @@ instance Monad Parser where
       in p s'
 
 -- Exercise C
-fail = \s -> []
-fail >> p = \s0 ->
-  case (\s -> []) s0 of
-    [] -> []
-    -- ...
+
+-- fail = \s -> []
+-- fail >> p = \s0 ->
+--   case (\s -> []) s0 of
+--     [] -> []
+--     -- ...
 
 -- hence: fail >> p = \s0 -> [] = fail
 
@@ -86,11 +88,47 @@ fail >> p = \s0 ->
 
 -- Exercise G
 
+failP :: Parser a
+failP = Parser $ \s -> Nothing
+apply :: Parser a -> String -> Maybe (a, String)
+apply (Parser p) s = p s
+none :: Parser [a]
+none = return []
+
+(<|>) :: Parser a -> Parser a -> Parser a
+p <|> q = Parser $ \s -> case apply p s of
+  Nothing -> apply q s
+  Just x -> Just x
 
 
+pMany :: Parser a -> Parser [a]
+pMany p = (do
+  x <- p
+  xs <- some p
+  return $ x:xs) <|> none
 
+some :: Parser a -> Parser [a]
+some p = do
+  x <- p
+  xs <- pMany p
+  return $ x:xs
 
+predP pred p = do
+  x <- p
+  if pred x then return x else failP
 
+getC = Parser $ \xs -> case xs of
+  x:xs' -> Just (x,xs')
+  _ -> Nothing
 
+digit = predP isDigit getC
 
-
+parseFloat :: Parser Double
+parseFloat = do
+  nString <- some digit
+  let n = read nString :: Double
+  predP (== '.') getC
+  mString <- some digit
+  let m = read mString :: Double
+  return $ n + m / fromIntegral (10*length mString)
+  
