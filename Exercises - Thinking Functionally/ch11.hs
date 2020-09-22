@@ -4,7 +4,7 @@
 
 import Data.Fixed (mod')
 import Control.Applicative -- Otherwise you can't do the Applicative instance.
-import Control.Monad (liftM, ap)
+import Control.Monad (MonadPlus, liftM, ap)
 
 -- Exercise A
 
@@ -48,4 +48,49 @@ instance Monad Parser where
       in p s'
 
 -- Exercise C
+fail = \s -> []
+fail >> p = \s0 ->
+  case (\s -> []) s0 of
+    [] -> []
+    -- ...
+
+-- hence: fail >> p = \s0 -> [] = fail
+
+
+-- Exercise D
+
+-- if both p and q would parse successfully, then
+-- (p <|> q)
+-- = Parser $ \s -> parse p s ++ parse q s
+-- = Parser $ \s -> [(a,s)] ++ [(b,t)]
+-- = Parser $ \s -> [(a,s),(b,t)]
+
+-- limit (Parser pq) = Parser $ \s -> case pq s of
+--   [] -> []
+--   x -> head x
+
+
+-- Exercise E
+
+-- instance MonadPlus Parser where
+--   mzero = Parser $ \s -> [] -- = fail
+--   p `mplus` q = Parser $ \s -> case apply p s of
+--     Nothing -> apply q s
+--     Just x -> x
+
+
+-- Execrise F
+
+-- if p is Just x, and Just x >>= f is Nothing, but q >>= f is Just y
+
+
+-- Exercise G
+
+
+
+
+
+
+
+
 
