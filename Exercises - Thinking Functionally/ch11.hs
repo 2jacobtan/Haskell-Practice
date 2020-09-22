@@ -5,7 +5,7 @@
 import Data.Fixed (mod')
 -- import Control.Applicative -- Otherwise you can't do the Applicative instance.
 import Control.Monad (MonadPlus, liftM, ap)
-import Data.Char (isDigit)
+import Data.Char (isSpace, isDigit)
 
 -- Exercise A
 
@@ -101,16 +101,15 @@ p <|> q = Parser $ \s -> case apply p s of
   Just x -> Just x
 
 
-pMany :: Parser a -> Parser [a]
-pMany p = (do
-  x <- p
+manyP :: Parser a -> Parser [a]
+manyP p = (do
   xs <- some p
-  return $ x:xs) <|> none
+  return $ xs) <|> none
 
 some :: Parser a -> Parser [a]
 some p = do
   x <- p
-  xs <- pMany p
+  xs <- manyP p
   return $ x:xs
 
 predP pred p = do
@@ -123,12 +122,16 @@ getC = Parser $ \xs -> case xs of
 
 digit = predP isDigit getC
 
+space = manyP (predP isSpace getC) >> return ()
+
+token p = space >> p
+
 parseFloat :: Parser Double
-parseFloat = do
+parseFloat = token $ do
   nString <- some digit
   let n = read nString :: Double
   predP (== '.') getC
   mString <- some digit
   let m = read mString :: Double
-  return $ n + m / fromIntegral (10*length mString)
+  return $ n + m / fromIntegral (10^length mString)
   
