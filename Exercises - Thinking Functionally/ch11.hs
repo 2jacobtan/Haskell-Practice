@@ -135,3 +135,36 @@ parseFloat = token $ do
   let m = read mString :: Double
   return $ n + m / fromIntegral (10^length mString)
   
+
+-- Exercise I
+char :: Char -> Parser ()
+char c = predP (== c) getC >> return ()
+
+paren p = (do
+  char '('
+  x <- p
+  token $ char ')'
+  return x)
+
+parseCInt :: Parser Expr
+parseCInt = do
+  nString <- some digit
+  return $ C $ CInt (read nString :: Int)
+
+data OperAdd = Plus | Minus deriving Show
+pOperAdd = do {char '+'; return Plus} <|> do {char '-'; return Minus}
+
+data Constant = CInt Int deriving Show
+pCons = parseCInt
+
+data Expr = C Constant  | ExprBin OperAdd Expr Expr deriving Show
+
+pExpr = token $ pTerm <|> pBinary
+  where
+    pTerm = token $ pCons <|> paren pExpr
+    pBinary =  do
+        e1 <- pTerm
+        operAdd <- pOperAdd
+        e2 <- pTerm
+        return (ExprBin operAdd e1 e2)
+
