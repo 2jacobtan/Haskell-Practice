@@ -152,7 +152,7 @@ parseCInt = do
   return $ C $ CInt (read nString :: Int)
 
 data OperAdd = Plus | Minus deriving Show
-pOperAdd = do {char '+'; return Plus} <|> do {char '-'; return Minus}
+pOperAdd = token $ do {char '+'; return Plus} <|> do {char '-'; return Minus}
 
 data Constant = CInt Int deriving Show
 pCons = parseCInt
@@ -167,4 +167,22 @@ pExpr = token $ pBinary <|> pTerm -- <|>
         operAdd <- pOperAdd
         t2 <- pTerm
         return (ExprBin operAdd t1 t2)
+
+
+-- Exercise J
+
+term = token $ pCons <|> paren pExpr
+op = pOperAdd
+many = manyP
+expr = do
+  e1 <- term
+  pes <- many (pair op term)
+  return (foldl shunt e1 pes)
+
+pair p q = do
+  vp <- p
+  vq <- q
+  return (vp,vq)
+
+shunt e1 (p,e2) = ExprBin p e1 e2
 
