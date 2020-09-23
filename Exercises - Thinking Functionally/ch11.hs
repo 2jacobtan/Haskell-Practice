@@ -151,28 +151,28 @@ parseCInt = do
   nString <- some digit
   return $ C $ CInt (read nString :: Int)
 
-data OperAdd = Plus | Minus deriving Show
-pOperAdd = token $ do {char '+'; return Plus} <|> do {char '-'; return Minus}
+data Oper = Plus | Minus | Mul | Div deriving Show
+pOper = token $ do {char '+'; return Plus} <|> do {char '-'; return Minus}
 
 data Constant = CInt Int deriving Show
 pCons = parseCInt
 
-data Expr = C Constant  | ExprBin OperAdd Expr Expr deriving Show
+data Expr = C Constant  | ExprBin Oper Expr Expr deriving Show
 
 pExpr = token $ pBinary <|> pTerm -- <|> 
   where
     pTerm = token $ pCons <|> paren pExpr
     pBinary =  do
         t1 <- pTerm
-        operAdd <- pOperAdd
+        oper <- pOper
         t2 <- pTerm
-        return (ExprBin operAdd t1 t2)
+        return (ExprBin oper t1 t2)
 
 
 -- Exercise J
 
 term = token $ pCons <|> paren pExpr
-op = pOperAdd
+op = pOper
 many = manyP
 expr = do
   e1 <- term
@@ -189,14 +189,14 @@ shunt e1 (p,e2) = ExprBin p e1 e2
 
 -- Exercise K
 
-expr2 = token (term >>= rest)
+expr' = token (term' >>= rest)
 
 rest e1 = do {
   p <- addop;
-  e2 <- term;
+  e2 <- term';
   rest (ExprBin p e1 e2)} <|> return e1
 
-term2 = token (factor >>= more)
+term' = token (factor >>= more)
 
 more e1 = do {
   p <- mulop;
@@ -205,3 +205,18 @@ more e1 = do {
   <|> return e1
 factor = token (pCons <|> paren expr)
 
+addop = token $ do {
+  char '+';
+  return Plus
+} <|> do {
+  char '-';
+  return Minus
+}
+  
+mulop = token $ do {
+  char '*';
+  return Mul
+} <|> do {
+  char '/';
+  return Div
+}
