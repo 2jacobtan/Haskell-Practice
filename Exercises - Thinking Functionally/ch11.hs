@@ -186,3 +186,22 @@ pair p q = do
 
 shunt e1 (p,e2) = ExprBin p e1 e2
 
+
+-- Exercise K
+
+expr2 = token (term >>= rest)
+
+rest e1 = do {
+  p <- addop;
+  e2 <- term;
+  rest (ExprBin p e1 e2)} <|> return e1
+
+term2 = token (factor >>= more)
+
+more e1 = do {
+  p <- mulop;
+  e2 <- factor;
+  more (ExprBin p e1 e2)}
+  <|> return e1
+factor = token (pCons <|> paren expr)
+
