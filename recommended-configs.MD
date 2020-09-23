@@ -1,3 +1,5 @@
+(last updated 2020-09-23; newer version at https://github.com/smucclaw/complaw/blob/master/doc/juniors/recommended-configs.MD)
+
 # Recommended configs and tools
 
 #### Support on CCLAW slack
@@ -64,6 +66,10 @@ Set up an SSH key https://support.atlassian.com/bitbucket-cloud/docs/set-up-an-s
 Haskell Stack https://docs.haskellstack.org/en/stable/install_and_upgrade/
 
 ghcup https://www.haskell.org/ghcup/
+
+### Useful packages
+- https://hackage.haskell.org/package/pretty-simple
+- https://hackage.haskell.org/package/simple-reflect-0.3.3/docs/Debug-SimpleReflect.html
 
 ---
 

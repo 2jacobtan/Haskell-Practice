@@ -159,12 +159,12 @@ pCons = parseCInt
 
 data Expr = C Constant  | ExprBin OperAdd Expr Expr deriving Show
 
-pExpr = token $ pTerm <|> pBinary
+pExpr = token $ pBinary <|> pTerm -- <|> 
   where
     pTerm = token $ pCons <|> paren pExpr
     pBinary =  do
-        e1 <- pTerm
+        t1 <- pTerm
         operAdd <- pOperAdd
-        e2 <- pTerm
-        return (ExprBin operAdd e1 e2)
+        t2 <- pTerm
+        return (ExprBin operAdd t1 t2)
 
