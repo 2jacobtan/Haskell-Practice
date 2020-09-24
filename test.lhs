@@ -156,7 +156,7 @@ traverseMap (Node x left right) =
 
 \begin{code}
 
-data ValList a = V a | L ([ValList a]) deriving Show
+data ValList a = V a | L [ValList a] deriving Show
 
 flat_list :: ValList Integer
 flat_list = L [V 3, V 2, V 1 ]
