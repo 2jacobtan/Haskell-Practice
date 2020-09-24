@@ -142,8 +142,8 @@ char :: Char -> Parser ()
 char c = predP (== c) getC >> return ()
 
 paren p = (do
-  char '('
-  x <- p
+  token $ char '('
+  x <- token $ p
   token $ char ')'
   return x)
 
@@ -158,7 +158,7 @@ pOp = token $ do {char '+'; return Plus} <|> do {char '-'; return Minus}
 data Constant = CInt Int deriving Show
 pCons = parseCInt
 
-data Expr = C Constant  | ExprBin Op Expr Expr -- deriving Show
+data Expr = C Constant  | ExprBin Op Expr Expr deriving Show
 
 pExpr = token $ pBinary <|> pTerm -- <|> 
   where
@@ -190,6 +190,8 @@ shunt e1 (p,e2) = ExprBin p e1 e2
 
 -- Exercise K
 
+parenOp p = paren p <|> p
+
 expr' = token (term' >>= rest)
 
 rest e1 = do {
@@ -202,8 +204,8 @@ term' = token (factor >>= more)
 more e1 = do {
   p <- mulop;
   e2 <- factor;
-  more (ExprBin p e1 e2)}
-  <|> return e1
+  more (ExprBin p e1 e2)} <|> return e1
+
 factor = token (pCons <|> paren expr)
 
 addop = token $ do {
@@ -230,35 +232,35 @@ isMulOp = \case
   Div -> True
   _ -> False
 
-instance Show Expr where
-  show e = showsF (\_ -> False) e ""
-    where
-    showsF :: (Op -> Bool) -> Expr -> ShowS
-    showsF _ (C (CInt x)) = showString $ show x
-    showsF f (ExprBin p e1 e2) = showParen (f p) $
-      showsF f1 e1 . showSpace
-      . showop p . showSpace
-      . showsF f2 e2
-      where
-      f1 q = if isMulOp p && not (isMulOp q) then True else False
-      -- f1 = if
-      --   | isMulOp p -> \q -> if
-      --     | isMulOp q -> False
-      --     | otherwise -> True
-      --   | otherwise -> \q -> if
-      --     | isMulOp q -> False
-      --     | otherwise -> False
-      f2 q = if not (isMulOp p) && isMulOp q then False else True
-      -- f2 = if
-      --   | isMulOp p -> \q -> if
-      --     | isMulOp q -> True
-      --     | otherwise -> True
-      --   | otherwise -> \q -> if
-      --     | isMulOp q -> False
-      --     | otherwise -> True
-      showop = \case
-        Mul -> showChar '*'
-        Div -> showChar '/'
-        Plus -> showChar '+'
-        Minus -> showChar '-'
+-- instance Show Expr where
+--   show e = showsF (\_ -> False) e ""
+--     where
+--     showsF :: (Op -> Bool) -> Expr -> ShowS
+--     showsF _ (C (CInt x)) = showString $ show x
+--     showsF f (ExprBin p e1 e2) = showParen (f p) $
+--       showsF f1 e1 . showSpace
+--       . showop p . showSpace
+--       . showsF f2 e2
+--       where
+--       f1 q = if isMulOp p && not (isMulOp q) then True else False
+--       -- f1 = if
+--       --   | isMulOp p -> \q -> if
+--       --     | isMulOp q -> False
+--       --     | otherwise -> True
+--       --   | otherwise -> \q -> if
+--       --     | isMulOp q -> False
+--       --     | otherwise -> False
+--       f2 q = if not (isMulOp p) && isMulOp q then False else True
+--       -- f2 = if
+--       --   | isMulOp p -> \q -> if
+--       --     | isMulOp q -> True
+--       --     | otherwise -> True
+--       --   | otherwise -> \q -> if
+--       --     | isMulOp q -> False
+--       --     | otherwise -> True
+--       showop = \case
+--         Mul -> showChar '*'
+--         Div -> showChar '/'
+--         Plus -> showChar '+'
+--         Minus -> showChar '-'
 
