@@ -158,7 +158,7 @@ pOp = token $ do {char '+'; return Plus} <|> do {char '-'; return Minus}
 data Constant = CInt Int deriving Show
 pCons = parseCInt
 
-data Expr = C Constant  | ExprBin Op Expr Expr deriving Show
+data Expr = C Constant  | ExprBin Op Expr Expr -- deriving Show
 
 pExpr = token $ pBinary <|> pTerm -- <|> 
   where
