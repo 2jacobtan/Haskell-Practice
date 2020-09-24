@@ -125,7 +125,7 @@ merge' xs'@(x:xs) ys'@(y:ys)
 
 \begin{code}
 
-data BinTree a = Leaf | Node a (BinTree a) (BinTree a)
+data BinTree a = Leaf | Node a (BinTree a) (BinTree a) deriving Show
 myTree =
     Node 3
         (Node 1
@@ -140,15 +140,31 @@ traverseMap Leaf = Leaf
 traverseMap (Node x left right) =
     Node (f x) (traverseMap left) (traverseMap right)
 
-instance Show a => Show (BinTree a) where
-    show =
-        let
-            show' h tree = case tree of
-                Leaf -> " Leaf"
-                Node x left right -> "\n" ++ indent h ++ "Node " ++ show x ++ show' (h+1) left ++ show' (h+1) right
-                where
-                    indent_string = "  "
-                    indent h = do {[1..h]; indent_string}
-        in show' 0
+-- instance Show a => Show (BinTree a) where
+--     show =
+--         let
+--             show' h tree = case tree of
+--                 Leaf -> " Leaf"
+--                 Node x left right -> "\n" ++ indent h ++ "Node " ++ show x ++ show' (h+1) left ++ show' (h+1) right
+--                 where
+--                     indent_string = "  "
+--                     indent h = do {[1..h]; indent_string}
+--         in show' 0
+
+\end{code}
+
+
+\begin{code}
+
+data ValList a = V a | L ([ValList a]) deriving Show
+
+flat_list :: ValList Integer
+flat_list = L [V 3, V 2, V 1 ]
+
+nested_list :: ValList a
+nested_list = L [L []]
+
+arbitrarily_nested_list :: ValList Integer
+arbitrarily_nested_list = L [V 1, L [V 2, V 3], L [L [V 4, V 5]]]
 
 \end{code}
