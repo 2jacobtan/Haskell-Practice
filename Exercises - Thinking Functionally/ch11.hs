@@ -6,6 +6,7 @@ import Data.Fixed (mod')
 -- import Control.Applicative -- Otherwise you can't do the Applicative instance.
 import Control.Monad (MonadPlus, liftM, ap)
 import Data.Char (isSpace, isDigit)
+import GHC.Show (showSpace)
 
 -- Exercise A
 
@@ -151,20 +152,20 @@ parseCInt = do
   nString <- some digit
   return $ C $ CInt (read nString :: Int)
 
-data Oper = Plus | Minus | Mul | Div deriving Show
-pOper = token $ do {char '+'; return Plus} <|> do {char '-'; return Minus}
+data Op = Plus | Minus | Mul | Div deriving Show
+pOp = token $ do {char '+'; return Plus} <|> do {char '-'; return Minus}
 
 data Constant = CInt Int deriving Show
 pCons = parseCInt
 
-data Expr = C Constant  | ExprBin Oper Expr Expr deriving Show
+data Expr = C Constant  | ExprBin Op Expr Expr -- deriving Show
 
 pExpr = token $ pBinary <|> pTerm -- <|> 
   where
     pTerm = token $ pCons <|> paren pExpr
     pBinary =  do
         t1 <- pTerm
-        oper <- pOper
+        oper <- pOp
         t2 <- pTerm
         return (ExprBin oper t1 t2)
 
@@ -172,7 +173,7 @@ pExpr = token $ pBinary <|> pTerm -- <|>
 -- Exercise J
 
 term = token $ pCons <|> paren pExpr
-op = pOper
+op = pOp
 many = manyP
 expr = do
   e1 <- term
@@ -220,3 +221,44 @@ mulop = token $ do {
   char '/';
   return Div
 }
+
+
+-- Exercise L
+
+isMulOp = \case
+  Mul -> True
+  Div -> True
+  _ -> False
+
+instance Show Expr where
+  show e = showsF (\_ -> False) e ""
+    where
+    showsF :: (Op -> Bool) -> Expr -> ShowS
+    showsF _ (C (CInt x)) = showString $ show x
+    showsF f (ExprBin p e1 e2) = showParen (f p) $
+      showsF f1 e1 . showSpace
+      . showop p . showSpace
+      . showsF f2 e2
+      where
+      f1 q = if isMulOp p && not (isMulOp q) then True else False
+      -- f1 = if
+      --   | isMulOp p -> \q -> if
+      --     | isMulOp q -> False
+      --     | otherwise -> True
+      --   | otherwise -> \q -> if
+      --     | isMulOp q -> False
+      --     | otherwise -> False
+      f2 q = if not (isMulOp p) && isMulOp q then False else True
+      -- f2 = if
+      --   | isMulOp p -> \q -> if
+      --     | isMulOp q -> True
+      --     | otherwise -> True
+      --   | otherwise -> \q -> if
+      --     | isMulOp q -> False
+      --     | otherwise -> True
+      showop = \case
+        Mul -> showChar '*'
+        Div -> showChar '/'
+        Plus -> showChar '+'
+        Minus -> showChar '-'
+
