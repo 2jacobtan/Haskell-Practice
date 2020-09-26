@@ -1,0 +1,7 @@
+cradle:
+  cabal:
+    # - path: "./Main.hs"
+    #   component: "NestedList:exe:NestedList"
+
+    # - path: "./NestedList.hs"
+    #   component: "NestedList:exe:NestedList"
