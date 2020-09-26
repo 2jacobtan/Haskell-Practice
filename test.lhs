@@ -167,4 +167,25 @@ nested_list = L [L []]
 arbitrarily_nested_list :: ValList Integer
 arbitrarily_nested_list = L [V 1, L [V 2, V 3], L [L [V 4, V 5]]]
 
+-- https://smucclaw.slack.com/archives/C01B92UL9B4/p1601049294002500?thread_ts=1600884447.000800&cid=C01B92UL9B4
+data Cell a = Nil | C a deriving Eq
+
+example1 = (Nil, (Nil, Nil)) -- :: (Cell String, (Cell Integer, Cell ()))
+
+example2 = (C "1", (C 2, Nil))
+
+type CellsType = (Cell String, (Cell Integer, Cell()))
+e1_equals_e2 = example1 == (example2 :: CellsType)
+
+equals x y = x == (y :: CellsType)
+e1_equals'_e2 = example1 `equals` example2
+
+-- e1_equals''_e2 = example1 == example2
+-- Error: Ambiguous type variable ‘a0’ arising from a use of ‘==’
+--  prevents the constraint ‘(Eq a0)’ from being solved.
+
+example02 = (C "1", (C 2, Nil :: Cell ()))
+
+e1_equals_e02 = example1 == example02
+
 \end{code}
