@@ -16,8 +16,8 @@ data NestedList a = Nil
 
 instance Semigroup (NestedList a) where
   Nil              <> ys  = ys
-  -- xs               <> Nil = xs
   Cons x xs        <> ys  = Cons x (xs <> ys)
+  xs               <> Nil = xs
   x                <> ys  = Cons x ys
 
 instance Monoid (NestedList a) where
@@ -44,3 +44,15 @@ proptest = do
   smallCheck 3 (prop_left_id @(NestedList ()))
   smallCheck 3 (prop_right_id @(NestedList ()))
   smallCheck 3 (prop_assoc @(NestedList ()))
+
+toNestedList :: [a] -> NestedList a
+toNestedList [] = Nil
+-- toNestedList [x] = Value x -- Should we have this rule?
+toNestedList (x:xs) = Cons (Value x) (toNestedList xs)
+
+takeNL 0 _ = []
+takeNL n (Cons x y) = x : takeNL (n-1) y
+
+takeTest = do
+  print $ take 3 $ [1,2,3] <> undefined
+  print $ takeNL 3 $ toNestedList [1,2,3] <> undefined
