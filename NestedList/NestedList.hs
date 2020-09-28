@@ -50,8 +50,9 @@ toNestedList [] = Nil
 -- toNestedList [x] = Value x -- Should we have this rule?
 toNestedList (x:xs) = Cons (Value x) (toNestedList xs)
 
-takeNL 0 _ = []
-takeNL n (Cons x y) = x : takeNL (n-1) y
+takeNL _ Nil = []
+takeNL 1 (Cons x _) = [x]
+takeNL n (Cons x xs) = x : takeNL (n-1) xs
 
 takeTest = do
   print $ take 3 $ [1,2,3] <> undefined
