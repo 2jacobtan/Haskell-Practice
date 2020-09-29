@@ -189,3 +189,14 @@ example02 = (C "1", (C 2, Nil :: Cell ()))
 e1_equals_e02 = example1 == example02
 
 \end{code}
+
+
+https://smucclaw.slack.com/archives/C019BR4LX9V/p1601351544001400
+\begin{code}
+
+multInt x y = go y 0
+  where go y' accum = case y' of
+          0 -> accum
+          _ -> go (y' - 1) (x + accum)
+
+\end{code}
