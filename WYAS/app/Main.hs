@@ -36,7 +36,9 @@ parseString = do
   char '"'
   return $ String x
   where
-    escapedChars
+    escapedChars = escapedChars1
+    escapedChars1 :: Parser Char
+    escapedChars1
       = char '\\'
       >> (
         (char '\\') -- >> pure '\\')
@@ -44,9 +46,18 @@ parseString = do
         <|> (char 'n' >> pure '\n')
 
       )
-      -- = (string "\\\\" >> pure '\\')
-      -- <|> (string "\\\"" >> pure '\"')
-      -- <|> (string "\\n" >> pure '\n')
+      -- This version doesn't work because megaparsec's <|> will only try the alternative if the original fails witohut consuming any input!
+    escapedChars2 :: Parser Char
+    escapedChars2
+      = (string "\\\\" >> pure '\\')
+      <|> (string "\\\"" >> pure '\"')
+      <|> (string "\\n" >> pure '\n')
+      -- This version works using "try" to "pretends that it hasn't consumed any input when an error occurs."
+    escapedChars3 :: Parser Char
+    escapedChars3
+      = try (string "\\\\" >> pure '\\')
+      <|> try (string "\\\"" >> pure '\"')
+      <|> (string "\\n" >> pure '\n')
 
 parseAtom :: Parser LispVal
 parseAtom = do 
