@@ -7,6 +7,7 @@ import System.Environment
 import Control.Monad (liftM)
 import Numeric (readDec, readHex, readOct, readInt)
 import Data.Char (digitToInt)
+import Text.Parsec (parserZero)
 
 symbol :: Parser Char
 symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
@@ -30,6 +31,7 @@ data LispVal
   | DottedList [LispVal] LispVal
   | Number Integer
   | String String
+  | Character Char
   | Bool Bool deriving Show
 
 parseString :: Parser LispVal
@@ -91,12 +93,28 @@ parseNumber = do {
     'd' -> (digit, readDec);
     'x' -> (hexDigit, readHex);
     } in do
+  sign <- option (1) (char '-' >> return (-1))
   num <- many1 digit';
-  return . Number . fst . head . read' $ num;
+  return . Number . (sign *) . fst . head . read' $ num;
 
   } <|> (liftM (Number . read) $ many1 digit)
 
+parseChar :: Parser LispVal
+parseChar = do
+  -- try $ string "#\\"
+  char '#' >> char '\\'
+  c <- choice
+    [ try $ string "space" >> return ' '
+    , try $ string "newline" >> return '\n'
+    , anyChar
+    ]
+  return $ Character c
+
 parseExpr :: Parser LispVal
-parseExpr = parseAtom
-         <|> parseString
-         <|> parseNumber
+parseExpr = choice
+  [ parserZero
+  , try parseNumber
+  , try parseChar
+  , try parseAtom
+  , parseString
+  ]
