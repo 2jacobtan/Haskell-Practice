@@ -10,7 +10,7 @@ import Data.Char (digitToInt)
 import Text.Parsec (parserZero)
 
 symbol :: Parser Char
-symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
+symbol = oneOf "!$%&|*+-/:<=>?@^_~"
 
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
@@ -77,11 +77,16 @@ parseAtom = do
   first <- letter <|> symbol
   rest <- many (letter <|> digit <|> symbol)
   let atom = first:rest
-  return $ case atom of 
-    "#t" -> Bool True
-    "#f" -> Bool False
-    _    -> Atom atom
+  return $ Atom atom
 
+parseBool :: Parser LispVal
+parseBool = do
+  char '#'
+  b <- oneOf "tf"
+  return . Bool $ case b of
+    't' -> True
+    'f' -> False
+    
 parseNumber :: Parser LispVal
 -- parseNumber = liftM (Number . read) $ many1 digit
 parseNumber = do {
@@ -106,15 +111,16 @@ parseChar = do
   c <- choice
     [ try $ string "space" >> return ' '
     , try $ string "newline" >> return '\n'
-    , anyChar
+    , do {x <- anyChar; notFollowedBy alphaNum; return x}
     ]
   return $ Character c
 
 parseExpr :: Parser LispVal
 parseExpr = choice
   [ parserZero
-  , try parseNumber
-  , try parseChar
-  , try parseAtom
+  , parseAtom
   , parseString
+  , try parseNumber
+  , try parseBool
+  , try parseChar
   ]
