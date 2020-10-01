@@ -39,8 +39,8 @@ parseString = do
     escapedChars
       = char '\\'
       >> (
-        (char '\\' >> pure '\\')
-        <|> (char '"' >> pure '"')
+        (char '\\') -- >> pure '\\')
+        <|> (char '"') -- >> pure '"')
         <|> (char 'n' >> pure '\n')
 
       )
