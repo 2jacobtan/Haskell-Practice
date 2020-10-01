@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 module Main where
 
 import Lib
@@ -37,6 +38,14 @@ parseString = do
   return $ String x
   where
     escapedChars = escapedChars1
+    escapedChars' :: Parser Char -- answer
+    escapedChars' = char '\\' >> oneOf "\\\"nrt"
+      >>= \x -> return $ case x of
+        '\"' -> '\"'
+        '\\' -> '\\'
+        'n' -> '\n'
+        'r' -> '\r'
+        't' -> '\t'
     escapedChars1 :: Parser Char
     escapedChars1
       = char '\\'
