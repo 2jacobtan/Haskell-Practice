@@ -5,6 +5,8 @@ import Lib
 import Text.ParserCombinators.Parsec hiding (spaces)
 import System.Environment
 import Control.Monad (liftM)
+import Numeric (readDec, readHex, readOct, readInt)
+import Data.Char (digitToInt)
 
 symbol :: Parser Char
 symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
@@ -79,7 +81,20 @@ parseAtom = do
     _    -> Atom atom
 
 parseNumber :: Parser LispVal
-parseNumber = liftM (Number . read) $ many1 digit
+-- parseNumber = liftM (Number . read) $ many1 digit
+parseNumber = do {
+  char '#';
+  r <- oneOf "bodx";
+  let (digit',read') = case r of {
+    'b' -> (oneOf "01", readInt 2 (const True) digitToInt);
+    'o' -> (octDigit, readOct);
+    'd' -> (digit, readDec);
+    'x' -> (hexDigit, readHex);
+    } in do
+  num <- many1 digit';
+  return . Number . fst . head . read' $ num;
+
+  } <|> (liftM (Number . read) $ many1 digit)
 
 parseExpr :: Parser LispVal
 parseExpr = parseAtom
