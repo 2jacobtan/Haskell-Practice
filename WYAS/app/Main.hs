@@ -32,7 +32,7 @@ data LispVal
 parseString :: Parser LispVal
 parseString = do
   char '"'
-  x <- many (escapedChars <|> noneOf "\"")
+  x <- many (escapedChars <|> noneOf "\"\\")
   char '"'
   return $ String x
   where
