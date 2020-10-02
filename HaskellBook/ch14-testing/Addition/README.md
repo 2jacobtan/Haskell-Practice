@@ -1,3 +1,3 @@
 # Addition
 
-QuickCheck test demo in Main.hs
+QuickCheck test demo in app/Main.hs
