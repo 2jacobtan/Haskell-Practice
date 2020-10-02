@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4cfac5cc24fe13ae968e72d2269a1a51cca9f7939acc893d7c8dc152399a9f54
+-- hash: 7b04fd6959bea536eb476ec6c54af6c91430ebd24dfe8777b594448667964ab4
 
 name:           Addition
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      NestedList
   other-modules:
       Paths_Addition
   hs-source-dirs:
