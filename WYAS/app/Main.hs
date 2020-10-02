@@ -30,6 +30,7 @@ data LispVal
   | List [LispVal]
   | DottedList [LispVal] LispVal
   | Number Integer
+  | Float Double
   | String String
   | Character Char
   | Bool Bool deriving Show
@@ -102,7 +103,18 @@ parseNumber = do {
   num <- many1 digit';
   return . Number . (sign *) . fst . head . read' $ num;
 
-  } <|> (liftM (Number . read) $ many1 digit)
+  } <|> do
+    n <- many1 digit
+    n' <- option "" (do
+      p <- char '.'
+      m <- many1 digit
+      optional $ oneOf "sfdlSFDL"
+      optional $ digit
+      return $ p:m
+      )
+    return $ case n' of
+      "" -> Number . read $ n
+      _ -> Float . read $ n ++ n'
 
 parseChar :: Parser LispVal
 parseChar = do
