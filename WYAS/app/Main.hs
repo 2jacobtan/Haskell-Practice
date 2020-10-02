@@ -8,6 +8,8 @@ import Control.Monad (liftM)
 import Numeric (readDec, readHex, readOct, readInt)
 import Data.Char (digitToInt)
 import Text.Parsec (parserZero)
+import Data.Complex ( Complex((:+)), mkPolar, Complex)
+import Data.Ratio ((%))
 
 symbol :: Parser Char
 symbol = oneOf "!$%&|*+-/:<=>?@^_~"
@@ -31,6 +33,8 @@ data LispVal
   | DottedList [LispVal] LispVal
   | Number Integer
   | Float Double
+  | Ration Rational
+  | Compl (Complex Double)
   | String String
   | Character Char
   | Bool Bool deriving Show
@@ -116,6 +120,38 @@ parseNumber = do {
       "" -> Number . read $ n
       _ -> Float . read $ n ++ n'
 
+parseFloat :: Parser LispVal
+parseFloat = do
+  n <- parseNumber
+  case n of
+    Float _ -> return n
+    _ -> parserZero
+
+parseInt :: Parser LispVal
+parseInt = do
+  n <- parseNumber
+  case n of
+    Number _ -> return n
+    _ -> parserZero
+
+parseRational :: Parser LispVal
+parseRational = do
+  Number n <- parseInt
+  char '/'
+  Number m <- parseInt
+  return $ Ration (n%m)
+
+parseComplex :: Parser LispVal
+parseComplex = do
+  let castDouble = \case
+        Float f -> f
+        Number i -> fromInteger i
+  n <- parseNumber
+  char '+'
+  m <- parseNumber
+  char 'i'
+  return $ Compl $ castDouble n :+ castDouble m
+
 parseChar :: Parser LispVal
 parseChar = do
   -- try $ string "#\\"
@@ -132,6 +168,8 @@ parseExpr = choice
   [ parserZero
   , parseAtom
   , parseString
+  , try parseRational
+  , try parseComplex
   , try parseNumber
   , try parseBool
   , try parseChar
