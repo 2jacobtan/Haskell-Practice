@@ -26,7 +26,18 @@ main = hspec $ do
 
 
 instance Arbitrary a => Arbitrary (NestedList a) where
-  arbitrary = arbitrary >>= \x -> return $ Value x
+  -- arbitrary = arbitrary >>= \x -> return $ Value x
+  arbitrary = do
+    x <- arbitrary
+    y <- arbitrary
+    elements
+      [ Nil
+      , Value x
+      , Cons (Value x) (Value y)
+      , Cons Nil Nil
+      , Cons (Value x) Nil
+      , Cons Nil (Value x)
+      ]
 
 
 prop_left_id :: (Monoid a, Show a, Eq a) => a -> Bool
