@@ -4,7 +4,7 @@ module Main where
 -- import Lib
 import Text.ParserCombinators.Parsec hiding (spaces)
 import System.Environment
--- import Control.Monad (liftM)
+import Control.Monad (liftM)
 import Numeric (readDec, readHex, readOct, readInt)
 import Data.Char (digitToInt)
 import Text.Parsec (parserZero)
@@ -173,4 +173,24 @@ parseExpr = choice
   , try parseNumber
   , try parseBool
   , try parseChar
+  , parseQuoted
+  , do char '('
+       x <- try parseList <|> parseDottedList
+       char ')'
+       return x
   ]
+  
+-- Recursive Parsers: Adding lists, dotted list, and quated datums
+
+parseList = liftM List $ sepBy parseExpr spaces
+
+parseDottedList = do
+  head <- endBy parseExpr spaces
+  tail <- char '.' >> spaces >> parseExpr
+  return $ DottedList head tail
+
+parseQuoted = do
+  char '\''
+  x <- parseExpr
+  return $ List [Atom "quote", x]
+
