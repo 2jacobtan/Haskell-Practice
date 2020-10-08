@@ -11,6 +11,7 @@ import Data.Char (digitToInt)
 import Text.Parsec (parserZero)
 import Data.Complex ( Complex((:+)), Complex)
 import Data.Ratio ((%))
+import Data.Array
 
 symbol :: Parser Char
 symbol = oneOf "!$%&|*+-/:<=>?@^_~"
@@ -30,6 +31,7 @@ spaces = skipMany1 space
 
 data LispVal 
   = Atom String
+  | Vector (Array Int LispVal)
   | List [LispVal]
   | DottedList [LispVal] LispVal
   | Number Integer
@@ -174,6 +176,7 @@ parseExpr = choice
   , try parseNumber
   , try parseBool
   , try parseChar
+  , try parseVector
   , parseQuoted
   , parseQQ
   , parseComma 
@@ -216,3 +219,9 @@ parseQQ = do
   char '`'
   x <- parseExpr
   return $ List [Atom "quasiquote", x]
+
+parseVector = do
+  string "#("
+  List xs <- parseList
+  char ')'
+  return $ Vector $ listArray (0, length xs - 1) xs
