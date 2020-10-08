@@ -1,3 +1,4 @@
+{-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE LambdaCase #-}
 module Main where
 
@@ -174,6 +175,8 @@ parseExpr = choice
   , try parseBool
   , try parseChar
   , parseQuoted
+  , parseQQ
+  , parseComma 
   , do char '('
        x <- try parseList <|> parseDottedList
        char ')'
@@ -181,6 +184,21 @@ parseExpr = choice
   ]
   
 -- Recursive Parsers: Adding lists, dotted list, and quated datums
+
+parseComma = do
+  char ','
+  at <- option False (char '@' >> return True)
+  x <- parseExpr
+  let prefix = if
+        | at -> "unquote-splicing"
+        | otherwise -> "unquote"
+  return $ List [Atom prefix, x]
+
+-- -- Integrated with parseComma
+-- parseCommaAt = do
+--   string ",@"
+--   x <- parseExpr
+--   return $ List [Atom "unquote-splicing", x]
 
 parseList = liftM List $ sepBy parseExpr spaces
 
@@ -194,3 +212,7 @@ parseQuoted = do
   x <- parseExpr
   return $ List [Atom "quote", x]
 
+parseQQ = do
+  char '`'
+  x <- parseExpr
+  return $ List [Atom "quasiquote", x]
