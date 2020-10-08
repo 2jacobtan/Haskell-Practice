@@ -5,7 +5,7 @@ module Main where
 -- import Lib
 import Text.ParserCombinators.Parsec hiding (spaces)
 import System.Environment
-import Control.Monad (liftM)
+-- import Control.Monad (liftM)
 import Numeric (readDec, readHex, readOct, readInt)
 import Data.Char (digitToInt)
 import Text.Parsec (parserZero)
@@ -180,10 +180,7 @@ parseExpr = choice
   , parseQuoted
   , parseQQ
   , parseComma 
-  , do char '('
-       x <- try parseList <|> parseDottedList
-       char ')'
-       return x
+  , parseList -- includes dotted list
   ]
   
 -- Recursive Parsers: Adding lists, dotted list, and quated datums
@@ -203,7 +200,17 @@ parseComma = do
 --   x <- parseExpr
 --   return $ List [Atom "unquote-splicing", x]
 
-parseList = liftM List $ sepBy parseExpr spaces
+parseList = do
+  char '('
+  xs <- sepEndBy parseExpr spaces
+  isDotted <- option False (char '.' >> spaces >> return True)
+  result <- if
+    | isDotted -> do
+      y <- parseExpr
+      return $ DottedList xs y
+    | otherwise -> return $ List xs
+  char ')'
+  return result
 
 parseDottedList = do
   head <- endBy parseExpr spaces
@@ -222,6 +229,6 @@ parseQQ = do
 
 parseVector = do
   string "#("
-  List xs <- parseList
+  xs <- sepBy parseExpr spaces
   char ')'
   return $ Vector $ listArray (0, length xs - 1) xs
