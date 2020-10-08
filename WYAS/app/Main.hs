@@ -206,8 +206,8 @@ parseList = do
   isDotted <- option False (char '.' >> spaces >> return True)
   result <- if
     | isDotted -> do
-      y <- parseExpr
-      return $ DottedList xs y
+        y <- parseExpr
+        return $ DottedList xs y
     | otherwise -> return $ List xs
   char ')'
   return result
