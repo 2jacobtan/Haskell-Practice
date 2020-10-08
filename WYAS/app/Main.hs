@@ -212,10 +212,14 @@ parseList = do
   char ')'
   return result
 
-parseDottedList = do
-  head <- endBy parseExpr spaces
-  tail <- char '.' >> spaces >> parseExpr
-  return $ DottedList head tail
+-- -- Integrated with new parseList that also parses dotted list
+-- parseList = liftM List $ sepBy parseExpr spaces
+
+-- -- Integrated with new parseList
+-- parseDottedList = do
+--   head <- endBy parseExpr spaces
+--   tail <- char '.' >> spaces >> parseExpr
+--   return $ DottedList head tail
 
 parseQuoted = do
   char '\''
