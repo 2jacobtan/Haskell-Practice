@@ -14,10 +14,10 @@ import Data.Array
 symbol :: Parser Char
 symbol = oneOf "!$%&|*+-/:<=>?@^_~"
 
-readExpr :: String -> String
+readExpr :: String -> LispVal
 readExpr input = case parse parseExpr "lisp" input of
-  Left err -> "No match: " ++ show err
-  Right val -> "Found value: " ++ show val
+  Left err -> String $ "No match: " ++ show err
+  Right val -> val
 
 spaces :: Parser ()
 spaces = skipMany1 space
@@ -33,7 +33,7 @@ data LispVal
   | Compl (Complex Double)
   | String String
   | Character Char
-  | Bool Bool deriving Show
+  | Bool Bool
 
 parseString :: Parser LispVal
 parseString = do
@@ -229,3 +229,22 @@ parseVector = do
   xs <- sepBy parseExpr spaces
   char ')'
   return $ Vector $ listArray (0, length xs - 1) xs
+
+
+-- Evaluation, Part 1
+
+showVal :: LispVal -> String
+showVal = \case
+  (String contents) -> "\"" ++ contents ++ "\""
+  (Atom name) -> name
+  (Number contents) -> show contents
+  (Bool True) -> "#t"
+  (Bool False) -> "#f"
+  (List contents) -> "(" ++ unwordsList contents ++ ")"
+  (DottedList head tail) -> "(" ++ unwordsList head ++ " . " ++ showVal tail ++ ")"
+
+unwordsList :: [LispVal] -> String
+unwordsList = unwords . map showVal
+
+instance Show LispVal where
+  show = showVal
