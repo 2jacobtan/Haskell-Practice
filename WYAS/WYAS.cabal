@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6a49d25494010711ae8421cd1df0bb737ff4575e047fac1e6cd360b132430f26
+-- hash: 48ae0768beb917617c93271eb319867107909907d0515bbe12a50eec8a145f44
 
 name:           WYAS
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
   build-depends:
       array
     , base >=4.7 && <5
+    , mtl
     , parsec
     , pretty-simple
   default-language: Haskell2010
@@ -52,6 +53,7 @@ executable WYAS-exe
       WYAS
     , array
     , base >=4.7 && <5
+    , mtl
     , parsec
     , pretty-simple
   default-language: Haskell2010
@@ -68,6 +70,7 @@ test-suite WYAS-test
       WYAS
     , array
     , base >=4.7 && <5
+    , mtl
     , parsec
     , pretty-simple
   default-language: Haskell2010

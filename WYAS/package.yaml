@@ -24,6 +24,7 @@ dependencies:
 - pretty-simple
 - parsec
 - array
+- mtl
 
 library:
   source-dirs: src
