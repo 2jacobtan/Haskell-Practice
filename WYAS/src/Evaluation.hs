@@ -17,7 +17,8 @@ eval (List [Atom "if", pred, conseq, alt]) =
      do result <- eval pred
         case result of
              Bool False -> eval alt
-             _          -> eval conseq
+             Bool True  -> eval conseq
+             _ -> throwError $ TypeMismatch "Bool" pred
 eval (List (Atom func : args)) = apply func =<< mapM eval args
 eval badForm = throwError $ BadSpecialForm "Unrecognized special form" badForm
 
@@ -148,11 +149,12 @@ eqv [(Number arg1), (Number arg2)]         = return $ Bool $ arg1 == arg2
 eqv [(String arg1), (String arg2)]         = return $ Bool $ arg1 == arg2
 eqv [(Atom arg1), (Atom arg2)]             = return $ Bool $ arg1 == arg2
 eqv [(DottedList xs x), (DottedList ys y)] = eqv [List $ xs ++ [x], List $ ys ++ [y]]
-eqv [(List arg1), (List arg2)]             = return $ Bool $ (length arg1 == length arg2) && 
-                                                             (all eqvPair $ zip arg1 arg2)
-     where eqvPair (x1, x2) = case eqv [x1, x2] of
-                                Left _ -> False
-                                Right (Bool val) -> val
+eqv [(List arg1), (List arg2)]             = equalList eqv arg1 arg2
+-- eqv [(List arg1), (List arg2)]             = return $ Bool $ (length arg1 == length arg2) && 
+--                                                              (all eqvPair $ zip arg1 arg2)
+--      where eqvPair (x1, x2) = case eqv [x1, x2] of
+--                                 Left _ -> False
+--                                 Right (Bool val) -> val
 eqv [_, _]                                 = return $ Bool False
 eqv badArgList                             = throwError $ NumArgs 2 badArgList
 
@@ -166,6 +168,8 @@ unpackEquals arg1 arg2 (AnyUnpacker unpacker) =
         `catchError` (const $ return False)
 
 equal :: [LispVal] -> ThrowsError LispVal
+equal [List xs, List ys] = equalList (equal) xs ys
+equal [DottedList xs x, DottedList ys y] = equalList (equal) (x:xs) (y:ys)
 equal [arg1, arg2] = do
       primitiveEquals <- liftM or $ mapM (unpackEquals arg1 arg2) 
                          [AnyUnpacker unpackNum, AnyUnpacker unpackStr, AnyUnpacker unpackBool]
@@ -173,3 +177,10 @@ equal [arg1, arg2] = do
       return $ Bool $ (primitiveEquals || let (Bool x) = eqvEquals in x)
 equal badArgList = throwError $ NumArgs 2 badArgList
 
+equalList eqv'equal xs ys = return $ Bool $
+   (length xs == length ys)
+   && (all equalPair $ zip xs ys)
+   where
+      equalPair (x, y) = case eqv'equal [x, y] of
+         Left _ -> False
+         Right (Bool val) -> val
