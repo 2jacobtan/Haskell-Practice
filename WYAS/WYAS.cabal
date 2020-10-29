@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 48ae0768beb917617c93271eb319867107909907d0515bbe12a50eec8a145f44
+-- hash: 2bad0f6f81ab8b3d42ea33b343ac56a6e3092289f0b1a09309538dc769e5a6bc
 
 name:           WYAS
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
   build-depends:
       array
     , base >=4.7 && <5
+    , hspec
     , mtl
     , parsec
     , pretty-simple
@@ -53,6 +54,7 @@ executable WYAS-exe
       WYAS
     , array
     , base >=4.7 && <5
+    , hspec
     , mtl
     , parsec
     , pretty-simple
@@ -70,6 +72,7 @@ test-suite WYAS-test
       WYAS
     , array
     , base >=4.7 && <5
+    , hspec
     , mtl
     , parsec
     , pretty-simple

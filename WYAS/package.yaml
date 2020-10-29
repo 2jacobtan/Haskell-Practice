@@ -25,6 +25,7 @@ dependencies:
 - parsec
 - array
 - mtl
+- hspec
 
 library:
   source-dirs: src

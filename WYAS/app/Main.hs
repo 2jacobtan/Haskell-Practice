@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiWayIf #-}
 
-module Main where
+module Main (main) where
 
 import Control.Monad (liftM)
 import Evaluation (eval)
