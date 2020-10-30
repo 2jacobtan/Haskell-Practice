@@ -44,3 +44,22 @@ main = do
   print $ Main.toList (Just 1) == [1]
   print $ Main.toList (Nothing :: Maybe Int) == []
 
+data Constant b = Constant b
+instance Foldable (Constant) where
+  foldMap f (Constant b) = f b
+
+_ = foldMap (*2) (Constant 3) :: Sum Int
+_ = foldr ((+) . (*2)) (0) (Constant 3) :: Int
+
+data Two a b = Two a b
+instance Foldable (Two a) where
+  foldMap f (Two _ b) = f b
+
+data Four a b = Four a b b b
+instance Foldable (Four a) where
+  foldMap f (Four _ x y z) = mconcat . map f $ [x,y,z]
+
+_ = foldMap (*2) (Four "a" 1 2 3) :: Sum Int
+_ = foldr ((+) . (*2)) (0) (Four "a" 1 2 3) :: Int
+
+filterF f = foldMap (\x -> [x | f x])
