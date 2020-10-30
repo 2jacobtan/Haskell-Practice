@@ -53,6 +53,17 @@ functorToApplicative x = x
 -- applicativeToFunctor :: (forall f . Applicative f => f a) -> (Functor g => g a)
 -- applicativeToFunctor x = x
 
+-- BEGIN: Further experiments with Rank-N Types
+newtype T a = T a deriving Show
+instance Functor T where fmap f (T a) = T $ f a
+x = T 2
+result = fmap (*3) x
+
+-- | fails type check
+y = functorToApplicative x
+
+-- END: Further experiments with Rank-N Types
+
 over :: Traversal a b -> (b -> b) -> (a -> a)
 over l f a = unI $ l f' a
   where f' b = MkI $ f b
