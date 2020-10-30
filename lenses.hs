@@ -60,7 +60,7 @@ x = T 2
 result = fmap (*3) x
 
 -- | fails type check
-y = functorToApplicative x
+-- y = functorToApplicative x
 
 -- END: Further experiments with Rank-N Types
 
