@@ -27,11 +27,31 @@ unC (MkC b) = b
 instance Functor (C b_) where
   fmap _ (MkC b) = MkC b
 
+type Plain a b = forall t . (b -> t b) -> (a -> t a) -- my own addition
 type Lens a b = forall t . Functor t => (b -> t b) -> (a -> t a)
 type Traversal a b = forall t . Applicative t => (b -> t b) -> (a -> t a)
 
 lensToTraversal :: Lens a b -> Traversal a b
 lensToTraversal l = l
+
+lensToTraversal' ::
+  (forall t . Functor t => (b -> t b) -> (a -> t a) )
+  -> ( Applicative s => (b -> s b) -> (a -> s a) )
+lensToTraversal' l = l
+
+plainToTraversal :: Plain a b -> Traversal a b
+plainToTraversal l = l
+
+-- | fails type check
+-- traversalToLens :: Traversal a b -> Lens a b
+-- traversalToLens l = l
+
+functorToApplicative :: (forall f . Functor f => f a) -> (Applicative g => g a)
+functorToApplicative x = x
+
+-- | fails type check
+-- applicativeToFunctor :: (forall f . Applicative f => f a) -> (Functor g => g a)
+-- applicativeToFunctor x = x
 
 over :: Traversal a b -> (b -> b) -> (a -> a)
 over l f a = unI $ l f' a
