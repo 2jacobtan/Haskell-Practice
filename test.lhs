@@ -204,6 +204,25 @@ multInt x y = go y 0
 
 \begin{code}
 
+-- | first attempt at Meng's challenge
+-- wrong order
+_ = foldr ((.) . dropWhile . (==)) id " /_" "    ////___aoeu"
+-- | correct order with `flip`
+_ = foldr ((flip (.)) . dropWhile . (==)) id " /_" "    ////___aoeu"
 
+-- | point-full
+_ = foldr (\x xs -> xs . dropWhile (==x)) id " /_" "  ////__aoeu"
+_ = foldl (\xs x -> dropWhile (==x) . xs) id " /_" "  ////__aoeu"
+
+-- | one-point foldl
+_ = foldl (\xs -> (. xs) . dropWhile . (==)) id " /_" "    ////___aoeu"
+-- | point-free foldl
+_ = foldl (( . dropWhile . (==)) . flip (.)) id " /_" "    ////___aoeu"
+
+-- | eta reduction for foldl
+-- \xs -> \x -> dropWhile (==x) . xs
+-- \xs -> (. xs) . dropWhile . (==)
+-- \xs -> (flip (.) xs) . dropWhile . (==)
+-- ( . dropWhile . (==)) . flip (.)
 
 \end{code}
