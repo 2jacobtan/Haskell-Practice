@@ -25,4 +25,9 @@ instance Traversable List where
   -- sequenceA (Cons x xs) = Cons <$> x <*> pure Nil
 instance Arbitrary a => Arbitrary (List a) where
   arbitrary = genericArbitrary uniform
+  -- arbitrary = frequency
+  --   [
+  --     (1, return Nil),
+  --     (3, Cons <$> arbitrary <*> arbitrary)
+  --   ]
 instance EqProp a => EqProp (List a)
