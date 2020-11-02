@@ -226,6 +226,7 @@ _ = foldl (( . dropWhile . (==)) . flip (.)) id " /_" "    ////___aoeu"
 -- \xs -> (flip (.) xs) . dropWhile . (==)
 -- ( . dropWhile . (==)) . flip (.)
 
+-- | clear version
 _ = 
   -- create a list of dropWhile functions for each character
   map (dropWhile . (==)) " /_"
