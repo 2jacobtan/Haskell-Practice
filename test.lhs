@@ -3,6 +3,7 @@ For testing purposes.
 \begin{code}
 {-# LANGUAGE ExistentialQuantification #-}
 
+import Data.Function ((&))
 main = print "Hello world!"
 
 \end{code}
@@ -224,5 +225,13 @@ _ = foldl (( . dropWhile . (==)) . flip (.)) id " /_" "    ////___aoeu"
 -- \xs -> (. xs) . dropWhile . (==)
 -- \xs -> (flip (.) xs) . dropWhile . (==)
 -- ( . dropWhile . (==)) . flip (.)
+
+_ = 
+  -- create a list of dropWhile functions for each character
+  map (dropWhile . (==)) " /_"
+  -- compose them in the correct order
+  & foldr (flip (.)) id
+  -- apply to input string
+  $ "    ////___aoeu"
 
 \end{code}
