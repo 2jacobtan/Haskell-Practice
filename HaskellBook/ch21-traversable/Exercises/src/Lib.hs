@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+-- {-# LANGUAGE FlexibleInstances #-}
 
 module Lib where
 
@@ -24,10 +25,23 @@ instance Traversable List where
   -- | deliberately fail testing
   -- sequenceA (Cons x xs) = Cons <$> x <*> pure Nil
 instance Arbitrary a => Arbitrary (List a) where
-  arbitrary = genericArbitrary uniform
+  arbitrary = genericArbitraryU
   -- arbitrary = frequency
   --   [
   --     (1, return Nil),
   --     (3, Cons <$> arbitrary <*> arbitrary)
   --   ]
 instance EqProp a => EqProp (List a)
+
+newtype Identity a = Identity a
+  deriving (Eq, Ord, Show, Generic)
+instance Traversable Identity where
+  traverse f (Identity a) = fmap Identity (f a)
+instance Foldable Identity where
+  foldMap f (Identity a) = f a
+instance Functor Identity where
+  fmap f (Identity a) = Identity (f a)
+instance Arbitrary a => Arbitrary (Identity a) where
+  arbitrary = genericArbitraryU
+  -- arbitrary = Identity <$> arbitrary
+instance EqProp a => EqProp (Identity a)

@@ -1,4 +1,4 @@
-import Test.QuickCheck.Checkers (quickBatch)
+import Test.QuickCheck.Checkers
 import Test.QuickCheck.Classes (traversable)
 import Lib
 
@@ -17,3 +17,5 @@ main = do
   -- putStrLn "Maybe"
   quickBatch . traversable $ (undefined :: List (Int, Int, [Int]))
   putStrLn "List"
+  quickBatch . traversable $ (undefined :: Identity (Int, Int, [Int]))
+  putStrLn "Identity"
