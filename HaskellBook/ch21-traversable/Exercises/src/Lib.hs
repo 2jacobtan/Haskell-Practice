@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Lib where
 
@@ -118,3 +119,24 @@ instance Arbitrary b => Arbitrary (Big Int b) where
 instance EqProp b => EqProp (Big Int b)
 
 
+data S n a = S (n a) a deriving (Eq, Show, Generic)
+instance ( Functor n
+  , Arbitrary (n a)
+  , Arbitrary a )
+  => Arbitrary (S n a) where
+  arbitrary =
+    S <$> arbitrary <*> arbitrary
+instance ( Applicative n
+  , Testable (n Property)
+  , Eq a
+  , Eq (n a)
+  , EqProp a)
+  => EqProp (S n a) where
+  (=-=) = eq
+instance Traversable n
+  => Traversable (S n) where
+  traverse f (S nx x) = S <$> (traverse f nx) <*> (f x)
+instance Foldable n => Foldable (S n) where
+  foldMap f (S nx x) = foldMap f nx <> f x
+instance Functor n => Functor (S n) where
+  fmap f (S nx x) = S (fmap f nx) (f x)

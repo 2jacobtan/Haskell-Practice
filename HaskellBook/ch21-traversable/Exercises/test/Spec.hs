@@ -1,6 +1,10 @@
 import Test.QuickCheck.Checkers
 import Test.QuickCheck.Classes (traversable)
 import Lib
+import Test.QuickCheck (arbitrary, Gen)
+import Test.QuickCheck (sample)
+-- import Test.QuickCheck (sample')
+import Data.Functor ((<&>))
 
 -- type TI = []
 
@@ -29,4 +33,10 @@ main = do
   putStrLn "Pair" 
   quickBatch . traversable $ (undefined :: Big Int (Int, Int, [Int]))
   putStrLn "Big"
+  -- sample' (arbitrary :: Gen (S [] Int)) >>= print
+  putStrLn "S sample'"
+  sample (arbitrary :: Gen (S [] Int)) <&> print
+  putStrLn "S sample"
+  quickBatch . traversable $ (undefined :: S [] (Int, Int, [Int]))
+  putStrLn "S"
   
