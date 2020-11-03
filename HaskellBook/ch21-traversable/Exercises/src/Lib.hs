@@ -140,3 +140,29 @@ instance Foldable n => Foldable (S n) where
   foldMap f (S nx x) = foldMap f nx <> f x
 instance Functor n => Functor (S n) where
   fmap f (S nx x) = S (fmap f nx) (f x)
+
+
+data Tree a =
+  Empty
+  | Leaf a
+  | Node (Tree a) a (Tree a)
+  deriving (Eq, Show, Generic)
+instance Functor Tree where
+  fmap _ Empty = Empty
+  fmap f (Leaf x) = Leaf $ f x
+  fmap f (Node tx y tz) = Node (fmap f tx) (f y) (fmap f tz)
+-- foldMap is a bit easier
+-- and looks more natural,
+-- but you can do foldr, too,
+-- for extra credit.
+instance Foldable Tree where
+  foldMap _ Empty = mempty
+  foldMap f (Leaf x) = f x
+  foldMap f (Node tx y tz) = foldMap f tx <> f y <> foldMap f tz
+instance Traversable Tree where
+  traverse _ Empty = pure Empty
+  traverse f (Leaf x) = Leaf <$> f x
+  traverse f (Node tx y tz) = Node <$> traverse f tx <*> f y <*> traverse f tz
+instance Arbitrary a => Arbitrary (Tree a) where
+  arbitrary = genericArbitraryU
+instance EqProp a => EqProp (Tree a)

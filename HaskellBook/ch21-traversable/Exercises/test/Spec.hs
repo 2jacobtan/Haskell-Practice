@@ -39,4 +39,6 @@ main = do
   putStrLn "S sample"
   quickBatch . traversable $ (undefined :: S [] (Int, Int, [Int]))
   putStrLn "S"
+  quickBatch . traversable $ (undefined :: Tree (Int, Int, [Int]))
+  putStrLn "Tree"
   
