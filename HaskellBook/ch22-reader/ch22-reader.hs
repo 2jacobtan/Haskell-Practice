@@ -1,3 +1,5 @@
+{-# LANGUAGE InstanceSigs #-}
+
 import Data.Char (toUpper)
 -- import Control.Monad.Trans.Reader
 -- import Data.Functor.Identity (Identity(Identity))
@@ -110,4 +112,27 @@ asks = Reader
 instance Applicative (Reader r) where
   (Reader rab) <*> (Reader ra) = Reader $ \r -> rab r (ra r)
   pure = Reader . const
+
+getDogRM' :: Person -> Dog
+getDogRM' = do
+  name <- dogName
+  addy <- address
+  return $ Dog name addy
+
+instance Monad (Reader r) where
+  return = pure
+  (>>=) :: Reader r a
+    -> (a -> Reader r b)
+    -> Reader r b
+  (Reader ra) >>= aRb = Reader $ \r -> runReader (aRb (ra r)) r
+  
+getDogRM :: Reader Person Dog
+getDogRM = do
+  name <- asks dogName
+  addy <- asks address
+  return $ Dog name addy
+
+
+withReader :: (r' -> r) -> Reader r a -> Reader r' a
+withReader f m = Reader $ runReader m . f
 
