@@ -1,6 +1,6 @@
 import Data.Char (toUpper)
-import Control.Monad.Trans.Reader
-import Data.Functor.Identity (Identity(Identity))
+-- import Control.Monad.Trans.Reader
+-- import Data.Functor.Identity (Identity(Identity))
 import Control.Applicative (liftA2)
 
 cap = map toUpper
@@ -23,15 +23,28 @@ test2 = tupled2 "Julie"
 test3 = tupled3 "Julie"
 
 
+-- | Using real Reader
+-- ask :: Reader a a
+-- ask = ReaderT $ fmap Identity id
+
+-- ask'' :: Reader a a
+-- ask'' = ReaderT $ Identity . id
+
+-- ask' :: Reader a a
+-- ask' = reader id
+
+newtype Reader r a =
+  Reader { runReader :: r -> a }
+
+instance Functor (Reader r) where
+  -- fmap :: (a -> b)
+  --   -> Reader r a
+  --   -> Reader r b
+  fmap f (Reader ra) =
+    Reader $ \r -> f (ra r)
+
 ask :: Reader a a
-ask = ReaderT $ fmap Identity id
-
-ask'' :: Reader a a
-ask'' = ReaderT $ Identity . id
-
-ask' :: Reader a a
-ask' = reader id
-
+ask = Reader id
 
 newtype HumanName = HumanName String
   deriving (Eq, Show)
@@ -90,4 +103,11 @@ myLiftA2 :: (Applicative f) => (a -> b -> c) -> f a -> f b -> f c
 -- myLiftA2 = \x -> (<*>) . (x <$>)
 myLiftA2 = ((<*>) . ) . (<$>)
 
+
+asks :: (r -> a) -> Reader r a
+asks = Reader
+
+instance Applicative (Reader r) where
+  (Reader rab) <*> (Reader ra) = Reader $ \r -> rab r (ra r)
+  pure = Reader . const
 
