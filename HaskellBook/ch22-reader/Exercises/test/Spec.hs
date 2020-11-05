@@ -1,4 +1,5 @@
 import Lib
+import Data.Monoid (getAll, All(All))
 
 p = putStrLn ""
 
@@ -23,4 +24,14 @@ main = do
   p
   print $ sequence [(>3), (<8), even] 7
   p
-  -- print $
+  putStrLn "1. Fold the Boolean conjunction operator over the list of results of sequA (applied to some value)."
+  print $ foldr (&&) True $ sequA 5
+  print $ getAll $ foldMap All $ sequA 5
+  p
+  putStrLn "2. Apply sequA to s'—you’ll need fromMaybe."
+  print $ sequA $ fromMaybe undefined s'
+  p
+  putStrLn "3. Apply bolt to ys—you’ll need fromMaybe."
+  print $ bolt  $ fromMaybe undefined ys
+  p
+  
