@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dcc5470e395d85ebcf971a7931820c0bd4cc4d046091f528f0c2186c99fa679d
+-- hash: e99b4fddb3dd2ea657597429dd2449b6a593ca4c01f9b8f7f85d5ad91ca6bd34
 
 name:           ch23-state
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Exercises
       Lib
       RandomExample
       RandomExample2
