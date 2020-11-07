@@ -23,6 +23,9 @@ rollDie3 :: State StdGen Die
 rollDie3 = state $
   uncurry ((,) . intToDie) . randomR (1,6)
 
+rollDie4 :: State StdGen Die
+rollDie4 = state $
+  ((,) <$> intToDie . fst <*> snd) . randomR (1, 6)
 
 rollDie' :: State StdGen Die
 rollDie' =
@@ -60,7 +63,9 @@ rollsToGetTwenty g = go 0 0 g
 rollsToGetN :: Int -> StdGen -> (Int, [Int])
 rollsToGetN n gen =
   evalState (go 0 0 []) gen
-  & (,) <$> fst <*> reverse . snd
+  & \(count, list) -> (count, reverse list)
+  -- & (,) <$> fst <*> reverse . snd
+  -- & uncurry ( (. reverse) . (,) )
   where
     newRoll = state $ randomR (1,6)
     go :: Int -> Int -> [Int] -> State StdGen (Int, [Int])
