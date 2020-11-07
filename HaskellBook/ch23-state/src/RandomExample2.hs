@@ -7,6 +7,7 @@ import Control.Monad.Trans.State
 import System.Random
 import RandomExample
 import qualified Debug.Trace as Debug
+import Data.Function ((&))
 -- Six-sided die
 
 rollDie :: State StdGen Die
@@ -55,14 +56,17 @@ rollsToGetTwenty g = go 0 0 g
         in go (sum + die)
           (count + 1) nextGen 
 
-rollsToGetN :: Int -> StdGen -> Int
-rollsToGetN n gen = evalState (go 0 0) gen
+-- modified to implement rollsCountLogged
+rollsToGetN :: Int -> StdGen -> (Int, [Int])
+rollsToGetN n gen =
+  evalState (go 0 0 []) gen
+  & (,) <$> fst <*> reverse . snd
   where
     newRoll = state $ randomR (1,6)
-    go :: Int -> Int -> State StdGen Int
-    go !sum !count
-      | sum >= n = return count
+    go :: Int -> Int -> [Int] -> State StdGen (Int, [Int])
+    go !sum !count rolledList
+      | sum >= n = return (count, rolledList)
       | otherwise = do
           roll <- newRoll
           roll <- pure $ Debug.trace (show roll) roll -- debug only
-          go (sum + roll) (count + 1)
+          go (sum + roll) (count + 1) (roll:rolledList)
