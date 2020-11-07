@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3a5ccb300b715351082120c3c260c4b8f3f3649606e6cfcd7afe5e3711aeeb90
+-- hash: dcc5470e395d85ebcf971a7931820c0bd4cc4d046091f528f0c2186c99fa679d
 
 name:           ch23-state
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Lib
       RandomExample
       RandomExample2
+      WriteState
   other-modules:
       Paths_ch23_state
   hs-source-dirs:
