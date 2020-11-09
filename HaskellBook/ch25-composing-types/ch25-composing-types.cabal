@@ -1,0 +1,66 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 8f2bd69f1583f7d9d39096850cd8ad83aa0a09e30b9e366e4ff3d11070e81ada
+
+name:           ch25-composing-types
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/ch25-composing-types#readme>
+homepage:       https://github.com/githubuser/ch25-composing-types#readme
+bug-reports:    https://github.com/githubuser/ch25-composing-types/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2020 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/ch25-composing-types
+
+library
+  exposed-modules:
+      Lib
+      Twinplicative
+  other-modules:
+      Paths_ch25_composing_types
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , pretty-simple
+  default-language: Haskell2010
+
+executable ch25-composing-types-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_ch25_composing_types
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ch25-composing-types
+    , pretty-simple
+  default-language: Haskell2010
+
+test-suite ch25-composing-types-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_ch25_composing_types
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ch25-composing-types
+    , pretty-simple
+  default-language: Haskell2010
