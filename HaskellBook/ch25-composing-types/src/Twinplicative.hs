@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE InstanceSigs #-}
 
 import Control.Applicative (Applicative(liftA2))
@@ -25,4 +26,63 @@ instance
   -- Compose x <*> Compose y = Compose $ fmap (<*>) x <*> y
   Compose x <*> Compose y = Compose $ liftA2 (<*>) x y
 
+instance
+  (Foldable f, Foldable g) =>
+  Foldable (Compose f g)
+  where
+  -- foldMap f (Compose x) = (foldMap . foldMap) f x -- "clever"
+  foldMap f (Compose x) = foldMap (foldMap f) x -- clearer
+
+instance
+  (Traversable s, Traversable t) =>
+  Traversable (Compose s t)
+  where
+  -- s (t (f a)) -> f (s (t b))
+  traverse f (Compose x) = fmap Compose $ traverse (traverse f) x
+
+
+class BiFunctor p where
+  {-# MINIMAL bimap | first, second #-}
+  bimap ::
+    (a -> b) ->
+    (c -> d) ->
+    p a c ->
+    p b d
+  bimap f g = first f . second g
   
+  first :: (a -> b) -> p a c -> p b c
+  first f = bimap f id
+  
+  second :: (c -> d) -> p a c -> p a d
+  second f = bimap id f
+
+data Deux a b = Deux a b
+instance BiFunctor Deux where
+  bimap f g (Deux a b) = Deux (f a) (g b)
+
+data Const a b = Const a
+instance BiFunctor Const where
+  bimap f _ (Const a) = Const $ f a
+
+data Drei z a b = Drei z a b
+instance BiFunctor (Drei z) where
+  bimap f g (Drei z a b) = Drei z (f a) (g b)
+
+data SuperDrei z a b = SuperDrei z a
+instance BiFunctor (SuperDrei z) where
+  bimap f _ (SuperDrei z a) = SuperDrei z (f a)
+
+data SemiDrei z a b = SemiDrei z
+instance BiFunctor (SemiDrei z) where
+  bimap _ _ (SemiDrei z) = SemiDrei z
+
+data Quadriceps y z a b = Quadzzz y z a b
+instance BiFunctor (Quadriceps y z) where
+  bimap f g (Quadzzz y z a b) = Quadzzz y z (f a) (g b)
+
+data Either a b = Left a | Right b
+instance BiFunctor (Main.Either) where
+  bimap f g = \case
+    Main.Left a -> Main.Left $ f a
+    Main.Right b -> Main.Right $ g b
+
