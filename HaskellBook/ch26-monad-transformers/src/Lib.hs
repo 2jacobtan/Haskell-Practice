@@ -4,6 +4,8 @@
 module Lib where
 
 import Control.Applicative (Applicative (liftA2))
+import Data.Bifunctor (first)
+-- import Control.Monad ((>=>))
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
@@ -117,3 +119,54 @@ instance
       mma r >>= \a -> f' a r
     where
       f' = runReaderT . f
+
+newtype StateT s m a = StateT {runStateT :: s -> m (a,s)}
+
+instance
+  Functor f =>
+  Functor (StateT s f)
+  where
+  fmap f (StateT x) =
+    StateT $ \s ->
+      fmap (first f) (x s)
+
+instance
+  Monad m =>
+  Applicative (StateT s m)
+  where
+  pure a =
+    StateT $ \s ->
+      pure (a,s)
+  
+  -- | original solution
+  -- StateT x <*> StateT y =
+  --   StateT $ \s ->
+  --     x s >>= \(x',s') ->
+  --       y s' >>= \(y',s'') ->
+  --         return (x' y',s'')
+  
+  -- | hlint suggestion
+  -- StateT x <*> StateT y =
+  --   StateT $ x >=> \(x',s') ->
+  --       y s' >>= \(y',s'') ->
+  --         return (x' y',s'')
+
+  -- | do notation
+  StateT x <*> StateT y =
+   StateT $ \s -> do
+     (x',s') <- x s
+     (y',s'') <- y s'
+     return (x' y',s'')
+
+instance
+  Monad m =>
+  Monad (StateT s m)
+  where
+  return = pure
+  StateT x >>= f =
+    StateT $ \s -> do
+      (x',s') <- x s
+      f' x' s'
+    where
+      f' = runStateT . f
+
