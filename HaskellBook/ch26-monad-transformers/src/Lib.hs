@@ -1,9 +1,7 @@
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Lib
-  ( someFunc,
-  )
-where
+module Lib where
 
 import Control.Applicative (Applicative (liftA2))
 
@@ -39,8 +37,7 @@ instance
     where
       f' = runMaybeT . f
 
-
-newtype EitherT e m a = EitherT { runEitherT :: m (Either e a)}
+newtype EitherT e m a = EitherT {runEitherT :: m (Either e a)}
 
 instance
   Functor f =>
@@ -91,3 +88,32 @@ eitherT f g (EitherT mma) =
     Left e -> f e
     Right a -> g a
 
+newtype ReaderT r m a = ReaderT {runReaderT :: r -> m a}
+
+instance
+  Functor f =>
+  Functor (ReaderT r f)
+  where
+  fmap f (ReaderT x) = ReaderT $ fmap (fmap f) x
+
+instance
+  Applicative f =>
+  Applicative (ReaderT r f)
+  where
+  pure = ReaderT . pure . pure
+  ReaderT x <*> ReaderT y = ReaderT $ liftA2 (<*>) x y
+
+instance
+  Monad m =>
+  Monad (ReaderT r m)
+  where
+  return = pure
+  (>>=) ::
+    ReaderT r m a ->
+    (a -> ReaderT r m b) ->
+    ReaderT r m b
+  ReaderT mma >>= f =
+    ReaderT $ \r ->
+      mma r >>= \a -> f' a r
+    where
+      f' = runReaderT . f
