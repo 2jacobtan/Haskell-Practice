@@ -120,7 +120,7 @@ instance
     where
       f' = runReaderT . f
 
-newtype StateT s m a = StateT {runStateT :: s -> m (a,s)}
+newtype StateT s m a = StateT {runStateT :: s -> m (a, s)}
 
 instance
   Functor f =>
@@ -136,7 +136,7 @@ instance
   where
   pure a =
     StateT $ \s ->
-      pure (a,s)
+      return (a, s)
   
   -- | original solution
   -- StateT x <*> StateT y =
@@ -165,7 +165,7 @@ instance
   return = pure
   StateT x >>= f =
     StateT $ \s -> do
-      (x',s') <- x s
+      (x', s') <- x s
       f' x' s'
     where
       f' = runStateT . f
