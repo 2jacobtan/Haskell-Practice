@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b3b391eb55a78cb44890bdfe7fe88bd1f61c639a44680a57e04ec9e8cb9b64cc
+-- hash: 17f6ba969e37a62be951294edbbcf831246e7e547db5c0648f6db80352b5ca0b
 
 name:           ch26-monad-transformers
 version:        0.1.0.0
@@ -34,6 +34,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , pretty-simple
   default-language: Haskell2010
 
 executable ch26-monad-transformers-exe
@@ -46,6 +47,7 @@ executable ch26-monad-transformers-exe
   build-depends:
       base >=4.7 && <5
     , ch26-monad-transformers
+    , pretty-simple
   default-language: Haskell2010
 
 test-suite ch26-monad-transformers-test
@@ -59,4 +61,5 @@ test-suite ch26-monad-transformers-test
   build-depends:
       base >=4.7 && <5
     , ch26-monad-transformers
+    , pretty-simple
   default-language: Haskell2010
