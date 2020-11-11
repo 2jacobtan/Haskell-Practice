@@ -1,20 +1,23 @@
 {-# LANGUAGE LambdaCase #-}
-module Lib
-  ( someFunc
-  ) where
 
-import Control.Applicative (Applicative(liftA2))
+module Lib
+  ( someFunc,
+  )
+where
+
+import Control.Applicative (Applicative (liftA2))
+
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
-newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a)}
+newtype MaybeT m a = MaybeT {runMaybeT :: m (Maybe a)}
 
 instance
   Functor f =>
   Functor (MaybeT f)
   where
   -- fmap f (MaybeT x)= MaybeT $ (fmap . fmap) f x -- "clever"
-  fmap f (MaybeT x)= MaybeT $ fmap (fmap f) x -- clearer
+  fmap f (MaybeT x) = MaybeT $ fmap (fmap f) x -- clearer
 
 instance
   Applicative f =>
@@ -35,3 +38,56 @@ instance
         Just a -> f' a
     where
       f' = runMaybeT . f
+
+
+newtype EitherT e m a = EitherT { runEitherT :: m (Either e a)}
+
+instance
+  Functor f =>
+  Functor (EitherT e f)
+  where
+  fmap f (EitherT x) = EitherT $ fmap (fmap f) x
+
+instance
+  Applicative f =>
+  Applicative (EitherT e f)
+  where
+  pure = EitherT . pure . pure
+  EitherT x <*> EitherT y = EitherT $ liftA2 (<*>) x y
+
+instance
+  Monad m =>
+  Monad (EitherT e m)
+  where
+  return = pure
+  EitherT mma >>= f =
+    EitherT $
+      mma >>= \case
+        Left e -> return $ Left e
+        Right a -> f' a
+    where
+      f' = runEitherT . f
+
+swapEitherT ::
+  (Functor f) =>
+  EitherT e f a ->
+  EitherT a f e
+swapEitherT (EitherT x) =
+  EitherT $ fmap swapEither x
+  where
+    swapEither :: Either e a -> Either a e
+    swapEither = \case
+      Left e -> Right e
+      Right a -> Left a
+
+eitherT ::
+  Monad m =>
+  (e -> m c) ->
+  (a -> m c) ->
+  EitherT e m a ->
+  m c
+eitherT f g (EitherT mma) =
+  mma >>= \case
+    Left e -> f e
+    Right a -> g a
+
