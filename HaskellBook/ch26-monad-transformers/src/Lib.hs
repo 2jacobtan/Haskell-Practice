@@ -5,6 +5,7 @@ module Lib where
 
 import Control.Applicative (Applicative (liftA2))
 import Data.Bifunctor (first)
+import Control.Monad.Trans.Except (runExceptT, ExceptT(ExceptT))
 -- import Control.Monad ((>=>))
 
 someFunc :: IO ()
@@ -169,4 +170,41 @@ instance
       f' x' s'
     where
       f' = runStateT . f
+
+
+embedded ::
+  MaybeT
+  (ExceptT String
+  (ReaderT () IO))
+  Int
+embedded = return 1
+
+maybeUnwrap ::
+  ExceptT String
+  (ReaderT () IO) (Maybe Int)
+maybeUnwrap = runMaybeT embedded
+
+eitherUnwrap ::
+  ReaderT () IO
+  (Either String (Maybe Int))
+eitherUnwrap = runExceptT maybeUnwrap
+
+readerUnwrap ::
+  () ->
+  IO (Either String
+  (Maybe Int))
+readerUnwrap = runReaderT eitherUnwrap
+
+_ = readerUnwrap ()
+
+type EmbeddedType =
+  MaybeT
+  (ExceptT String
+  (ReaderT () IO))
+  Int
+embedded' :: EmbeddedType
+embedded' = MaybeT . ExceptT . ReaderT . (return .) $ const (Right (Just 1))
+
+embedded'' :: EmbeddedType
+embedded'' = MaybeT . ExceptT . ReaderT . fmap return $ const (Right (Just 1))
 
