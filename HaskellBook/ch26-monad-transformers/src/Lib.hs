@@ -208,3 +208,14 @@ embedded' = MaybeT . ExceptT . ReaderT . (return .) $ const (Right (Just 1))
 embedded'' :: EmbeddedType
 embedded'' = MaybeT . ExceptT . ReaderT . fmap return $ const (Right (Just 1))
 
+-- Exercises: Lift more
+
+class MonadTrans t where
+  lift :: Monad m => m a -> t m a
+
+instance MonadTrans (EitherT e) where
+  lift = EitherT . fmap Right
+
+instance MonadTrans (StateT s) where
+  lift m = StateT $ \s -> m >>= \a -> return (a, s)
+

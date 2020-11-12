@@ -3,12 +3,13 @@
 module Scotty where
 
 -- import Data.Monoid (mconcat)
+
+import Control.Monad.Trans.Class (MonadTrans (lift))
+import Control.Monad.Trans.Except (ExceptT (ExceptT))
+import Control.Monad.Trans.Reader (ReaderT (ReaderT))
+import Control.Monad.Trans.State.Strict (StateT (StateT))
 import Web.Scotty
-import Control.Monad.Trans.Class (MonadTrans(lift))
-import Control.Monad.Trans.Except (ExceptT(ExceptT))
-import Control.Monad.Trans.Reader (ReaderT(ReaderT))
-import Control.Monad.Trans.State.Strict (StateT(StateT))
-import Web.Scotty.Internal.Types (ActionT(ActionT))
+import Web.Scotty.Internal.Types (ActionT (ActionT))
 
 main = scotty 3000 $ do
   get "/:word" $ do
@@ -33,7 +34,6 @@ main = scotty 3000 $ do
           beam,
           " me up!</h1>"
         ]
-
 
 liftReaderT :: m a -> ReaderT r m a
 liftReaderT = ReaderT . const
