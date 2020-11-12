@@ -24,6 +24,7 @@ dependencies:
 - pretty-simple
 - transformers
 - scotty
+- text
 
 library:
   source-dirs: src
