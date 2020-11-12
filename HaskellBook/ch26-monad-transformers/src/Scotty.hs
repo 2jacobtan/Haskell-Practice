@@ -10,6 +10,7 @@ import Control.Monad.Trans.Reader (ReaderT (ReaderT))
 import Control.Monad.Trans.State.Strict (StateT (StateT))
 import Web.Scotty
 import Web.Scotty.Internal.Types (ActionT (ActionT))
+import Control.Monad.IO.Class (MonadIO(liftIO))
 
 main = scotty 3000 $ do
   get "/:word" $ do
@@ -28,6 +29,7 @@ main = scotty 3000 $ do
       --     )
       --   )
       $ putStrLn "lift ExceptT + ReaderT"
+    liftIO $ putStrLn "liftIO"
     html $
       mconcat
         [ "<h1>Scotty, ",

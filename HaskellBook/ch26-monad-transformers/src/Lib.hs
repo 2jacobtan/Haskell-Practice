@@ -6,6 +6,7 @@ module Lib where
 import Control.Applicative (Applicative (liftA2))
 import Data.Bifunctor (first)
 import Control.Monad.Trans.Except (runExceptT, ExceptT(ExceptT))
+import Control.Monad.IO.Class (MonadIO(liftIO))
 -- import Control.Monad ((>=>))
 
 someFunc :: IO ()
@@ -218,4 +219,24 @@ instance MonadTrans (EitherT e) where
 
 instance MonadTrans (StateT s) where
   lift m = StateT $ \s -> m >>= \a -> return (a, s)
+
+instance MonadTrans MaybeT where
+  lift = MaybeT . fmap Just
+
+instance MonadTrans (ReaderT r) where
+  lift m = ReaderT (const m)
+
+-- Exercises: Some instances
+
+instance (MonadIO m) =>
+  MonadIO (MaybeT m) where
+    liftIO = lift . liftIO
+
+instance (MonadIO m) =>
+  MonadIO (ReaderT r m) where
+    liftIO = lift . liftIO
+
+instance (MonadIO m) =>
+  MonadIO (StateT s m) where
+    liftIO = lift . liftIO
 
