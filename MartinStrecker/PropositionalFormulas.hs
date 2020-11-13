@@ -83,7 +83,7 @@ cnf = \case
   -- other cases
   Or f1 f2 -> cnf f1 `Or` cnf f2
   And f1 f2 -> cnf f1 `And` cnf f2
-  Not f -> cnf f
+  Not f -> Not (cnf f)
   expr@(V _) -> expr
   expr@(C _) -> expr
 
