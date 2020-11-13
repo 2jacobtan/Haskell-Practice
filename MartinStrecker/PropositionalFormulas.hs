@@ -51,6 +51,7 @@ removeConst = \case
 
   expr -> expr
 
+simplifyConst :: Form -> Form
 simplifyConst = \case
   And f1 f2 -> removeConst (And (simplifyConst f1) (simplifyConst f2))
   Or f1 f2 -> removeConst (Or (simplifyConst f1) (simplifyConst f2))
@@ -66,6 +67,17 @@ nnf = \case
   (Not f) -> Not (nnf f)
   And f1 f2 -> And (nnf f1) (nnf f2)
   Or f1 f2 -> Or (nnf f1) (nnf f2)
+  expr@(V _) -> expr
+  expr@(C _) -> expr
+
+cnf = \case
+  -- apply rule
+  Or p (And q r) -> cnf (Or p q) `And` cnf (Or p r)
+  Or (And q r) p -> cnf (Or q p) `And` cnf (Or r p)
+  -- other cases
+  Or f1 f2 -> cnf f1 `Or` cnf f2
+  And f1 f2 -> cnf f1 `And` cnf f2
+  Not f -> cnf f
   expr@(V _) -> expr
   expr@(C _) -> expr
 
