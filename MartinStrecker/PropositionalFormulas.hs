@@ -48,3 +48,10 @@ removeConst = \case
 
   expr -> expr
 
+simplifyConst = \case
+  And f1 f2 -> removeConst (And (simplifyConst f1) (simplifyConst f2))
+  Or f1 f2 -> removeConst (Or (simplifyConst f1) (simplifyConst f2))
+  Not f -> removeConst (Not (simplifyConst f))
+  expr@(C _) -> expr
+  expr@(V _) -> expr
+
