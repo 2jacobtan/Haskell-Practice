@@ -40,19 +40,20 @@ removeConst = \case
   And (C True) f -> f
   And _ (C False) -> C False
   And f (C True) -> f
-  expr@(And _ _) -> expr -- optional
+  expr@(And _ _) -> expr
   
   Or (C False) f -> f
   Or (C True) _ -> C True
   Or f (C False) -> f
   Or _ (C True) -> C True
-  expr@(Or _ _) -> expr -- optional
+  expr@(Or _ _) -> expr
 
   Not (C False) -> C True
   Not (C True) -> C False
-  expr@(Not _) -> expr -- optional
-
-  expr -> expr
+  expr@(Not _) -> expr
+  
+  expr@(C _) -> expr
+  expr@(V _) -> expr
 
 simplifyConst :: Form -> Form
 simplifyConst = \case
