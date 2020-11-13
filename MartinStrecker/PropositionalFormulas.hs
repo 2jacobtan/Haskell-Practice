@@ -5,6 +5,7 @@
 
 import Prelude hiding (and)
 import Data.List (nub)
+-- import Data.Function ((&))
 -- import Data.Maybe (fromMaybe)
 -- import Control.Applicative (Alternative((<|>)))
 
@@ -106,3 +107,62 @@ subst f0 (v0, b) = go f0
         | otherwise -> V v
       expr@(C _) -> expr
 
+substAll :: Form -> [] (String, Bool) -> Form
+substAll = foldl subst
+-- substAll f varList
+--   = map (flip subst) varList
+--   & foldr (.) id
+--   $ f
+_ = substAll (V "a" `And` (Not (V "a") `Or` (Not (V "b")))) [("a", True), ("b", False)]
+
+evalSubst :: Form -> [(String, Bool)] -> Bool
+evalSubst f varList =
+  case simplifyConst . substAll f $ varList of
+    (C b) -> b
+    _ -> error "rip"
+
+_ = evalSubst (V "a" `And` (Not (V "a") `Or` (Not (V "b")))) [("a", True), ("b", False)] -- True
+_ = evalSubst (V "a" `And` (Not (V "a") `Or` (Not (V "b")))) [("a", True), ("b", True)] -- False
+
+models :: Form -> [(String, Bool)] -> [String] -> [[(String, Bool)]]
+models f varPairs = \case
+  v:vs -> models f ((v, True):varPairs) vs ++ models f ((v, False):varPairs) vs
+  [] -> case evalSubst f varPairs of
+    True -> [varPairs]
+    False -> []
+
+allModels :: Form -> [[(String, Bool)]]
+allModels f = models f [] (fv f)
+
+allModels' :: Form -> [[(String, Bool)]]
+allModels' f = filter (evalSubst f)
+  $ foldr (\x xs -> do
+      x' <- x
+      xs' <- xs
+      return $ x':xs'
+    ) [[]] [[(v,True), (v,False)] | v <- fv f]
+
+-- x = foldr (\x xs -> do
+--       x' <- x
+--       xs' <- xs
+--       return $ x':xs'
+--     ) [[]] [[(v,True), (v,False)] | v <- fv (Or (V "a") (V "b"))]
+
+unsatisfiable :: Form -> Bool
+unsatisfiable f = case allModels' f of
+  [] -> True
+  _ -> False
+
+valid :: Form -> Bool
+valid = unsatisfiable . Not
+
+a = valid (V "a" `Or` (Not (V "b")))
+-- False
+b = valid (V "a" `Or` (Not (V "a")))
+-- True
+c = unsatisfiable (V "a" `Or` (Not (V "b")))
+-- False
+d = unsatisfiable (V "a" `Or` (Not (V "a")))
+-- False
+
+main = mapM_ print [a,b,c,d]
