@@ -1,8 +1,10 @@
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE MultiWayIf #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
 
 import Prelude hiding (and)
+import Data.List (nub)
 -- import Data.Maybe (fromMaybe)
 -- import Control.Applicative (Alternative((<|>)))
 
@@ -70,6 +72,7 @@ nnf = \case
   expr@(V _) -> expr
   expr@(C _) -> expr
 
+cnf :: Form -> Form
 cnf = \case
   -- apply rule
   Or p (And q r) -> cnf (Or p q) `And` cnf (Or p r)
@@ -80,4 +83,26 @@ cnf = \case
   Not f -> cnf f
   expr@(V _) -> expr
   expr@(C _) -> expr
+
+fv :: Form -> [String]
+fv = nub . fvList
+  where
+    fvList = \case
+      Or f1 f2 -> fvList f1 ++ fvList f2
+      And f1 f2 -> fvList f1 ++ fvList f2
+      Not f -> fvList f
+      V v -> [v]
+      C _ -> []
+
+subst :: Form -> (String, Bool) -> Form
+subst f0 (v0, b) = go f0
+  where
+    go = \case
+      Or f1 f2 -> Or (go f1) (go f2)
+      And f1 f2 -> And (go f1) (go f2)
+      Not f -> Not (go f)
+      V v
+        | v == v0 -> C b
+        | otherwise -> V v
+      expr@(C _) -> expr
 
