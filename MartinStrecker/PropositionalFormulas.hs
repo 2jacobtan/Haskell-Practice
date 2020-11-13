@@ -5,6 +5,7 @@
 
 import Prelude hiding (and)
 import Data.List (nub)
+import Text.Pretty.Simple (pPrint)
 -- import Data.Function ((&))
 -- import Data.Maybe (fromMaybe)
 -- import Control.Applicative (Alternative((<|>)))
@@ -157,6 +158,11 @@ unsatisfiable f = case allModels' f of
 valid :: Form -> Bool
 valid = unsatisfiable . Not
 
+-- tests
+nnf_test = nnf (Not ((V "a") `And` ((V "b") `Or` (Not (V "a")))))
+nnf_test' = nnf_test == Not (V "a") `Or` (Not (V "b") `And` V "a")
+cnf_test = cnf ((V "a" `And` V "b") `Or` (V "c" `And` V "d"))
+cnf_test' = cnf_test == ((V "a" `Or` V "c") `And` (V "b" `Or` V "c")) `And` ((V "a" `Or` V "d") `And` (V "b" `Or` V "d"))
 a = valid (V "a" `Or` (Not (V "b")))
 -- False
 b = valid (V "a" `Or` (Not (V "a")))
@@ -166,4 +172,8 @@ c = unsatisfiable (V "a" `Or` (Not (V "b")))
 d = unsatisfiable (V "a" `Or` (Not (V "a")))
 -- False
 
-main = mapM_ print [a,b,c,d]
+main = do
+  pPrint nnf_test'
+  pPrint cnf_test'
+  putStrLn ""
+  mapM_ print [a,b,c,d]
