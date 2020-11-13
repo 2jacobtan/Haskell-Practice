@@ -1,4 +1,7 @@
 {-# LANGUAGE LambdaCase #-}
+{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+
+
 import Prelude hiding (and)
 -- import Data.Maybe (fromMaybe)
 -- import Control.Applicative (Alternative((<|>)))
@@ -54,4 +57,15 @@ simplifyConst = \case
   Not f -> removeConst (Not (simplifyConst f))
   expr@(C _) -> expr
   expr@(V _) -> expr
+
+nnf :: Form -> Form
+nnf = \case
+  (Not (Not f)) -> nnf f
+  (Not (And f1 f2)) -> Or (nnf (Not f1)) (nnf (Not f2))
+  (Not (Or f1 f2)) -> And (nnf (Not f1)) (nnf (Not f2))
+  (Not f) -> Not (nnf f)
+  And f1 f2 -> And (nnf f1) (nnf f2)
+  Or f1 f2 -> Or (nnf f1) (nnf f2)
+  expr@(V _) -> expr
+  expr@(C _) -> expr
 
