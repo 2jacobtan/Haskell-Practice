@@ -77,8 +77,8 @@ nnf = \case
 
 distribOr :: Form -> Form
 distribOr = \case
-  Or p (And q r) -> distribOr' (Or p q) `And` distribOr' (Or p r)
-  Or (And q r) p -> (Or q p) `And` (Or r p)
+  Or p (And q r) -> cnf $ distribOr' (Or p q) `And` distribOr' (Or p r)
+  Or (And q r) p -> cnf $ (Or q p) `And` (Or r p)
   expr@(Or _ _) -> expr
   _ -> error "Invalid argument: only accepts (Or _ _)."
   where
@@ -91,7 +91,7 @@ distribOr = \case
     --   expr@(Or _ _) -> expr
     --   _ -> error "Invalid argument: only accepts (Or _ _)."
 
--- | This works
+-- | This works, but is it correct?
 -- distribOr = \case
 --   Or p (And q r) -> distribOr (Or p q) `And` distribOr (Or p r)
 --   Or (And q r) p -> distribOr (Or q p) `And` distribOr (Or r p)
