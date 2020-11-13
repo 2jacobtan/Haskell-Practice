@@ -75,13 +75,36 @@ nnf = \case
   expr@(V _) -> expr
   expr@(C _) -> expr
 
+distribOr :: Form -> Form
+distribOr = \case
+  Or p (And q r) -> distribOr' (Or p q) `And` distribOr' (Or p r)
+  Or (And q r) p -> (Or q p) `And` (Or r p)
+  expr@(Or _ _) -> expr
+  _ -> error "Invalid argument: only accepts (Or _ _)."
+  where
+    distribOr' = \case
+      Or (And q r) p -> (Or q p) `And` (Or r p)
+      expr@(Or _ _) -> expr
+      _ -> error "Invalid argument: only accepts (Or _ _)."
+    -- distribOrL = \case
+    --   Or p (And q r) -> (Or p q) `And` (Or p r)
+    --   expr@(Or _ _) -> expr
+    --   _ -> error "Invalid argument: only accepts (Or _ _)."
+
+-- | This works
+-- distribOr = \case
+--   Or p (And q r) -> distribOr (Or p q) `And` distribOr (Or p r)
+--   Or (And q r) p -> distribOr (Or q p) `And` distribOr (Or r p)
+--   expr@(Or _ _) -> expr
+--   _ -> error "Invalid argument: only accepts (Or _ _)."
+
 cnf :: Form -> Form
 cnf = \case
   -- apply rule
-  Or p (And q r) -> cnf (Or p q) `And` cnf (Or p r)
-  Or (And q r) p -> cnf (Or q p) `And` cnf (Or r p)
+  -- Or p (And q r) -> cnf (Or p q) `And` cnf (Or p r)
+  -- Or (And q r) p -> cnf (Or q p) `And` cnf (Or r p)
   -- other cases
-  Or f1 f2 -> cnf f1 `Or` cnf f2
+  Or f1 f2 -> distribOr $ cnf f1 `Or` cnf f2
   And f1 f2 -> cnf f1 `And` cnf f2
   Not f -> Not (cnf f)
   expr@(V _) -> expr
@@ -177,3 +200,15 @@ main = do
   pPrint cnf_test'
   putStrLn ""
   mapM_ print [a,b,c,d]
+  putStrLn ""
+  pPrint $ distribOr $ (V "a" `And` V "b") `Or` (V "c" `And` V "d")
+  putStrLn ""
+  pPrint $ cnf . nnf $ Or
+    (Or
+        (V "p" `And` V "q")
+        (V "r" `And` V "s")
+    )
+    (And
+        (Not (V "q"))
+        (V "p" `Or` V "t")
+    )
