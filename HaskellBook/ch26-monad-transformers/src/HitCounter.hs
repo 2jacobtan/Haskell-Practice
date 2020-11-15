@@ -10,11 +10,6 @@ import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as TL
 import System.Environment (getArgs)
 import Web.Scotty.Trans
-import Control.Monad.Trans.Except (runExceptT)
-import Data.Function ((&))
-import Web.Scotty.Internal.Types (ActionT(runAM))
-import Control.Monad.IO.Class (MonadIO(liftIO))
-import Control.Monad.Trans.State.Strict (StateT(runStateT))
 data Config =
   Config {
   -- that's one, one click!
@@ -52,15 +47,14 @@ app =
       let (newCountsMap, newCount) = bumpBoomp (key' :: Text) countsMap
       lift $ writeIORef refCount newCountsMap
       return newCount
-    return () -- :: ActionT Text (ReaderT Config IO) ()
+    -- return () -- :: ActionT Text (ReaderT Config IO) ()
 
-    let actionT_IO = html $
-          mconcat
-            [ "<h1>Success! Count was: ",
-              TL.pack $ show newInteger,
-              "</h1>"
-            ]
-    runAM actionT_IO & runExceptT & runReaderT & fmap runStateT & _
+    html $
+      mconcat
+        [ "<h1>Success! Count was: ",
+          TL.pack $ show newInteger,
+          "</h1>"
+        ]
 
 main :: IO ()
 main = do
