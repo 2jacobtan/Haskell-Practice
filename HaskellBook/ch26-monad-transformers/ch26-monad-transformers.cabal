@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bbca56b7751a91d15c8f9c374d4b7431d87cc631cf50fda192e1fe0f326a7231
+-- hash: e04179122e618e96f0ecb4fba6d443bc2cf2377e268c36a6ab41b84fb27cbe3e
 
 name:           ch26-monad-transformers
 version:        0.1.0.0
@@ -27,6 +27,8 @@ source-repository head
 
 library
   exposed-modules:
+      ChapterExercises
+      HitCounter
       Lib
       Scotty
       ScottyAgain
