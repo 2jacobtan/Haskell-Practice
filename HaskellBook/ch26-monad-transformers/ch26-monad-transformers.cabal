@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e04179122e618e96f0ecb4fba6d443bc2cf2377e268c36a6ab41b84fb27cbe3e
+-- hash: 741f41d69302940186a426585586adaa64783fcd0ad2e7220ca0618260c9a69f
 
 name:           ch26-monad-transformers
 version:        0.1.0.0
@@ -38,6 +38,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
     , pretty-simple
     , scotty
     , text
@@ -54,6 +55,7 @@ executable ch26-monad-transformers-exe
   build-depends:
       base >=4.7 && <5
     , ch26-monad-transformers
+    , containers
     , pretty-simple
     , scotty
     , text
@@ -71,6 +73,7 @@ test-suite ch26-monad-transformers-test
   build-depends:
       base >=4.7 && <5
     , ch26-monad-transformers
+    , containers
     , pretty-simple
     , scotty
     , text

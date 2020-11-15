@@ -25,6 +25,7 @@ dependencies:
 - transformers
 - scotty
 - text
+- containers
 
 library:
   source-dirs: src
