@@ -240,3 +240,14 @@ instance (MonadIO m) =>
   MonadIO (StateT s m) where
     liftIO = lift . liftIO
 
+-- Hypothetical exercise (under 26.12 Monads do not commute)
+hypotheticalReaderTMaybe :: ReaderT r Maybe String
+hypotheticalReaderTMaybe =
+  lift $ Just "Hello ReaderTMaybe"
+
+hypotheticalMaybeTReader :: MaybeT ((->) r) String
+hypotheticalMaybeTReader =
+  lift $ \_ -> "Hello MaybeTReader"
+
+x = runReaderT hypotheticalReaderTMaybe 1
+y = runMaybeT hypotheticalMaybeTReader 1
