@@ -1,0 +1,13 @@
+cradle:
+  stack:
+    # - path: "./src"
+    #   component: "ch28-basic-libraries:lib"
+
+    # - path: "./app/Main.hs"
+    #   component: "ch28-basic-libraries:exe:ch28-basic-libraries-exe"
+
+    # - path: "./app/Paths_ch28_basic_libraries.hs"
+    #   component: "ch28-basic-libraries:exe:ch28-basic-libraries-exe"
+
+    # - path: "./test"
+    #   component: "ch28-basic-libraries:test:ch28-basic-libraries-test"
