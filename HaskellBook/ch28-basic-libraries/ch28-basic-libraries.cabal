@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 36ee0a3b1b26083085adb7acfb53849bfa8bce7bb84a40a3af9b21f5609be74f
+-- hash: 7a4012145e68f17623cbc0e00f1ddc76ae085f6ea61f57e73456b5e5d6380b77
 
 name:           ch28-basic-libraries
 version:        0.1.0.0
@@ -27,9 +27,11 @@ source-repository head
 
 library
   exposed-modules:
+      Criterion
       Loci
       MyLib
       ProfilingTime
+      VectorBench
   other-modules:
       Paths_ch28_basic_libraries
   hs-source-dirs:
@@ -38,6 +40,7 @@ library
       base >=4.7 && <5
     , criterion
     , pretty-simple
+    , vector
   default-language: Haskell2010
 
 executable ch28-basic-libraries-exe
@@ -52,6 +55,7 @@ executable ch28-basic-libraries-exe
     , ch28-basic-libraries
     , criterion
     , pretty-simple
+    , vector
   default-language: Haskell2010
 
 test-suite ch28-basic-libraries-test
@@ -67,4 +71,5 @@ test-suite ch28-basic-libraries-test
     , ch28-basic-libraries
     , criterion
     , pretty-simple
+    , vector
   default-language: Haskell2010

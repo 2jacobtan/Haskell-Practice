@@ -1,5 +1,5 @@
 -- profilingTime.hs
-module Main where
+module ProfilingTime where
 f :: IO ()
 f = do
   print ([1..] !! 999999)

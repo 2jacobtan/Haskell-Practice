@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - pretty-simple
 - criterion
+- vector
 
 library:
   source-dirs: src

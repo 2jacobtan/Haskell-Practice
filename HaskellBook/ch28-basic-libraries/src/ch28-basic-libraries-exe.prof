@@ -1,0 +1,211 @@
+	Wed Nov 18 19:18 2020 Time and Allocation Profiling Report  (Final)
+
+	   ch28-basic-libraries-exe +RTS -N -hc -p -RTS
+
+	total time  =        0.00 secs   (14 ticks @ 1000 us, 4 processors)
+	total alloc =  11,726,176 bytes  (excludes profiling overheads)
+
+COST CENTRE      MODULE                            SRC                                                    %time %alloc
+
+main.unboxed     Main                              app/Main.hs:18:7-48                                     28.6   17.1
+MAIN             MAIN                              <built-in>                                              21.4    0.6
+main.boxed       Main                              app/Main.hs:27:7-38                                     14.3   34.1
+main             Main                              app/Main.hs:(17,1)-(34,52)                              14.3    0.1
+primitive        Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                      7.1    6.7
+basicUnsafeWrite Data.Vector.Mutable               Data/Vector/Mutable.hs:120:3-65                          7.1    6.8
+fmap             Data.Vector.Fusion.Stream.Monadic Data/Vector/Fusion/Stream/Monadic.hs:(133,3)-(135,20)    7.1   16.4
+basicUnsafeSlice Data.Vector.Mutable               Data/Vector/Mutable.hs:91:3-62                           0.0    5.5
+basicUnsafeWrite Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:124:3-69                0.0    3.4
+basicUnsafeSlice Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:(94,3)-(95,25)          0.0    2.7
+>>=              Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:36:3-18                       0.0    6.1
+
+
+                                                                                                                                       individual      inherited
+COST CENTRE                MODULE                            SRC                                                   no.      entries  %time %alloc   %time %alloc
+
+MAIN                       MAIN                              <built-in>                                            1614          0   21.4    0.6   100.0  100.0
+ CAF                       GHC.Conc.Signal                   <entire-module>                                       1729          0    0.0    0.0     0.0    0.0
+ CAF                       GHC.IO.Encoding                   <entire-module>                                       1713          0    0.0    0.0     0.0    0.0
+ CAF                       GHC.IO.Encoding.Iconv             <entire-module>                                       1711          0    0.0    0.0     0.0    0.0
+ CAF                       GHC.IO.Handle.FD                  <entire-module>                                       1703          0    0.0    0.3     0.0    0.3
+ CAF                       GHC.IO.Handle.Text                <entire-module>                                       1701          0    0.0    0.0     0.0    0.0
+ CAF                       GHC.Event.Thread                  <entire-module>                                       1661          0    0.0    0.0     0.0    0.0
+ CAF                       GHC.Event.Poll                    <entire-module>                                       1632          0    0.0    0.0     0.0    0.0
+ CAF:$fApplicativeId4      Data.Vector.Fusion.Util           <no location info>                                    3158          0    0.0    0.0     0.0    0.0
+  pure                     Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:31:3-11                    3255          1    0.0    0.0     0.0    0.0
+ CAF:$fMonadId1            Data.Vector.Fusion.Util           <no location info>                                    3160          0    0.0    0.0     0.0    0.0
+  return                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:35:3-15                    3254          1    0.0    0.0     0.0    0.0
+ CAF:$fPrimMonadST1_r5gV   Control.Monad.Primitive           <no location info>                                    2430          0    0.0    0.0     0.0    0.0
+  primitive                Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3288          1    0.0    0.0     0.0    0.0
+ CAF:doBoundsChecks        Data.Vector.Internal.Check        Data/Vector/Internal/Check.hs:55:1-14                 3163          0    0.0    0.0     0.0    0.0
+  doBoundsChecks           Data.Vector.Internal.Check        Data/Vector/Internal/Check.hs:55:1-21                 3232          1    0.0    0.0     0.0    0.0
+ CAF:doInternalChecks      Data.Vector.Internal.Check        Data/Vector/Internal/Check.hs:71:1-16                 3165          0    0.0    0.0     0.0    0.0
+  doInternalChecks         Data.Vector.Internal.Check        Data/Vector/Internal/Check.hs:71:1-24                 3283          1    0.0    0.0     0.0    0.0
+ CAF:doUnsafeChecks        Data.Vector.Internal.Check        Data/Vector/Internal/Check.hs:64:1-14                 3164          0    0.0    0.0     0.0    0.0
+  doUnsafeChecks           Data.Vector.Internal.Check        Data/Vector/Internal/Check.hs:64:1-22                 3241          1    0.0    0.0     0.0    0.0
+ CAF:main1                 Main                              <no location info>                                    3226          0    0.0    0.0     0.0    0.0
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3228          1    0.0    0.0     0.0    0.0
+ CAF:main15                Main                              <no location info>                                    3221          0    0.0    0.0     0.0    0.0
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3312          0    0.0    0.0     0.0    0.0
+   printBoxed              Main                              app/Main.hs:32:34-52                                  3313          1    0.0    0.0     0.0    0.0
+    unId                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:25:21-24                   3314          2    0.0    0.0     0.0    0.0
+    basicLength            Data.Vector                       Data/Vector.hs:284:3-32                               3350          1    0.0    0.0     0.0    0.0
+    basicUnsafeIndexM      Data.Vector                       Data/Vector.hs:290:3-62                               3351          1    0.0    0.0     0.0    0.0
+     array#                Data.Primitive.Array              Data/Primitive/Array.hs:87:5-10                       3352          1    0.0    0.0     0.0    0.0
+ CAF:main16                Main                              <no location info>                                    3220          0    0.0    0.0    14.3   26.8
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3315          0    0.0    0.0    14.3   26.8
+   printBoxed              Main                              app/Main.hs:32:34-52                                  3316          0    0.0    0.0    14.3   26.8
+    main.boxed             Main                              app/Main.hs:27:7-38                                   3317          1    7.1   10.9    14.3   26.8
+     basicLength           Data.Vector.Mutable               Data/Vector/Mutable.hs:88:3-33                        3329      10015    0.0    0.0     0.0    0.0
+     >>=                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:36:3-18                    3324      10001    0.0    2.0     0.0   10.9
+      fmap                 Data.Vector.Fusion.Stream.Monadic Data/Vector/Fusion/Stream/Monadic.hs:(133,3)-(135,20) 3325      10001    0.0    5.5     0.0    8.9
+       basicUnsafeWrite    Data.Vector.Mutable               Data/Vector/Mutable.hs:120:3-65                       3340      10000    0.0    3.4     0.0    3.4
+        primitive          Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3342          0    0.0    0.0     0.0    0.0
+         marray#           Data.Primitive.Array              Data/Primitive/Array.hs:92:5-11                       3343      10000    0.0    0.0     0.0    0.0
+     basicUnsafeSlice      Data.Vector.Mutable               Data/Vector/Mutable.hs:91:3-62                        3341      10001    0.0    2.7     0.0    2.7
+     unId                  Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:25:21-24                   3323      10001    0.0    0.0     0.0    0.0
+     basicUnsafeGrow       Data.Vector.Generic.Mutable.Base  Data/Vector/Generic/Mutable/Base.hs:(140,3)-(146,23)  3332         15    0.0    0.0     7.1    2.3
+      basicUnsafeCopy      Data.Vector.Mutable               Data/Vector/Mutable.hs:(123,3)-(124,36)               3338         15    0.0    0.0     0.0    0.0
+       primitive           Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3339         15    0.0    0.0     0.0    0.0
+      basicUnsafeGrow.n    Data.Vector.Generic.Mutable.Base  Data/Vector/Generic/Mutable/Base.hs:146:7-23          3334         15    0.0    0.0     0.0    0.0
+       basicLength         Data.Vector.Mutable               Data/Vector/Mutable.hs:88:3-33                        3335         15    0.0    0.0     0.0    0.0
+      basicUnsafeNew       Data.Vector.Mutable               Data/Vector/Mutable.hs:(101,3)-(104,32)               3333         15    0.0    0.0     7.1    2.2
+       primitive           Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3336         15    7.1    2.2     7.1    2.2
+      basicUnsafeSlice     Data.Vector.Mutable               Data/Vector/Mutable.hs:91:3-62                        3337         15    0.0    0.0     0.0    0.0
+     enlarge_delta         Data.Vector.Generic.Mutable       Data/Vector/Generic/Mutable.hs:642:1-34               3330         15    0.0    0.0     0.0    0.0
+      basicLength          Data.Vector.Mutable               Data/Vector/Mutable.hs:88:3-33                        3331         15    0.0    0.0     0.0    0.0
+     basicUnsafeFreeze     Data.Vector                       Data/Vector.hs:(276,3)-(277,47)                       3347          1    0.0    0.0     0.0    0.0
+      primitive            Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3348          1    0.0    0.0     0.0    0.0
+       marray#             Data.Primitive.Array              Data/Primitive/Array.hs:92:5-11                       3349          1    0.0    0.0     0.0    0.0
+     basicUnsafeNew        Data.Vector.Mutable               Data/Vector/Mutable.hs:(101,3)-(104,32)               3320          1    0.0    0.0     0.0    0.0
+      primitive            Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3321          1    0.0    0.0     0.0    0.0
+     sChunks               Data.Vector.Fusion.Bundle.Monadic Data/Vector/Fusion/Bundle/Monadic.hs:122:30-36        3322          1    0.0    0.0     0.0    0.0
+     sSize                 Data.Vector.Fusion.Bundle.Monadic Data/Vector/Fusion/Bundle/Monadic.hs:124:30-34        3319          1    0.0    0.0     0.0    0.0
+     upperBound            Data.Vector.Fusion.Bundle.Size    Data/Vector/Fusion/Bundle/Size.hs:(126,1)-(128,30)    3318          1    0.0    0.0     0.0    0.0
+ CAF:main18                Main                              <no location info>                                    3219          0    0.0    0.0     7.1    6.1
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3326          0    0.0    0.0     7.1    6.1
+   printBoxed              Main                              app/Main.hs:32:34-52                                  3327          0    0.0    0.0     7.1    6.1
+    main.boxed             Main                              app/Main.hs:27:7-38                                   3328          0    7.1    6.1     7.1    6.1
+ CAF:main2                 Main                              <no location info>                                    3217          0    0.0    0.0     0.0    0.0
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3353          0    0.0    0.0     0.0    0.0
+   printBoxed              Main                              app/Main.hs:34:34-52                                  3354          1    0.0    0.0     0.0    0.0
+    unId                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:25:21-24                   3355          2    0.0    0.0     0.0    0.0
+    basicLength            Data.Vector                       Data/Vector.hs:284:3-32                               3391          1    0.0    0.0     0.0    0.0
+    basicUnsafeIndexM      Data.Vector                       Data/Vector.hs:290:3-62                               3392          1    0.0    0.0     0.0    0.0
+     array#                Data.Primitive.Array              Data/Primitive/Array.hs:87:5-10                       3393          1    0.0    0.0     0.0    0.0
+ CAF:main20                Main                              <no location info>                                    3223          0    0.0    0.0     0.0    0.0
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3301          0    0.0    0.0     0.0    0.0
+   printUnboxed            Main                              app/Main.hs:25:38-59                                  3302          1    0.0    0.0     0.0    0.0
+    unId                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:25:21-24                   3303          2    0.0    0.0     0.0    0.0
+    basicLength            Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:242:664-703               3307          1    0.0    0.0     0.0    0.0
+     basicLength           Data.Vector.Primitive             Data/Vector/Primitive.hs:228:3-32                     3308          1    0.0    0.0     0.0    0.0
+    basicUnsafeIndexM      Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:242:817-872               3309          1    0.0    0.0     0.0    0.0
+     basicUnsafeIndexM     Data.Vector.Primitive             Data/Vector/Primitive.hs:234:3-75                     3310          1    0.0    0.0     0.0    0.0
+      indexByteArray#      Data.Primitive.Types              Data/Primitive/Types.hs:263:214-279                   3311          1    0.0    0.0     0.0    0.0
+ CAF:main22                Main                              <no location info>                                    3222          0    0.0    0.0     0.0    0.0
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3304          0    0.0    0.0     0.0    0.0
+   printUnboxed            Main                              app/Main.hs:25:38-59                                  3305          0    0.0    0.0     0.0    0.0
+    main.unboxed           Main                              app/Main.hs:18:7-48                                   3306          1    0.0    0.0     0.0    0.0
+ CAF:main23                Main                              <no location info>                                    3213          0    0.0    0.0    35.7   26.8
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3237          0    0.0    0.0    35.7   26.8
+   main.unboxed            Main                              app/Main.hs:18:7-48                                   3238          0   28.6   10.9    35.7   26.8
+    >>=                    Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:36:3-18                    3253      10001    0.0    2.0     7.1   10.9
+     fmap                  Data.Vector.Fusion.Stream.Monadic Data/Vector/Fusion/Stream/Monadic.hs:(133,3)-(135,20) 3256      10001    7.1    5.5     7.1    8.9
+      basicUnsafeWrite     Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:241:1480-1538             3284      10000    0.0    0.0     0.0    3.4
+       basicUnsafeWrite    Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:124:3-69             3285      10000    0.0    3.4     0.0    3.4
+        primitive          Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3289          0    0.0    0.0     0.0    0.0
+         writeByteArray#   Data.Primitive.Types              Data/Primitive/Types.hs:263:433-499                   3290      10000    0.0    0.0     0.0    0.0
+    basicUnsafeSlice       Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:241:1016-1084             3286      10001    0.0    0.0     0.0    2.7
+     basicUnsafeSlice      Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:(94,3)-(95,25)       3287      10001    0.0    2.7     0.0    2.7
+    unId                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:25:21-24                   3252      10001    0.0    0.0     0.0    0.0
+    basicLength            Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:241:940-980               3259      10000    0.0    0.0     0.0    0.0
+     basicLength           Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:93:3-33              3260      10000    0.0    0.0     0.0    0.0
+    basicUnsafeGrow        Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:241:1868-1936             3264         15    0.0    0.0     0.0    2.3
+     basicUnsafeGrow       Data.Vector.Generic.Mutable.Base  Data/Vector/Generic/Mutable/Base.hs:(140,3)-(146,23)  3265         15    0.0    0.0     0.0    2.3
+      basicUnsafeCopy      Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:(127,3)-(130,34)     3276         15    0.0    0.0     0.0    0.0
+       primitive           Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3277         15    0.0    0.0     0.0    0.0
+        unI#               Data.Primitive.ByteArray          Data/Primitive/ByteArray.hs:290:1-17                  3278         45    0.0    0.0     0.0    0.0
+        basicUnsafeCopy.sz Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:130:7-34             3279         15    0.0    0.0     0.0    0.0
+         sizeOf            Data.Primitive.Types              Data/Primitive/Types.hs:131:1-25                      3280         15    0.0    0.0     0.0    0.0
+          sizeOf#          Data.Primitive.Types              Data/Primitive/Types.hs:263:68-95                     3281         15    0.0    0.0     0.0    0.0
+           unI#            Data.Primitive.Types              Data/Primitive/Types.hs:246:1-17                      3282         15    0.0    0.0     0.0    0.0
+      basicUnsafeGrow.n    Data.Vector.Generic.Mutable.Base  Data/Vector/Generic/Mutable/Base.hs:146:7-23          3266         15    0.0    0.0     0.0    0.0
+       basicLength         Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:93:3-33              3267         15    0.0    0.0     0.0    0.0
+      basicUnsafeNew       Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:(105,3)-(111,37)     3268         15    0.0    0.0     0.0    2.3
+       basicUnsafeNew.mx   Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:111:7-37             3269         15    0.0    0.0     0.0    0.0
+       basicUnsafeNew.size Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:110:7-36             3270         15    0.0    0.0     0.0    0.0
+        sizeOf             Data.Primitive.Types              Data/Primitive/Types.hs:131:1-25                      3271         15    0.0    0.0     0.0    0.0
+         sizeOf#           Data.Primitive.Types              Data/Primitive/Types.hs:263:68-95                     3272         15    0.0    0.0     0.0    0.0
+          unI#             Data.Primitive.Types              Data/Primitive/Types.hs:246:1-17                      3273         15    0.0    0.0     0.0    0.0
+       primitive           Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3274         15    0.0    2.2     0.0    2.2
+      basicUnsafeSlice     Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:(94,3)-(95,25)       3275         15    0.0    0.0     0.0    0.0
+    enlarge_delta          Data.Vector.Generic.Mutable       Data/Vector/Generic/Mutable.hs:642:1-34               3261         15    0.0    0.0     0.0    0.0
+     basicLength           Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:241:940-980               3262         15    0.0    0.0     0.0    0.0
+      basicLength          Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:93:3-33              3263         15    0.0    0.0     0.0    0.0
+    basicUnsafeFreeze      Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:242:508-575               3293          1    0.0    0.0     0.0    0.0
+     basicUnsafeFreeze     Data.Vector.Primitive             Data/Vector/Primitive.hs:(220,3)-(221,51)             3294          1    0.0    0.0     0.0    0.0
+      primitive            Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3295          1    0.0    0.0     0.0    0.0
+    basicUnsafeNew         Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:241:1176-1228             3242          1    0.0    0.0     0.0    0.0
+     basicUnsafeNew        Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:(105,3)-(111,37)     3243          1    0.0    0.0     0.0    0.0
+      basicUnsafeNew.mx    Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:111:7-37             3244          1    0.0    0.0     0.0    0.0
+      basicUnsafeNew.size  Data.Vector.Primitive.Mutable     Data/Vector/Primitive/Mutable.hs:110:7-36             3245          1    0.0    0.0     0.0    0.0
+       sizeOf              Data.Primitive.Types              Data/Primitive/Types.hs:131:1-25                      3246          1    0.0    0.0     0.0    0.0
+        sizeOf#            Data.Primitive.Types              Data/Primitive/Types.hs:263:68-95                     3247          1    0.0    0.0     0.0    0.0
+         unI#              Data.Primitive.Types              Data/Primitive/Types.hs:246:1-17                      3248          1    0.0    0.0     0.0    0.0
+      primitive            Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3250          1    0.0    0.0     0.0    0.0
+    sChunks                Data.Vector.Fusion.Bundle.Monadic Data/Vector/Fusion/Bundle/Monadic.hs:122:30-36        3251          1    0.0    0.0     0.0    0.0
+    sSize                  Data.Vector.Fusion.Bundle.Monadic Data/Vector/Fusion/Bundle/Monadic.hs:124:30-34        3240          1    0.0    0.0     0.0    0.0
+    upperBound             Data.Vector.Fusion.Bundle.Size    Data/Vector/Fusion/Bundle/Size.hs:(126,1)-(128,30)    3239          1    0.0    0.0     0.0    0.0
+ CAF:main27                Main                              <no location info>                                    3209          0    0.0    0.0     0.0    6.1
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3257          0    0.0    0.0     0.0    6.1
+   main.unboxed            Main                              app/Main.hs:18:7-48                                   3258          0    0.0    6.1     0.0    6.1
+ CAF:main31                Main                              <no location info>                                    3225          0    0.0    0.0     0.0    0.0
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3230          0    0.0    0.0     0.0    0.0
+   printUnboxed            Main                              app/Main.hs:23:38-59                                  3231          1    0.0    0.0     0.0    0.0
+    unId                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:25:21-24                   3233          2    0.0    0.0     0.0    0.0
+    basicLength            Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:242:664-703               3296          1    0.0    0.0     0.0    0.0
+     basicLength           Data.Vector.Primitive             Data/Vector/Primitive.hs:228:3-32                     3297          1    0.0    0.0     0.0    0.0
+    basicUnsafeIndexM      Data.Vector.Unboxed.Base          Data/Vector/Unboxed/Base.hs:242:817-872               3298          1    0.0    0.0     0.0    0.0
+     basicUnsafeIndexM     Data.Vector.Primitive             Data/Vector/Primitive.hs:234:3-75                     3299          1    0.0    0.0     0.0    0.0
+      indexByteArray#      Data.Primitive.Types              Data/Primitive/Types.hs:263:214-279                   3300          1    0.0    0.0     0.0    0.0
+ CAF:main32                Main                              <no location info>                                    3224          0    0.0    0.0     0.0    0.0
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3234          0    0.0    0.0     0.0    0.0
+   printUnboxed            Main                              app/Main.hs:23:38-59                                  3235          0    0.0    0.0     0.0    0.0
+    main.unboxed           Main                              app/Main.hs:18:7-48                                   3236          1    0.0    0.0     0.0    0.0
+ CAF:main4                 Main                              <no location info>                                    3216          0    0.0    0.0     7.1   26.8
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3356          0    0.0    0.0     7.1   26.8
+   printBoxed              Main                              app/Main.hs:34:34-52                                  3357          0    0.0    0.0     7.1   26.8
+    main.boxed             Main                              app/Main.hs:27:7-38                                   3358          1    0.0   10.9     7.1   26.8
+     basicLength           Data.Vector.Mutable               Data/Vector/Mutable.hs:88:3-33                        3370      10015    0.0    0.0     0.0    0.0
+     >>=                   Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:36:3-18                    3365      10001    0.0    2.0     7.1   10.9
+      fmap                 Data.Vector.Fusion.Stream.Monadic Data/Vector/Fusion/Stream/Monadic.hs:(133,3)-(135,20) 3366      10001    0.0    5.5     7.1    8.9
+       basicUnsafeWrite    Data.Vector.Mutable               Data/Vector/Mutable.hs:120:3-65                       3381      10000    7.1    3.4     7.1    3.4
+        primitive          Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3383          0    0.0    0.0     0.0    0.0
+         marray#           Data.Primitive.Array              Data/Primitive/Array.hs:92:5-11                       3384      10000    0.0    0.0     0.0    0.0
+     basicUnsafeSlice      Data.Vector.Mutable               Data/Vector/Mutable.hs:91:3-62                        3382      10001    0.0    2.7     0.0    2.7
+     unId                  Data.Vector.Fusion.Util           Data/Vector/Fusion/Util.hs:25:21-24                   3364      10001    0.0    0.0     0.0    0.0
+     basicUnsafeGrow       Data.Vector.Generic.Mutable.Base  Data/Vector/Generic/Mutable/Base.hs:(140,3)-(146,23)  3373         15    0.0    0.0     0.0    2.3
+      basicUnsafeCopy      Data.Vector.Mutable               Data/Vector/Mutable.hs:(123,3)-(124,36)               3379         15    0.0    0.0     0.0    0.0
+       primitive           Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3380         15    0.0    0.0     0.0    0.0
+      basicUnsafeGrow.n    Data.Vector.Generic.Mutable.Base  Data/Vector/Generic/Mutable/Base.hs:146:7-23          3375         15    0.0    0.0     0.0    0.0
+       basicLength         Data.Vector.Mutable               Data/Vector/Mutable.hs:88:3-33                        3376         15    0.0    0.0     0.0    0.0
+      basicUnsafeNew       Data.Vector.Mutable               Data/Vector/Mutable.hs:(101,3)-(104,32)               3374         15    0.0    0.0     0.0    2.2
+       primitive           Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3377         15    0.0    2.2     0.0    2.2
+      basicUnsafeSlice     Data.Vector.Mutable               Data/Vector/Mutable.hs:91:3-62                        3378         15    0.0    0.0     0.0    0.0
+     enlarge_delta         Data.Vector.Generic.Mutable       Data/Vector/Generic/Mutable.hs:642:1-34               3371         15    0.0    0.0     0.0    0.0
+      basicLength          Data.Vector.Mutable               Data/Vector/Mutable.hs:88:3-33                        3372         15    0.0    0.0     0.0    0.0
+     basicUnsafeFreeze     Data.Vector                       Data/Vector.hs:(276,3)-(277,47)                       3388          1    0.0    0.0     0.0    0.0
+      primitive            Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3389          1    0.0    0.0     0.0    0.0
+       marray#             Data.Primitive.Array              Data/Primitive/Array.hs:92:5-11                       3390          1    0.0    0.0     0.0    0.0
+     basicUnsafeNew        Data.Vector.Mutable               Data/Vector/Mutable.hs:(101,3)-(104,32)               3361          1    0.0    0.0     0.0    0.0
+      primitive            Control.Monad.Primitive           Control/Monad/Primitive.hs:205:3-16                   3362          1    0.0    0.0     0.0    0.0
+     sChunks               Data.Vector.Fusion.Bundle.Monadic Data/Vector/Fusion/Bundle/Monadic.hs:122:30-36        3363          1    0.0    0.0     0.0    0.0
+     sSize                 Data.Vector.Fusion.Bundle.Monadic Data/Vector/Fusion/Bundle/Monadic.hs:124:30-34        3360          1    0.0    0.0     0.0    0.0
+     upperBound            Data.Vector.Fusion.Bundle.Size    Data/Vector/Fusion/Bundle/Size.hs:(126,1)-(128,30)    3359          1    0.0    0.0     0.0    0.0
+ CAF:main8                 Main                              <no location info>                                    3215          0    0.0    0.0     0.0    6.1
+  main                     Main                              app/Main.hs:(17,1)-(34,52)                            3367          0    0.0    0.0     0.0    6.1
+   printBoxed              Main                              app/Main.hs:34:34-52                                  3368          0    0.0    0.0     0.0    6.1
+    main.boxed             Main                              app/Main.hs:27:7-38                                   3369          0    0.0    6.1     0.0    6.1
+ CAF:sIZEOF_INT            Data.Primitive.MachDeps           Data/Primitive/MachDeps.hs:71:1-10                    2399          0    0.0    0.0     0.0    0.0
+  sIZEOF_INT               Data.Primitive.MachDeps           Data/Primitive/MachDeps.hs:71:1-14                    3249          1    0.0    0.0     0.0    0.0
+ main                      Main                              app/Main.hs:(17,1)-(34,52)                            3229          0   14.3    0.1    14.3    0.1

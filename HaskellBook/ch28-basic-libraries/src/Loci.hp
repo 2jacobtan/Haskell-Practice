@@ -1,5 +1,5 @@
-JOB "Loci +RTS -hc -p"
-DATE "Tue Nov 17 23:09 2020"
+JOB "Loci +RTS -hc"
+DATE "Wed Nov 18 17:59 2020"
 SAMPLE_UNIT "seconds"
 VALUE_UNIT "bytes"
 BEGIN_SAMPLE 0.000000
