@@ -12,8 +12,9 @@ boxed _ = V.fromList @Int [0 .. 9999]
 
 main = do
   defaultMain
-    [ bench "bench1" $ whnf print $
-        {-# SCC printUnboxed #-} (unboxed ()) VU.! 1,
+    [ 
       bench "bench2" $ whnf print $
-        {-# SCC printBoxed #-} (boxed ()) V.! 2
+        {-# SCC printBoxed #-} (boxed () ) V.! 2,
+      bench "bench1" $ whnf print $
+        {-# SCC printUnboxed #-} (unboxed () ) VU.! 1
     ]

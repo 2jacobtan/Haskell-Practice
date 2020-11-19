@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7a4012145e68f17623cbc0e00f1ddc76ae085f6ea61f57e73456b5e5d6380b77
+-- hash: 8385e5a5f6dc4731a20f40b5e52abff8d1fd2a919c68023a3f4e4cb5ea74fdf1
 
 name:           ch28-basic-libraries
 version:        0.1.0.0
@@ -46,6 +46,8 @@ library
 executable ch28-basic-libraries-exe
   main-is: Main.hs
   other-modules:
+      DifferenceList
+      DifferenceList2
       Paths_ch28_basic_libraries
   hs-source-dirs:
       app
