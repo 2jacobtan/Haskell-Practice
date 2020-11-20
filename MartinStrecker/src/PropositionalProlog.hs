@@ -9,7 +9,7 @@ import PropositionalFormulas hiding (main)
 import Prelude hiding (head)
 
 data Rule = Rl {head :: String, body :: [String]}
-  deriving Show
+  deriving (Show)
 
 newtype Goal = Gl {unGl :: [String]}
 
@@ -66,8 +66,8 @@ main :: IO ()
 main = do
   print $ valid . progToForm $ mortalSocrates
   print $ valid . progToForm $ immortalSocrates
-  print $ allModels . Not. progToForm $ immortalSocrates
-  
+  print $ allModels . Not . progToForm $ immortalSocrates
+
   putStrLn "\nany: divisible by 3"
   let divisible3 x = x `mod` 3 == 0
       numbers = [1, 4, 5, 6]
@@ -78,8 +78,47 @@ main = do
   print $ all divisible3 numbers
 
   putStrLn "\nExercise 18"
-  print $ map (^2) . filter (<0) $ [1, -3, 4, -5]
-  print $ [x^2 | x <- [1, -3, 4, -5] , x < 0]
+  print $ map (^ 2) . filter (< 0) $ [1, -3, 4, -5]
+  print $ [x ^ 2 | x <- [1, -3, 4, -5], x < 0]
 
-  print $ [r | r <- rules abcdProg, head r == "d" ]
+  print $ [r | r <- rules abcdProg, head r == "d"]
 
+-- Exercise 19
+solveGoal :: [Rule] -> [String] -> Bool
+solveGoal rls ps =
+  all (== True) . map (solveProp rls) $ ps
+
+solveProp :: [Rule] -> String -> Bool
+solveProp rls p =
+  any (== True) . map f $ rls
+  where
+    f (Rl {head, body}) = head == p && solveGoal rls body
+
+-- Exercise 20
+runProg :: Prog -> Bool
+runProg (Pr {rules, goal = Gl gs}) = solveGoal rules gs
+
+ex20 :: IO ()
+ex20 = do
+  print $ runProg mortalSocrates
+  print $ runProg immortalSocrates
+  print $ runProg terminating
+  -- print $ runProg nonterminating -- infinite loop
+
+nonterminating :: Prog
+nonterminating =
+  Pr
+    [ Rl "h" [],
+      Rl "m" ["m", "h"],
+      Rl "m" ["h"]
+    ]
+    (Gl ["m"])
+
+terminating :: Prog
+terminating =
+  Pr
+    [ Rl "h" [],
+      Rl "m" ["h"],
+      Rl "m" ["m", "h"]
+    ]
+    (Gl ["m"])
