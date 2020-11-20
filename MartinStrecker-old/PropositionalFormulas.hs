@@ -2,6 +2,7 @@
 {-# LANGUAGE MultiWayIf #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
+module PropositionalFormulas where
 
 import Prelude hiding (and)
 import Data.List (nub)
