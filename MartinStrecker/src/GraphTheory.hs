@@ -266,3 +266,5 @@ main = do
   xs <- getArgs
   print $ scanl (\xs _ -> xs + 1) 0 $ solveQueens (read $ head xs)
 
+-- data on n-Queens
+-- http://www.durangobill.com/N_Queens.html
