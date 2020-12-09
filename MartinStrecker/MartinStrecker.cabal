@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ce728d16055a8cc3501442337e5febe658971063b67581a7629e10254614b519
+-- hash: 87bbd6789710a1b30a7bcdef9e86f9bfc5a1eda03a60aeb632f8111381101067
 
 name:           MartinStrecker
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      GraphTheory
       Lib
       PropositionalFormulas
       PropositionalProlog
@@ -36,7 +37,11 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
+    , fgl
+    , graphviz
     , pretty-simple
+    , text
   default-language: Haskell2010
 
 executable MartinStrecker-exe
@@ -49,7 +54,11 @@ executable MartinStrecker-exe
   build-depends:
       MartinStrecker
     , base >=4.7 && <5
+    , containers
+    , fgl
+    , graphviz
     , pretty-simple
+    , text
   default-language: Haskell2010
 
 test-suite MartinStrecker-test
@@ -63,5 +72,9 @@ test-suite MartinStrecker-test
   build-depends:
       MartinStrecker
     , base >=4.7 && <5
+    , containers
+    , fgl
+    , graphviz
     , pretty-simple
+    , text
   default-language: Haskell2010
