@@ -7,7 +7,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
-module GraphTheory where
+module Main where
 
 import Data.Map (Map)
 import qualified Data.Map as M
@@ -257,12 +257,12 @@ nextQueens n diagMap xs = map (\x -> xs ++ [x]) $ filter prune options
     prune x = null $ (diagMap M.! (x,nextColumn)) `intersect` spotsTaken
 
 solveQueens :: Int -> [[Int]]
-solveQueens n = breadthfirst (nextQueens n diagMap) ((==n). length) []
+solveQueens n = depthfirst (nextQueens n diagMap) ((==n). length) []
   where
     diagMap = makeDiagMap n
 
 main :: IO ()
 main = do
   xs <- getArgs
-  print $ length $ solveQueens (read $ head xs)
+  print $ scanl (\xs _ -> xs + 1) 0 $ solveQueens (read $ head xs)
 
