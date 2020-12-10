@@ -248,14 +248,23 @@ makeDiagMap :: (Num b, Enum b, Ord b) => b -> Map (b, b) [(b, b)]
 makeDiagMap n = M.fromAscList [((i,j), diagSquares n (i,j)) | i <- [1..n], j <- [1..n]]
 
 nextQueens :: Int -> Map (Int,Int) [(Int,Int)] -> [Int] -> [[Int]]
-nextQueens n _diagMap xs | length xs == n = []
-nextQueens n diagMap xs = map (: xs) $ filter prune options
+nextQueens n _diagMap oldQs | length oldQs == n = []
+nextQueens n diagMap oldQs = map (: oldQs) $ filter prune options
   where
-    len_xs = length xs
-    nextColumn = len_xs + 1
-    options = [1..n] \\ xs
-    spotsTaken = zip xs [len_xs, len_xs-1 ..]
-    prune x = null $ (diagMap M.! (x,nextColumn)) `intersect` spotsTaken
+    options = [1..n] \\ oldQs
+    -- len_oldQs = length oldQs
+    -- nextColumn = len_oldQs + 1
+    -- spotsTaken = zip oldQs [len_oldQs, len_oldQs-1 ..]
+    -- prune x = null $ (diagMap M.! (x,nextColumn)) `intersect` spotsTaken
+    
+    -- | Diag check based on Martin Strecker's feedback
+    --   The code immediately above is superseded.
+    prune newQ = nodiag 1 oldQs
+      where
+        nodiag i = \case
+          [] -> True
+          q:qs -> abs (newQ - q) /= i && nodiag (i+1) qs
+
 
 solveQueens :: Int -> [[Int]]
 solveQueens n = depthfirst (nextQueens n diagMap) ((==n). length) []

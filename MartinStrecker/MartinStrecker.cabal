@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 87bbd6789710a1b30a7bcdef9e86f9bfc5a1eda03a60aeb632f8111381101067
+-- hash: fb862e9d1311d75003c7635d6c2109191bc9033a703b89c3164c18e191996fd6
 
 name:           MartinStrecker
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       GraphTheory
+      GraphTheoryOld
       Lib
       PropositionalFormulas
       PropositionalProlog
