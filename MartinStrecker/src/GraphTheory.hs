@@ -249,11 +249,12 @@ makeDiagMap n = M.fromAscList [((i,j), diagSquares n (i,j)) | i <- [1..n], j <- 
 
 nextQueens :: Int -> Map (Int,Int) [(Int,Int)] -> [Int] -> [[Int]]
 nextQueens n _diagMap xs | length xs == n = []
-nextQueens n diagMap xs = map (\x -> xs ++ [x]) $ filter prune options
+nextQueens n diagMap xs = map (: xs) $ filter prune options
   where
-    nextColumn = length xs + 1
+    len_xs = length xs
+    nextColumn = len_xs + 1
     options = [1..n] \\ xs
-    spotsTaken = zip xs [1..]
+    spotsTaken = zip xs [len_xs, len_xs-1 ..]
     prune x = null $ (diagMap M.! (x,nextColumn)) `intersect` spotsTaken
 
 solveQueens :: Int -> [[Int]]
