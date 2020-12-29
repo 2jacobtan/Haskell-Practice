@@ -1,5 +1,4 @@
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
