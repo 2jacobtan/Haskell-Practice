@@ -100,7 +100,7 @@ parseNumber = do {
     'd' -> (digit, readDec);
     'x' -> (hexDigit, readHex);
     } in do
-  sign <- option (1) (char '-' >> return (-1))
+  sign <- option 1 (char '-' >> return (-1))
   num <- many1 digit';
   return . Number . (sign *) . fst . head . read' $ num;
 
@@ -110,7 +110,7 @@ parseNumber = do {
       p <- char '.'
       m <- many1 digit
       optional $ oneOf "sfdlSFDL"
-      optional $ digit
+      optional digit
       return $ p:m
       )
     return $ case n' of
@@ -183,9 +183,9 @@ parseComma = do
   char ','
   at <- option False (char '@' >> return True)
   x <- parseExpr
-  let prefix = if
-        | at -> "unquote-splicing"
-        | otherwise -> "unquote"
+  let prefix = if at
+        then "unquote-splicing"
+        else "unquote"
   return $ List [Atom prefix, x]
 
 -- -- Integrated with parseComma
@@ -198,11 +198,9 @@ parseList = do
   char '('
   xs <- sepEndBy parseExpr spaces
   isDotted <- option False (char '.' >> spaces >> return True)
-  result <- if
-    | isDotted -> do
-        y <- parseExpr
-        return $ DottedList xs y
-    | otherwise -> return $ List xs
+  result <- if isDotted
+    then DottedList xs <$> parseExpr
+    else return $ List xs
   char ')'
   return result
 

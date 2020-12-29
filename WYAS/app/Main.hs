@@ -3,13 +3,13 @@
 
 module Main (main) where
 
-import Control.Monad (liftM)
+import Control.Monad ((<=<), liftM)
 import Evaluation (eval)
 import Parsing (extractValue, readExpr, trapError)
 import System.Environment
 
 main :: IO ()
-main = putStrLn . extractValue . trapError . liftM show . (eval =<<) . readExpr . head =<< getArgs
+main = putStrLn . extractValue . trapError . fmap show . (eval <=< (readExpr . head)) =<< getArgs
 
 -- main = do
 --      args <- getArgs
