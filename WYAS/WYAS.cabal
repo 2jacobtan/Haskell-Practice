@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2bad0f6f81ab8b3d42ea33b343ac56a6e3092289f0b1a09309538dc769e5a6bc
+-- hash: 0b44d7a1a99baea7cc92b70309e11b38eca01f971281a727756a3ce01fd61960
 
 name:           WYAS
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Evaluation
       Lib
       Parsing
+      Repl
   other-modules:
       Paths_WYAS
   hs-source-dirs:

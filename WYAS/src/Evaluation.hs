@@ -183,3 +183,4 @@ equalList eqv'equal xs ys = return $ Bool $
       equalPair (x, y) = case eqv'equal [x, y] of
          Left _ -> False
          Right (Bool val) -> val
+         Right _ -> error "only accepts (Bool val)"
