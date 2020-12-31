@@ -1,12 +1,14 @@
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
 
 module Main (main) where
 
 import Control.Monad ((<=<), liftM)
-import System.Environment
+import System.Environment ( getArgs )
 
 import Evaluation (eval)
 import Parsing (extractValue, readExpr, trapError)
-import Repl
+import Repl ( runRepl, runOne )
 
 main :: IO ()
 main = do

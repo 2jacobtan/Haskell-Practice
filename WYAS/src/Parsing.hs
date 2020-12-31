@@ -1,4 +1,8 @@
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
+
 {-# LANGUAGE LambdaCase #-}
+
 module Parsing where
 
 import Text.ParserCombinators.Parsec hiding (spaces)
@@ -8,8 +12,8 @@ import Data.Char (digitToInt)
 import Text.Parsec (parserZero)
 import Data.Complex ( Complex((:+)), Complex)
 import Data.Ratio ((%))
-import Data.Array
-import Control.Monad.Except
+import Data.Array ( listArray )
+import Control.Monad.Except ( MonadError(catchError, throwError) )
 
 import Types
 

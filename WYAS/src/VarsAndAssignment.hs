@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
+
 {-# LANGUAGE TupleSections #-}
 
 module VarsAndAssignment where
@@ -10,8 +13,8 @@ import Control.Monad.Except
     ( MonadError(throwError), ExceptT, runExceptT, MonadTrans(lift) )
 import Data.Maybe (isJust)
 
-import Parsing
-import Types
+import Parsing ( extractValue, trapError )
+import Types ( Env, LispError(UnboundVar), LispVal, ThrowsError )
 
 -- Adding Variables and Assignment
 

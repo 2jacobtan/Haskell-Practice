@@ -1,5 +1,7 @@
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
+
 {-# LANGUAGE ExistentialQuantification #-}
-{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
 module Evaluation where
 

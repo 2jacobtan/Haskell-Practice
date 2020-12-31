@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
+
 module Repl where
 
 import System.IO ( hFlush, stdout )

@@ -1,3 +1,7 @@
+{-# LANGUAGE RecordWildCards #-}
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
+
 {-# LANGUAGE LambdaCase #-}
 
 module Types where
@@ -28,6 +32,7 @@ data LispVal
       body :: [LispVal], closure :: Env
   }
 
+
 -- Evaluation, Part 1
 
 showVal :: LispVal -> String
@@ -39,6 +44,12 @@ showVal = \case
   (Bool False) -> "#f"
   (List contents) -> "(" ++ unwordsList contents ++ ")"
   (DottedList head tail) -> "(" ++ unwordsList head ++ " . " ++ showVal tail ++ ")"
+  (PrimitiveFunc _) -> "<primitive>"
+  Func {..} ->
+    "(lambda (" ++ unwords (map show params) ++
+      (case vararg of
+        Nothing -> ""
+        Just arg -> " . " ++ arg) ++ ") ...)"
 
 unwordsList :: [LispVal] -> String
 unwordsList = unwords . map showVal
