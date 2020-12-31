@@ -5,11 +5,14 @@ module Evaluation where
 
 import Control.Monad.Except ( MonadError(throwError, catchError) )
 
-import Parsing
-    ( LispError(NumArgs, BadSpecialForm, NotFunction, TypeMismatch),
+import Types
+    ( Env,
+      LispError(NumArgs, BadSpecialForm, NotFunction, TypeMismatch),
       LispVal(Bool, Number, String, Atom, List, DottedList),
       ThrowsError )
 import VarsAndAssignment
+    ( IOThrowsError, liftThrows, getVar, setVar, defineVar )
+import Data.Function ((&))
 
 eval :: Env -> LispVal -> IOThrowsError LispVal
 eval env val@(String _) = return val
@@ -80,7 +83,7 @@ unpackNum (Number n) = return n
 unpackNum (String n) = let parsed = reads n :: [(Integer, String)] in 
                            if null parsed 
                               then throwError $ TypeMismatch "number" $ String n
-                              else return $ fst $ parsed !! 0
+                              else return $ fst $ parsed & head
 unpackNum (List [n]) = unpackNum n
 unpackNum notNum = throwError $ TypeMismatch "number" notNum
 
@@ -113,7 +116,7 @@ string2symbol _          = Atom ""
 boolBinop :: (LispVal -> ThrowsError a) -> (a -> a -> Bool) -> [LispVal] -> ThrowsError LispVal
 boolBinop unpacker op args = if length args /= 2 
                              then throwError $ NumArgs 2 args
-                             else do   left <- unpacker $ args !! 0
+                             else do   left <- unpacker $ args & head
                                        right <- unpacker $ args !! 1
                                        return $ Bool $ left `op` right
 

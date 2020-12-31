@@ -11,10 +11,9 @@ import Control.Monad.Except
 import Data.Maybe (isJust)
 
 import Parsing
+import Types
 
 -- Adding Variables and Assignment
-
-type Env = IORef [(String, IORef LispVal)]
 
 nullEnv :: IO Env
 nullEnv = newIORef []

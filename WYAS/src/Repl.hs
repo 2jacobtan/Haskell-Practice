@@ -5,9 +5,10 @@ import Control.Monad ((>=>))
 import Data.Functor ((<&>))
 import Data.Function ((&))
 
+import Types ( Env )
 import Parsing ( extractValue, readExpr, trapError )
 import Evaluation ( eval )
-import VarsAndAssignment
+import VarsAndAssignment ( nullEnv, liftThrows, runIOThrows )
 import Control.Monad.Except (MonadTrans(lift))
 
 -- Bulding a REPL
