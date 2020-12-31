@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -Wincomplete-patterns #-}
-{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
-
 {-# LANGUAGE LambdaCase #-}
 
 module Parsing where

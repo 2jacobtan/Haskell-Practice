@@ -1,18 +1,16 @@
-{-# OPTIONS_GHC -Wincomplete-patterns #-}
-{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
-
 module Repl where
 
 import System.IO ( hFlush, stdout )
 import Control.Monad ((>=>))
 import Data.Functor ((<&>))
 import Data.Function ((&))
+import Control.Monad.Except (MonadTrans(lift))
 
 import Types ( Env )
 import Parsing ( extractValue, readExpr, trapError )
 import Evaluation ( eval )
 import VarsAndAssignment ( nullEnv, liftThrows, runIOThrows )
-import Control.Monad.Except (MonadTrans(lift))
+import DefiningSchemeFunctions
 
 -- Bulding a REPL
 
@@ -36,9 +34,9 @@ until_ pred prompt action = do
     else action result >> until_ pred prompt action
 
 runRepl :: IO ()
-runRepl = until_ (== "quit") (readPrompt "Lisp>>> ") . evalAndPrint =<< nullEnv 
+runRepl = until_ (== "quit") (readPrompt "Lisp>>> ") . evalAndPrint =<< primitiveBindings 
 
 
 -- Adding Variables and Assignment
 runOne :: String -> IO ()
-runOne expr = nullEnv >>= flip evalAndPrint expr
+runOne expr = primitiveBindings >>= flip evalAndPrint expr

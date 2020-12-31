@@ -1,8 +1,5 @@
-{-# LANGUAGE RecordWildCards #-}
-{-# OPTIONS_GHC -Wincomplete-patterns #-}
-{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
-
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Types where
 

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5747a8e79a6321ed811a4c602085c9e4bea6cd67f0f750a3db42803fc4cb847e
+-- hash: 82b0806a339fa0b8dcbe3f36117bd80b23bc0d44dd3987361a4f39986b93f625
 
 name:           WYAS
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      DefiningSchemeFunctions
       Evaluation
       Lib
       Parsing
@@ -37,6 +38,7 @@ library
       Paths_WYAS
   hs-source-dirs:
       src
+  ghc-options: -Wincomplete-patterns -Wincomplete-uni-patterns
   build-depends:
       array
     , base >=4.7 && <5
@@ -52,7 +54,7 @@ executable WYAS-exe
       Paths_WYAS
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wincomplete-patterns -Wincomplete-uni-patterns
   build-depends:
       WYAS
     , array
@@ -70,7 +72,7 @@ test-suite WYAS-test
       Paths_WYAS
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wincomplete-patterns -Wincomplete-uni-patterns
   build-depends:
       WYAS
     , array

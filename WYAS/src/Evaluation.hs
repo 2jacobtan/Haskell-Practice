@@ -1,20 +1,24 @@
-{-# OPTIONS_GHC -Wincomplete-patterns #-}
-{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
-
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ExistentialQuantification #-}
 
 module Evaluation where
 
 import Control.Monad.Except ( MonadError(throwError, catchError) )
+import Control.Monad.Trans (MonadTrans(lift))
+import Data.Function ((&))
+import Data.Maybe (isNothing)
 
 import Types
-    ( Env,
-      LispError(NumArgs, BadSpecialForm, NotFunction, TypeMismatch),
-      LispVal(Bool, Number, String, Atom, List, DottedList),
+    ( showVal,
+      Env,
+      LispError(NumArgs, BadSpecialForm, TypeMismatch),
+      LispVal(List, Number, String, Atom, DottedList, Bool,
+              PrimitiveFunc, Func, closure, body, vararg, params),
       ThrowsError )
 import VarsAndAssignment
-    ( IOThrowsError, liftThrows, getVar, setVar, defineVar )
-import Data.Function ((&))
+    (nullEnv,  IOThrowsError, liftThrows, getVar, setVar, defineVar, bindVars )
+import Control.Monad (join)
+
 
 eval :: Env -> LispVal -> IOThrowsError LispVal
 eval env val@(String _) = return val
@@ -32,11 +36,26 @@ eval env (List [Atom "set!", Atom var, form]) =
    eval env form >>= setVar env var
 eval env (List [Atom "define", Atom var, form]) =
    eval env form >>= defineVar env var
-eval env (List (Atom func : args)) = liftThrows . apply func =<< mapM (eval env) args
+   
+-- from: Defining Scheme Functions
+eval env (List (Atom "define" : List (Atom var : params) : body)) =
+  makeNormalFunc env params body >>= defineVar env var
+eval env (List (Atom "define" : DottedList (Atom var : params) varargs : body)) =
+  makeVarArgs varargs env params body >>= defineVar env var
+eval env (List (Atom "lambda" : List params : body)) =
+  makeNormalFunc env params body
+eval env (List (Atom "lambda" : DottedList params varargs : body)) =
+  makeVarArgs varargs env params body
+eval env (List (Atom "lambda" : varargs@(Atom _) : body)) =
+  makeVarArgs varargs env [] body
+eval env (List (function : args)) = join $ apply <$> eval env function <*> mapM (eval env) args
+-- eval env (List (function : args)) = do
+--   func <- eval env function
+--   argVals <- mapM (eval env) args
+--   apply func argVals
+
 eval env badForm = throwError $ BadSpecialForm "Unrecognized special form" badForm
 
-apply :: String -> [LispVal] -> ThrowsError LispVal
-apply func args = maybe (throwError $ NotFunction "Unrecognized primitive function args" func) ($ args) $ lookup func primitives
 
 primitives :: [(String, [LispVal] -> ThrowsError LispVal)]
 primitives = [
@@ -198,3 +217,33 @@ equalList eqv'equal xs ys = return $ Bool $
          Left _ -> False
          Right (Bool val) -> val
          Right _ -> error "only accepts (Bool val)"
+
+
+-- from: Defining Scheme Functions
+
+makeFunc :: Maybe String -> Env -> [LispVal] -> [LispVal] -> IOThrowsError LispVal
+makeFunc vararg env params body = return $ Func (map showVal params) vararg body env
+
+makeNormalFunc :: Env -> [LispVal] -> [LispVal] -> IOThrowsError LispVal
+makeNormalFunc = makeFunc Nothing
+
+makeVarArgs :: LispVal -> Env -> [LispVal] -> [LispVal] -> IOThrowsError LispVal
+makeVarArgs = makeFunc . Just . showVal
+
+apply :: LispVal -> [LispVal] -> IOThrowsError LispVal
+
+apply (PrimitiveFunc func) args = liftThrows $ func args
+
+apply Func {..} args =
+  if num params /= num args && isNothing vararg
+    then throwError $ NumArgs (num params) args
+    else lift (bindVars closure $ zip params args) >>= bindVarArgs vararg >>= evalBody
+  where
+    remainingArgs = drop (length params) args
+    num = toInteger . length
+    evalBody env = last <$> mapM (eval env) body
+    bindVarArgs arg env = case arg of
+      Just argName -> lift $ bindVars env [(argName, List remainingArgs)]
+      Nothing -> return env
+
+apply _ _ = error "apply: only for PrimitiveFunc / Func"

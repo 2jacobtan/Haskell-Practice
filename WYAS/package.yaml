@@ -29,6 +29,9 @@ dependencies:
 
 library:
   source-dirs: src
+  ghc-options:
+  - -Wincomplete-patterns
+  - -Wincomplete-uni-patterns
 
 executables:
   WYAS-exe:
@@ -38,6 +41,8 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wincomplete-patterns
+    - -Wincomplete-uni-patterns
     dependencies:
     - WYAS
 
@@ -49,5 +54,7 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wincomplete-patterns
+    - -Wincomplete-uni-patterns
     dependencies:
     - WYAS

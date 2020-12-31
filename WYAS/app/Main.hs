@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -Wincomplete-patterns #-}
-{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
-
 module Main (main) where
 
 import Control.Monad ((<=<), liftM)

@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -Wincomplete-patterns #-}
-{-# OPTIONS_GHC -Wincomplete-uni-patterns #-}
-
 {-# LANGUAGE TupleSections #-}
 
 module VarsAndAssignment where
