@@ -3,7 +3,7 @@
 
 module Evaluation where
 
-import Control.Monad.Except ( MonadError(throwError, catchError) )
+import Control.Monad.Except ( MonadError(throwError, catchError), ExceptT(ExceptT) )
 import Control.Monad.Trans (MonadTrans(lift))
 import Data.Function ((&))
 import Data.Maybe (isNothing)
@@ -11,13 +11,13 @@ import Data.Maybe (isNothing)
 import Types
     ( showVal,
       Env,
-      LispError(NumArgs, BadSpecialForm, TypeMismatch),
-      LispVal(List, Number, String, Atom, DottedList, Bool,
-              PrimitiveFunc, Func, closure, body, vararg, params),
+      LispError(..),
+      LispVal(..),
       ThrowsError, IOThrowsError )
 import VarsAndAssignment
     (nullEnv, liftThrows, getVar, setVar, defineVar, bindVars )
 import Control.Monad (join)
+import Parsing (readExprList)
 
 
 eval :: Env -> LispVal -> IOThrowsError LispVal
@@ -48,6 +48,11 @@ eval env (List (Atom "lambda" : DottedList params varargs : body)) =
   makeVarArgs varargs env params body
 eval env (List (Atom "lambda" : varargs@(Atom _) : body)) =
   makeVarArgs varargs env [] body
+
+-- Creating IO Primitives
+eval env (List [Atom "load", String filename]) =
+  fmap last . mapM (eval env) =<< load filename
+
 eval env (List (function : args)) = join $ apply <$> eval env function <*> mapM (eval env) args
 -- eval env (List (function : args)) = do
 --   func <- eval env function
@@ -55,6 +60,10 @@ eval env (List (function : args)) = join $ apply <$> eval env function <*> mapM 
 --   apply func argVals
 
 eval env badForm = throwError $ BadSpecialForm "Unrecognized special form" badForm
+
+-- Creating IO Primitives
+load :: String -> IOThrowsError [LispVal]
+load filename = ExceptT $ readExprList <$> readFile filename
 
 
 primitives :: [(String, [LispVal] -> ThrowsError LispVal)]
@@ -245,5 +254,7 @@ apply Func {..} args =
     bindVarArgs arg env = case arg of
       Just argName -> lift $ bindVars env [(argName, List remainingArgs)]
       Nothing -> return env
+
+apply (IOFunc func) args = func args
 
 apply _ _ = error "apply: only for PrimitiveFunc / Func"

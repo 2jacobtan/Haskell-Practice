@@ -1,15 +1,15 @@
 module Repl where
 
-import System.IO ( hFlush, stdout )
+import System.IO (stderr, hPutStrLn,  hFlush, stdout )
 import Control.Monad ((>=>))
 import Data.Functor ((<&>))
 import Data.Function ((&))
 import Control.Monad.Except (MonadTrans(lift))
 
-import Types ( Env )
+import Types
 import Parsing ( extractValue, readExpr, trapError )
 import Evaluation ( eval )
-import VarsAndAssignment ( nullEnv, liftThrows, runIOThrows )
+import VarsAndAssignment (bindVars,  nullEnv, liftThrows, runIOThrows )
 import DefiningSchemeFunctions
 
 -- Bulding a REPL
@@ -36,7 +36,10 @@ until_ pred prompt action = do
 runRepl :: IO ()
 runRepl = until_ (== "quit") (readPrompt "Lisp>>> ") . evalAndPrint =<< primitiveBindings 
 
+runOne :: [String] -> IO ()
+runOne args = do
+  env <- ($ [("args", List $ String <$> drop 1 args)])
+    . bindVars =<< primitiveBindings
+  hPutStrLn stderr =<< runIOThrows (show <$> eval env (List [Atom "load", String (head args)]))
 
--- Adding Variables and Assignment
-runOne :: String -> IO ()
-runOne expr = primitiveBindings >>= flip evalAndPrint expr
+

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 82b0806a339fa0b8dcbe3f36117bd80b23bc0d44dd3987361a4f39986b93f625
+-- hash: 3a19e9b7946315f111acc6722bca3e2bdfe29131f09cd8dfc4c2eb594a6562b2
 
 name:           WYAS
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       DefiningSchemeFunctions
       Evaluation
+      IOPrimitives
       Lib
       Parsing
       Repl

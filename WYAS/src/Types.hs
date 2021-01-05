@@ -31,7 +31,7 @@ data LispVal
   | Func {
       params :: [String], vararg :: Maybe String,
       body :: [LispVal], closure :: Env
-  }
+      }
   | IOFunc ([LispVal] -> IOThrowsError LispVal)
   | Port Handle
 
@@ -53,6 +53,8 @@ showVal = \case
       (case vararg of
         Nothing -> ""
         Just arg -> " . " ++ arg) ++ ") ...)"
+  (Port _) -> "<IO port>"        
+  (IOFunc _) -> "<IO primitive>"
 
 unwordsList :: [LispVal] -> String
 unwordsList = unwords . map showVal
