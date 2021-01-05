@@ -14,9 +14,9 @@ import Types
       LispError(NumArgs, BadSpecialForm, TypeMismatch),
       LispVal(List, Number, String, Atom, DottedList, Bool,
               PrimitiveFunc, Func, closure, body, vararg, params),
-      ThrowsError )
+      ThrowsError, IOThrowsError )
 import VarsAndAssignment
-    (nullEnv,  IOThrowsError, liftThrows, getVar, setVar, defineVar, bindVars )
+    (nullEnv, liftThrows, getVar, setVar, defineVar, bindVars )
 import Control.Monad (join)
 
 

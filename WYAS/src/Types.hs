@@ -7,8 +7,12 @@ import Data.IORef (IORef)
 import Data.Array (Array)
 import Data.Complex (Complex)
 import Text.Parsec (ParseError)
+import Control.Monad.Except (ExceptT)
+import System.IO (Handle)
 
 type Env = IORef [(String, IORef LispVal)]
+
+type IOThrowsError = ExceptT LispError IO
 
 data LispVal 
   = Atom String
@@ -28,6 +32,8 @@ data LispVal
       params :: [String], vararg :: Maybe String,
       body :: [LispVal], closure :: Env
   }
+  | IOFunc ([LispVal] -> IOThrowsError LispVal)
+  | Port Handle
 
 
 -- Evaluation, Part 1

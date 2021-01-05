@@ -11,14 +11,12 @@ import Control.Monad.Except
 import Data.Maybe (isJust)
 
 import Parsing ( extractValue, trapError )
-import Types ( Env, LispError(UnboundVar), LispVal, ThrowsError )
+import Types ( Env, LispError(UnboundVar), LispVal, ThrowsError, IOThrowsError )
 
 -- Adding Variables and Assignment
 
 nullEnv :: IO Env
 nullEnv = newIORef []
-
-type IOThrowsError = ExceptT LispError IO
 
 liftThrows :: ThrowsError a -> IOThrowsError a
 liftThrows (Left err) = throwError err

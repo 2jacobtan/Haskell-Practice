@@ -1,7 +1,7 @@
 module DefiningSchemeFunctions where
 
 import Types
-import VarsAndAssignment (nullEnv,  bindVars, liftThrows, IOThrowsError )
+import VarsAndAssignment (nullEnv,  bindVars, liftThrows)
 import Evaluation (primitives, eval)
 
 primitiveBindings :: IO Env

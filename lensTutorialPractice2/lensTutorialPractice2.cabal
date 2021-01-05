@@ -1,0 +1,69 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: aa941c900353fbaf902c895f58bc8ac0279e41ddde1bb2ea20be797f857930f2
+
+name:           lensTutorialPractice2
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/lensTutorialPractice2#readme>
+homepage:       https://github.com/githubuser/lensTutorialPractice2#readme
+bug-reports:    https://github.com/githubuser/lensTutorialPractice2/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2021 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/lensTutorialPractice2
+
+library
+  exposed-modules:
+      Lib
+      Practice
+  other-modules:
+      Paths_lensTutorialPractice2
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , lens
+    , lens-tutorial
+  default-language: Haskell2010
+
+executable lensTutorialPractice2-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_lensTutorialPractice2
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , lens
+    , lens-tutorial
+    , lensTutorialPractice2
+  default-language: Haskell2010
+
+test-suite lensTutorialPractice2-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_lensTutorialPractice2
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , lens
+    , lens-tutorial
+    , lensTutorialPractice2
+  default-language: Haskell2010
