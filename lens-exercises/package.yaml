@@ -22,6 +22,11 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - pretty-simple
+- lens
+- text
+- aeson
+- lens-aeson
+- aeson-qq
 
 library:
   source-dirs: src
