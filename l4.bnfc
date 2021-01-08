@@ -1,0 +1,373 @@
+-- this is auto-generated from README.org. Use C-c C-v C-t to output a fresh version of this file.
+Rule.      Rule      ::= "RULE" RuleDef RuleName Asof MetaLimb RuleBody;
+
+RID.       RuleDef   ::=         ObjAttr ;
+RNumID.    RuleDef   ::= Integer ObjAttr ;
+RNum.      RuleDef   ::= Integer ;
+RName.     RuleName  ::= OptLangStrings ;
+
+rules      OptLangStrings ::= | LangStrings;
+
+-- a constitutive rule
+RuleDeem.     RuleBody  ::= GivenUpon [DefineLimb] WhenHenceWhere ;
+separator nonempty DefineLimb "";
+
+GU0.          GivenUpon ::= ;
+GUGiven.      GivenUpon ::= GivenLimb UponLimb;
+GUUpon.       GivenUpon ::= UponLimb GivenLimb;
+
+WHW.          WhenHenceWhere ::= WhenLimb HenceLimb WhereLimb ;
+
+DefLimb.    DefineLimb ::= DefineWord [ConstraintComma] WithLimb Asof ;
+
+DefDefine.  DefineWord ::= "DEFINE" ;
+DefDeem.    DefineWord ::= "DEEM" ;
+DefDeclare. DefineWord ::= "DECLARE" ;
+DefEntity.  DefineWord ::= "ENTITY" ;
+RModal.   RuleBody    ::= GivenUpon ModalLimb WhenHenceWhere ;
+
+MD1.      ModalLimb   ::= PartyLimb DeonticLimb DeadlineLimb;
+
+Parties.   PartyLimb   ::= "PARTIES" OptAsAlias;
+PartyLimb. PartyLimb   ::= "PARTY" PartyDef OptAsAlias;
+PSome.   PartyDef    ::= ObjAttr ;
+PEvery.  PartyDef    ::= PEvery ;
+rules    PEvery      ::=          "EVERYBODY" | "ANYBODY" | "EVERYONE" | "ANYONE" ;
+PNobody. PartyDef    ::= PNobody;
+rules    PNobody     ::=          "NOBODY" | "NO-ONE" | "NOONE" | "NONE" ;
+OptAsAlias0.  OptAsAlias     ::= ;
+OptAsAlias1.  OptAsAlias     ::= AsAlias ;
+AsAlias. AsAlias ::= "AS" ObjAttr ;
+rules    DeonticLimb ::= DeonticExpr OptLangStrings ActionLimb;
+DEMust.  DeonticExpr ::= "MUST" ;
+DEMay.   DeonticExpr ::= "MAY"  ;
+DEShant. DeonticExpr ::= "SHANT" ;
+-- Exp already contains LstExp
+-- ActionMulti.    ActionLimb  ::= LstExp [Blah] OptAsAlias ;
+ActionSingle.   ActionLimb  ::= Exp    [Blah] OptAsAlias ;
+DL0.         DeadlineLimb ::= ;
+DLLimb.      DeadlineLimb ::= TempRel TemporalExpr OptAsAlias ;
+TRBefore.    TempRel      ::= "BEFORE";
+TRPrior.     TempRel      ::= "PRIORTO"; -- immediately prior to
+TRAfter.     TempRel      ::= "AFTER";
+TRUntil.     TempRel      ::= "UNTIL";
+-- TODO: Move "TO" here, unless that would cause problems with things like "2020-06-01 TO someVarName"
+rules     TemporalExpr ::= DateTime DurationExpr | ObjAttr DurationExpr
+                        | "EARLIEST" LstExp
+                        | "LATEST"   LstExp
+                        | Duration;
+rules     DurationExpr ::= | "+" Duration ;
+TDY.      Duration     ::= Integer "YEARS" ;
+TDM.      Duration     ::= Integer "MONTHS" ;
+TDW.      Duration     ::= Integer "WEEKS" ;
+TDD.      Duration     ::= Integer "DAYS" ;
+TDBD.     Duration     ::= Integer "BUSINESS" "DAYS" ;
+TDDH.     Duration     ::= Integer "DAYS" "AND" Integer "HOURS" ;
+DNoHence. HenceLimb    ::= ;
+DHence.   HenceLimb    ::= "HENCE" Goto OptLangStrings;
+DHeLe.    HenceLimb    ::= "HENCE" Goto OptLangStrings "LEST" Goto OptLangStrings ;
+DLest.    HenceLimb    ::=                             "LEST" Goto OptLangStrings ;
+RGotoOne.       Goto   ::= RuleDef ;
+RGotoOneArgs.   Goto   ::= RuleDef Args ;
+RGotoLst.       Goto   ::= LstExp ; -- if we could, we'd make this a LstExp RuleDef, but we can't do that in BNFC.
+RFulfilled.     Goto   ::= "FULFILLED" ;
+RBreach.        Goto   ::= "BREACH" ;
+RulePerform.  RuleBody  ::= GivenUpon PartyLimb PerformWord [ConstraintComma] WithLimb WhenHenceWhere;
+
+PerHereby.    PerformWord ::= "HEREBY" ;
+PerAgree.     PerformWord ::= "AGREE" ;
+PerRep.       PerformWord ::= "REPRESENT" ;
+PerWar.       PerformWord ::= "WARRANT" ;
+PerRepWar.    PerformWord ::= "REPRANT" ;
+rules       UponLimb       ::= | "UPON" UponRefinement GivenExpr ;
+Upon0.      UponRefinement ::= ;
+Upon2.      UponRefinement ::= UponKleisli UponTime;
+UponEach.   UponKleisli    ::= "EACH"; -- fires once for each matching event
+UponAny.    UponKleisli    ::= "ANY";  -- collects all matching events, fires once
+UponPast.    UponTime      ::= "PAST"; -- match events prior to the UPON event
+UponFuture.  UponTime      ::= "FUTURE"; -- default; match events after the UPON
+UponCurrent. UponTime      ::= "CURRENT"; -- match events contemporaneous with UPON
+UponEver.    UponTime      ::= "EVER";    -- match past, current, and future
+GivenLimb0.     GivenLimb ::= ;
+GivenLimb1.     GivenLimb ::= "GIVEN"  GivenExpr ;
+rules      GivenExpr ::=   [Exp]
+                         | [Exp] HavingLimb ;
+rules     HavingLimb ::= "HAVING" "{" [HavingBoolExp] "}";
+rules     HavingBoolExp ::= Exp ;
+separator nonempty HavingBoolExp ";";
+NoWhen.      WhenLimb   ::= ;
+WhenMatch.   WhenLimb   ::= "WHEN" Exp ;
+WhenUnless.  WhenLimb   ::= "WHEN" Exp "UNLESS" Exp ;
+rules      WithLimb  ::= | WithHas "{" [WithIn] "}";
+rules      WithHas   ::= "WITH" | "HAS" | "TYPE" ;
+rules      WithIn    ::= Exp | TraceExpr;
+separator nonempty WithIn ";";
+Asof.      Asof      ::= "ASOF" DateTime ;
+AsofNull.  Asof      ::= ;
+rules      DateTime  ::= Iso8601 | "PRESENT" | "NOW" | "ENTRY" ;
+rules      Iso8601   ::= YYYYMMDD | YYYYMMDDTHHMM;
+
+token YYYYMMDD      ( digit digit digit digit '-'? digit digit '-'? digit digit );
+token YYYYMMDDTHHMM ( digit digit digit digit '-'? digit digit '-'? digit digit 'T' digit digit digit digit );
+Meta0.       MetaLimb ::= ;
+MetaNOTW.    MetaLimb ::= "NOTW" RuleDef ;
+MetaSubj.    MetaLimb ::= "SUBJ" RuleDef ;
+WhereLimb0.     WhereLimb ::= ;
+WhereLimb1.     WhereLimb ::= "WHERE" "{" [WhereExp] "}" ;
+rules     WhereExp  ::= GivenLimb Exp WithLimb WhenLimb WhereLimb ;
+
+separator nonempty WhereExp ";";
+RMatch.  RuleBody  ::= "MATCHTYPE" "{" [MatchVars] "}";
+rules    MatchVars ::= "Rule"        Rule
+                     | "ConstraintSemi"  "{" [ConstraintSemi] "}"
+                     | "ConstraintComma" "{" [ConstraintComma] "}"
+                     | "ObjMethod"   ObjMethod
+                     | "ObjAttr"     ObjAttr
+                     | "ObjAttrElem" ObjAttrElem
+                     | "UnifyElem"   [UnifyElem]
+                     | "Exp"         Exp
+                     | "LstExp"      LstExp
+                     | "CaseExpr"    Exp14
+                     | "WhenLimb"    WhenLimb
+                     | "WhereLimb"   WhereLimb
+                     | "DeonticLimb" DeonticLimb
+                     | "DefineLimb"  DefineLimb
+                     | "BraceList"   BraceList
+                     | "HenceLimb"   HenceLimb
+                     | "MatchQualifier"  MatchQualifier
+                     | "MatchQuantifier" MatchQuantifier
+                     | "MatchFlag"       MatchFlag
+                     | "RuleBody"    RuleBody;
+
+separator nonempty MatchVars ";";
+RBNoop.    RuleBody  ::= "NOOP";
+ModuleDecl. Module ::= "module" ObjAttr "where";
+Toplevel.  Tops      ::= [Toplevels];
+rules      Toplevels ::= Module | Import | Pragma
+                       | Rule | Scenario
+                       | Group | Section ;
+terminator Toplevels ";";
+
+layout toplevel;
+layout "WITH", "TRACE", "WHERE", "MATCHTYPE", "HAVING", "BEING", "GROUP", "SECTION", "THEN", "MATCHES";
+-- , "DEFINE", "ENTITY", "DECLARE", "DEEM";
+entrypoints Tops;
+Import. Import ::= "import" ObjAttr ;
+rules Group ::= "GROUP" RuleDef RuleName [Toplevels] ;
+
+rules Section ::= "SECTION" RuleDef RuleName WithLimb WhereLimb ;
+rules Pragma ::= "pragma" [Exp] ;
+RScenario. Scenario ::= "SCENARIO" ObjAttr WithLimb TraceExpr Asof WhereLimb ;
+rules      TraceExpr ::= "TRACE" "{" [LogEvent] "}";
+rules      LogEvent ::= Iso8601 ObjAttr ObjAttr [Blah] ;
+separator  nonempty LogEvent ";";
+separator  Blah "";
+rules      Blah     ::= Exp;
+comment "//" ;
+comment "--" ;
+comment "/*" "*/" ;
+coercions Exp 40;
+ConstE. Exp40 ::= ConstVal ;
+-- CaseE.  Exp38 ::= CaseExpr ;
+ListE.  Exp38 ::= LstExp ;
+BracesE. Exp38 ::= BraceList ; -- This might cause indentation confusion
+TempE.  Exp38 ::= DateTime ;
+RangeE. Exp37 ::= Exp38 "TO" Exp38 ;
+ObjME.  Exp35 ::= ObjMethod ;
+CurrE.  Exp34 ::= CurrencyPrefix Exp35 ;
+
+-- QualExp.      Exp25  ::= MatchQuantifier Exp30 OptAsAlias MatchQualifier [MatchFlag] ;
+
+-- Num -> Num -> Num
+PowE.   Exp22 ::= Exp23 PowOp Exp24 ;
+MulE.   Exp21 ::= Exp21 MulOp Exp22 ;
+AddE.   Exp20  ::= Exp20 AddOp Exp21 ;
+
+-- Set -> Set -> Set
+Set_Union.      Exp15 ::= Exp23 UNION     Exp23;
+Set_Subset.     Exp15 ::= Exp23 SUBSET    Exp23;
+Set_Intersect.  Exp15 ::= Exp23 INTERSECT Exp23;
+
+-- a -> a -> Bool
+CompE.  Exp9  ::= Exp10 CompOp Exp10 ;
+RelE.   Exp8  ::= Exp10 RelOp Exp9 ; -- TODO: Extract "HAS"
+
+-- Bool -> Bool
+UBool_Not. Exp7 ::= NOT Exp8 ;
+LikelyE. Exp6 ::= Likelihood Exp7 ;
+
+-- Bool -> Bool -> Bool
+BBool_And.   Exp5    ::= Exp5 AND Exp6;
+BBool_Or.    Exp4    ::= Exp4 OR  Exp5;
+-- BBool_Xor.   Exp4    ::= Exp6 "XOR" Exp6;
+
+-- Op1E.   Exp5 ::= UnaOp   Exp ;
+-- Op3E.   Exp3 ::= TriOp   Exp14 Exp14 Exp14; ;
+
+-- Op3ETern1.  Exp2 ::=         Exp "?"    Exp ":"    Exp;
+-- Op3ETern2.  Exp2 ::=    "IF" Exp "THEN" [ExpStm] ; -- classic "dangling else" shift/reduce conflict here
+-- Op3ETern3.  Exp2 ::=    "IF" Exp "THEN" [ExpStm] "ELSE" [ExpStm];
+
+-- BAssign2.    BinExp2   ::= Exp4 ":="   Exp5;
+
+ExpStm1.    ExpStm ::= Exp;
+ExpStmLet.  ExpStm ::= "LET" Exp;
+separator nonempty ExpStm ";"; -- used inside THEN and ELSE
+
+ListComp1.   LstExp ::=    "[" Exp "FOR" ObjAttr "IN" Exp "]" ;
+ListComp2.   LstExp ::=    "[" Exp "FOR" ObjAttr "IN" Exp "IF" Exp "]" ;
+ListComp3.   LstExp ::=    "["           ObjAttr "IN" Exp "IF" Exp "]" ;
+ListComp4.   LstExp ::=    "["           ObjAttr "IN" Exp          "]" ;
+ListComma.  LstExp ::=    "[" [Exp]         "]" ;
+ListAnd.    LstExp ::=    "[" [Exp] "&" Exp "]" ;
+ListOr.     LstExp ::=    "[" [Exp] "|" Exp "]" ;
+separator nonempty Exp "," ;
+
+-- TriOpITE. TriOp ::= "ITE" ;
+
+BoolV_T. ConstVal ::=  TrueBool ;
+BoolV_F. ConstVal ::= FalseBool ;
+BoolV_N. ConstVal ::= NothingBl ;
+IntV.    ConstVal ::= Integer ;
+FloatV.  ConstVal ::= Double ;
+StringV. ConstVal ::= String ;
+FloatPercent.  ConstVal ::= Double  "%" ;
+IntPercent.    ConstVal ::= Integer "%" ;
+
+-- Numeric operations
+BArith_Pow.  PowOp   ::= "**" ;
+
+BArith_Mul.  MulOp   ::= "*" ;
+BArith_Div.  MulOp   ::= "/" ;
+BL_Modulo1.  MulOp   ::= "%" ;
+
+BArith_Plus. AddOp   ::= "+" ;
+BArith_Sub.  AddOp   ::= "-" ;
+-- List concatenation
+L_Join.      AddOp   ::= "++";
+
+-- BL_Modulo2.  BinExp4   ::= Exp4 "%%"   Exp5 "-->" Exp5; -- rewrite
+
+-- Convert into bool
+BCmp_LT.     CompOp   ::= "<"   ;
+BCmp_LTE.    CompOp   ::= "<="  ;
+BCmp_GT.     CompOp   ::= ">"   ;
+BCmp_GTE.    CompOp   ::= ">="  ;
+BCmp_Eq1.    CompOp   ::= "="   ; -- constraint unification -- TODO: Remove
+BCmp_Eq2.    CompOp   ::= "=="  ; -- constraint unification
+BCmp_Eq3.    CompOp   ::= "===" ; -- object reference identity
+BCmp_Neq.    CompOp   ::= NEQ   ;
+BCmp_Match1. CompOp   ::= "~"   ;
+BCmp_NMatch. CompOp   ::= "!~"  ;
+
+BL_In.       RelOp   ::= "IN"        ;
+BRel_Fat.    RelOp   ::= "=>"        ;
+BRel_Is.     RelOp   ::= "IS"        ;
+BRel_Isa.    RelOp   ::= "ISA"       ;
+BRel_Has.    RelOp   ::= "HAS"       ;
+BRel_Are.    RelOp   ::= "ARE"       ;
+-- BRel_To.     RelOp   ::= "TO"        ;
+BRel_Sat1.   RelOp   ::= "SATISFY"   ;
+BRel_Sat2.   RelOp   ::= "SATISFIES" ;
+BRel_Exist1. RelOp   ::= "EXIST"     ;
+BRel_Exist2. RelOp   ::= "EXISTS"    ;
+
+
+rules        NEQ ::= "!=" | "/=";
+rules        AND ::= "^" | "&&" | "AND";
+rules        OR  ::= "∨" | "||" | "OR";
+rules        UNION ::= "U" | "∪" | "UNION";
+rules        SUBSET ::= "⊂" | "SUBSET";
+rules        INTERSECT ::=  "∩" | "INTERSECT";
+
+CurrCode.     CurrencyPrefix ::= ":" UIdent ":" ;
+CurrDollar.   CurrencyPrefix ::= "$";
+
+UBool_Unlikely.  Likelihood ::= "UNLIKELY" ;
+UBool_Likely.    Likelihood ::= "LIKELY" ;
+
+-- These are already in MatchQuantifier
+-- L_All.       UnaOp ::= "ALL";
+-- L_Any.       UnaOp ::= "ANY";
+
+-- What is this?
+-- L_Xor.       UnaOp ::= "XOR";
+
+
+token TrueBool  ["Tt"] ["Rr"] ["Uu"] ["Ee"] ;
+token FalseBool ["Ff"] ["Aa"] ["Ll"] ["Ss"] ["Ee"];
+token NothingBl ["Nn"] ["Oo"] ["Tt"] ["Hh"] ["Ii"] ["Nn"] ["Gg"] ;
+-- [a] -> a
+QualExp.      Exp25  ::= MatchQuantifier Exp30 OptAsAlias MatchQualifier [MatchFlag] ;
+
+rules NOT ::= "NOT" | "¬" | "!";
+
+-- ConstVal here will probably need to be upgraded to at least a variable
+-- so we can say, TheRelevantQuorum.Percentage
+MQuant0.      MatchQuantifier ::= "NONE OF" ;
+MQuantMin.    MatchQuantifier ::= "AT" "LEAST" ConstVal OptOf ;
+MQuantAny.    MatchQuantifier ::= "ANYOF" ;
+MQuantAll.    MatchQuantifier ::= "ALLOF" ;
+MQuantConst.  MatchQuantifier ::= "EXACTLY" ConstVal "OF" ;
+MQuantMax.    MatchQuantifier ::= "AT" "MOST" ConstVal OptOf ;
+MQuantNull.   MatchQuantifier ::= "SOME" ;
+
+OptOfNull.   OptOf           ::= ;
+OptOf.       OptOf           ::= "OF";
+
+MQualEach.      MatchQualifier ::= "EACH";
+MQualTogether.  MatchQualifier ::= "TOGETHER";
+MQualNull.      MatchQualifier ::= ;
+
+MFlagLDistinct. MatchFlag     ::= "L-DISTINCT" ;
+MFlagRDistinct. MatchFlag     ::= "R-DISTINCT" ;
+MFlagBDistinct. MatchFlag     ::=   "DISTINCT" ;
+MFlagNoRepeat.  MatchFlag     ::= "NO-REPEATS" ;
+separator MatchFlag ",";
+
+rules      ObjAttrElem  ::= Ident | UIdent ;            -- Foo
+
+OA_dots.   ObjAttr      ::= [ObjAttrElem];              -- Foo.Bar.Baz
+separator nonempty ObjAttrElem ".";
+separator nonempty ObjAttr     ",";
+OMArgs.    ObjMethod ::= [UnifyElem] Args OptLangStrings;
+OMNoAargs. ObjMethod ::= [UnifyElem] OptLangStrings;
+
+rules      Args       ::= "(" [ConstraintComma] ")";
+rules      UnifyElem ::= ObjAttrElem
+                      |  UnifyBracket
+                      |  UnifyStar
+                      |  "."; -- ideally we would have foo..bar and not foo...bar
+separator nonempty UnifyElem ".";
+rules      UnifyStar ::= "*" ;
+rules      UnifyBracket ::= "[" [CommaElem] "]" ;
+rules      CommaElem ::= ObjAttr;
+separator nonempty CommaElem ",";
+rules BraceList     ::= "{" [ConstraintComma] "}" ;
+CComma.  ConstraintComma   ::= Exp;
+CSemi.   ConstraintSemi    ::= Exp;
+separator nonempty ConstraintComma  "," ;
+separator nonempty ConstraintSemi   ";" ;
+
+-- rules ConstraintBinOp ::= "=" | "<" | ">" | "<=" | ">=" | "==" | "IS" | "ISA" | "ARE" | "HAS";
+CaseE. Exp38  ::= "CASE" ObjAttr "MATCHES" "{" [CaseExp] "}" ;
+rules CaseExp   ::= Exp "->" Exp;
+-- TODO: CaseExp should take a pattern, not an arbitrary Exp
+separator nonempty CaseExp ";";
+TU.        TypeUnify      ::= "::" "Unify";
+TS.        TypeString     ::= "::" "STRING";
+TB.        TypeBool       ::= "::" "Bool";
+TM.        TypeMath       ::= "::" "Math";
+TOM.       TypeObjMethod  ::= "::" "ObjMethod";
+TT.        TypeTemporal   ::= "::" "Temporal";
+token UIdent (upper (letter | digit | '_')*) ; -- doesn't seem to work for single character idents though, like P
+rules      UIdentList ::= [UIdentElem];
+rules      UIdentElem ::= UIdent;
+separator nonempty UIdentElem ".";
+
+ELangStrings. LangStrings  ::= [LangString] ;
+    separator nonempty LangString " ";
+ELangString.  LangString   ::= LangID String ;
+rules         LangID       ::= ":" [LangLabel] ":";
+rules         LangLabel    ::= Ident ;
+    separator nonempty LangLabel "," ;
