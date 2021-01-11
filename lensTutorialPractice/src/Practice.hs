@@ -10,7 +10,7 @@
 module Practice where
 
 import Control.Lens hiding (element)
-import Control.Lens.TH
+-- import Control.Lens.TH
 import Data.Monoid (Sum(Sum))
 
 data Atom = Atom { _element :: String, _point :: Point } deriving (Show)
