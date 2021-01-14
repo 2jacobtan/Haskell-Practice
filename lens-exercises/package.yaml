@@ -27,6 +27,7 @@ dependencies:
 - aeson
 - aeson-qq
 - lens-aeson
+- vector
 
 library:
   source-dirs: src

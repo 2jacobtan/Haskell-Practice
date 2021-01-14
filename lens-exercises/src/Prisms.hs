@@ -3,7 +3,12 @@
 
 module Prisms (
   module Prisms,
-  module Lens
+  module Lens,
+  module Control.Lens,
+  module Data.Aeson.QQ,
+  module Data.Aeson,
+  module Data.Aeson.Lens,
+
 ) where
 
 import Data.Aeson.QQ
