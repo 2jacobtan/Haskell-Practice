@@ -1,7 +1,10 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Prisms where
+module Prisms (
+  module Prisms,
+  module Lens
+) where
 
 import Data.Aeson.QQ
 import Data.Aeson (Value)

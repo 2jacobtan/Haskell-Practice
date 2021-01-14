@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 51684ecef26d32acf77f50de7d52b48f0c5ac8cbcdc853e78a74acbd781cbb44
+-- hash: 951cecf5118e02a2c4bbf2a34c1ae0cfbb3a42815826caa3d6906f54fdb2654c
 
 name:           lens-exercises
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      FoldsTraversals
       Lens
       Lib
       Prisms
