@@ -167,68 +167,68 @@ p3e2b = users & foldMapOf (key "users".values.key "metadata".key "associated_ips
 
 p3e3 = users & traverseOf_ (key "users".values.key "metadata".key "associated_ips".values._String) Text.putStrLn
 
-p4e4 = users & foldMapOf (key "users".values.key "metadata".key "num_logins"._Integer) Sum & getSum
--- >>> p4e4
+p3e4 = users & foldMapOf (key "users".values.key "metadata".key "num_logins"._Integer) Sum & getSum
+-- >>> p3e4
 -- 32
 
-p4e5 = do
+p3e5 = do
   prefix <- putStr "Enter prefix: " >> getLine <&> Text.pack
   print =<< (users & traverseOf (key "users".values.key "name"._String) (pure . Text.append prefix))
 
 
 -- Part 5
 
-p5e1' :: [Vector Value]
-p5e1' = users &
+p4e1' :: [Vector Value]
+p4e1' = users &
   flip (^..)
     (key "users".values.key "metadata".key "associated_ips"._Array)
 
-p5e1a :: Vector ()
-p5e1a = users &
+p4e1a :: Vector ()
+p4e1a = users &
   sequenceAOf_
     (key "users".values.key "metadata".key "associated_ips"._Array)
--- >>> p5e1'
--- >>> p5e1a
+-- >>> p4e1'
+-- >>> p4e1a
 -- [[String "52.49.1.233",String "52.49.1.234"],[String "51.2.244.193"]]
 
 -- [(),()]
 
--- p5e1b :: Vector Value
--- p5e1b = users &
+-- p4e1b :: Vector Value
+-- p4e1b = users &
 --   sequenceAOf
 --     (key "users".values.key "metadata".key "associated_ips"._Array)
 
 
--- p5e2err = users &
+-- p4e2err = users &
 --   key "users"._Array.folded.key "name"._String .~ "<unknown>"
-p5e2a = users &
+p4e2a = users &
   key "users"._Array.traversed.key "name"._String .~ "<unknown>"
-p5e2b = users &
+p4e2b = users &
   key "users".values.key "name"._String .~ "<unknown>"
--- >>> p5e2a
--- >>> p5e2b
+-- >>> p4e2a
+-- >>> p4e2b
 -- Object (fromList [("users",Array [Object (fromList [("email",String "qyifan@xingxin.com"),("name",String "<unknown>"),("metadata",Object (fromList [("num_logins",Number 5.0)]))]),Object (fromList [("name",String "<unknown>"),("metadata",Object (fromList [("associated_ips",Array [String "52.49.1.233",String "52.49.1.234"]),("num_logins",Number 27.0)]))]),Object (fromList [("email",String "smucheng@xingxin.com"),("name",String "<unknown>"),("metadata",Object (fromList [("associated_ips",Array [String "51.2.244.193"])]))])])])
 
 -- Object (fromList [("users",Array [Object (fromList [("email",String "qyifan@xingxin.com"),("name",String "<unknown>"),("metadata",Object (fromList [("num_logins",Number 5.0)]))]),Object (fromList [("name",String "<unknown>"),("metadata",Object (fromList [("associated_ips",Array [String "52.49.1.233",String "52.49.1.234"]),("num_logins",Number 27.0)]))]),Object (fromList [("email",String "smucheng@xingxin.com"),("name",String "<unknown>"),("metadata",Object (fromList [("associated_ips",Array [String "51.2.244.193"])]))])])])
 
 
-p5e3 = users &
+p4e3 = users &
   key "users"._Array.traversed.key "name"._String .~ "<unknown>"
--- >>> p5e3
+-- >>> p4e3
 
-p5e4 = users & key "users".values.key "email"._String %~ (<> ".cn")
--- >>> p5e4
+p4e4 = users & key "users".values.key "email"._String %~ (<> ".cn")
+-- >>> p4e4
 -- Object (fromList [("users",Array [Object (fromList [("email",String "qyifan@xingxin.com.cn"),("name",String "qiao.yifan"),("metadata",Object (fromList [("num_logins",Number 5.0)]))]),Object (fromList [("name",String "ye.xiu"),("metadata",Object (fromList [("associated_ips",Array [String "52.49.1.233",String "52.49.1.234"]),("num_logins",Number 27.0)]))]),Object (fromList [("email",String "smucheng@xingxin.com.cn"),("name",String "su.mucheng"),("metadata",Object (fromList [("associated_ips",Array [String "51.2.244.193"])]))])])])
 
-p5e5 = users &
+p4e5 = users &
   foldMapOf
     (key "users".values.key "metadata".key "num_logins"._Integer)
     (\x -> All $ x > 1)
--- >>> p5e5
+-- >>> p4e5
 -- All {getAll = True}
 
-p5e6 = users ^.. key "users"._Array.traversed.key "metadata"
--- >>> p5e6
+p4e6 = users ^.. key "users"._Array.traversed.key "metadata"
+-- >>> p4e6
 -- [Object (fromList [("num_logins",Number 5.0)]),Object (fromList [("associated_ips",Array [String "52.49.1.233",String "52.49.1.234"]),("num_logins",Number 27.0)]),Object (fromList [("associated_ips",Array [String "51.2.244.193"])])]
 
 
