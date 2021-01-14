@@ -197,6 +197,7 @@ p4e1a = users &
 -- p4e1b = users &
 --   sequenceAOf
 --     (key "users".values.key "metadata".key "associated_ips"._Array)
+--     --- ^ type won't fit, even though it works for sequenceAOf_ and flip (^..) ---- see prior paragraphs
 
 
 -- p4e2err = users &
