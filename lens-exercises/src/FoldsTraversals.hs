@@ -3,7 +3,7 @@
 
 module FoldsTraversals where
 
-import Prisms
+import Prisms hiding ((^..), sequenceAOf, traverseOf, traversed)
 import qualified Data.Text as Text
 import qualified Data.Text.IO as Text
 import Data.Monoid
@@ -11,7 +11,7 @@ import Data.IORef
 import Data.Functor (($>))
 import Data.Text (Text)
 import Data.Maybe (isJust)
-import Data.Vector (Vector)
+import Data.Vector (Vector, fromList)
 
 users = [aesonQQ|
   {
@@ -111,7 +111,7 @@ p2ex1 = do
   print =<< readIORef ref
   return result
 
-dop2ex1 = p2ex1 >>= print
+dop2ex1 = p2ex1 >>= print -- redundant on GHCi; just use p2ex1
 
 p2ex2 = print =<<
   (users &
@@ -193,6 +193,7 @@ p4e1a = users &
 
 -- [(),()]
 
+-- !!! I can't get this to work
 -- p4e1b :: Vector Value
 -- p4e1b = users &
 --   sequenceAOf
@@ -232,4 +233,43 @@ p4e6 = users ^.. key "users"._Array.traversed.key "metadata"
 -- >>> p4e6
 -- [Object (fromList [("num_logins",Number 5.0)]),Object (fromList [("associated_ips",Array [String "52.49.1.233",String "52.49.1.234"]),("num_logins",Number 27.0)]),Object (fromList [("associated_ips",Array [String "51.2.244.193"])])]
 
+
+-- Part 5
+
+infixl 8 ^..
+(^..) :: s
+      -> ((a -> Const (Endo [a]) b) -> s -> Const (Endo [a]) t)
+      -> [a]
+s ^.. l = l (Const . Endo . ((++) . pure)) s & getConst & flip appEndo []
+
+sequenceAOf :: ((f b -> f b) -> s -> f t) -> s -> f t
+sequenceAOf l = l id
+
+-- >>> sequenceAOf (both.traversed) ([[1,2],[3,4]],[[5,6]])
+-- >>> Prisms.sequenceAOf (both.traversed) ([[1,2],[3,4]],[[5,6]])
+-- [([1,3],[5]),([1,3],[6]),([1,4],[5]),([1,4],[6]),([2,3],[5]),([2,3],[6]),([2,4],[5]),([2,4],[6])]
+
+-- [([1,3],[5]),([1,3],[6]),([1,4],[5]),([1,4],[6]),([2,3],[5]),([2,3],[6]),([2,4],[5]),([2,4],[6])]
+
+traverseOf :: ((a -> f b) -> s -> f t) -> (a -> f b) -> s -> f t
+traverseOf = id
+
+traversed :: (Applicative f, Traversable t) => (a -> f b) -> t a -> f (t b)
+traversed = traverse
+
+-- >>>  sequenceAOf traversed $ fromList [fromList [1,2], fromList [3,4]]
+-- [[1,3],[1,4],[2,3],[2,4]]
+
+
+p5e5 = users ^? key "users".values.filtered (\x -> x ^? key "name" == Just "qiao.yifan").key "metadata".key "num_logins"
+p5e5b = users ^? key "users".values.filtered (\x -> x ^? key "name" == Just "qiao.yifan").key "metadata".key "associated_ips"
+p5e5c = users ^? key "users".values.filtered (\x -> x ^? key "name" == Just "ye.xiu").key "metadata".key "associated_ips"
+-- >>> p5e5
+-- >>> p5e5b
+-- >>> p5e5c
+-- Just (Number 5.0)
+
+-- Nothing
+
+-- Just (Array [String "52.49.1.233",String "52.49.1.234"])
 
