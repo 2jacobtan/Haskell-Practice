@@ -200,7 +200,7 @@ p4e1b :: Vector Value
 p4e1b = users &
   sequenceAOf
     (key "users".values.key "metadata".key "associated_ips"
-    .(_JSON :: Prism _ _ (Vector Value) Value))
+    .(_JSON :: Prism Value Value (Vector Value) Value))
 --     --- ^ type won't fit, even though it works for sequenceAOf_ and flip (^..) ---- see prior paragraphs
 --     --- edit: solved ! ! ! Used _JSON to decode. Started with Prism Value Value _ _ , and GHC told me to fill in the holes with Vector _0 and _0. :D
 
