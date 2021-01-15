@@ -194,12 +194,14 @@ p4e1a = users &
 -- [(),()]
 
 -- !!! I can't get this to work
--- p4e1b :: Vector Value
--- p4e1b = users &
---   sequenceAOf
---     (key "users".values.key "metadata".key "associated_ips"._Array)
+p4e1b :: Vector Value
+p4e1b = users &
+  sequenceAOf
+    (key "users".values.key "metadata".key "associated_ips".(_JSON :: Prism Value Value (Vector Value) Value))
 --     --- ^ type won't fit, even though it works for sequenceAOf_ and flip (^..) ---- see prior paragraphs
 
+-- >>> p4e1b
+-- [Object (fromList [("users",Array [Object (fromList [("email",String "qyifan@xingxin.com"),("name",String "qiao.yifan"),("metadata",Object (fromList [("num_logins",Number 5.0)]))]),Object (fromList [("name",String "ye.xiu"),("metadata",Object (fromList [("associated_ips",String "52.49.1.233"),("num_logins",Number 27.0)]))]),Object (fromList [("email",String "smucheng@xingxin.com"),("name",String "su.mucheng"),("metadata",Object (fromList [("associated_ips",String "51.2.244.193")]))])])]),Object (fromList [("users",Array [Object (fromList [("email",String "qyifan@xingxin.com"),("name",String "qiao.yifan"),("metadata",Object (fromList [("num_logins",Number 5.0)]))]),Object (fromList [("name",String "ye.xiu"),("metadata",Object (fromList [("associated_ips",String "52.49.1.234"),("num_logins",Number 27.0)]))]),Object (fromList [("email",String "smucheng@xingxin.com"),("name",String "su.mucheng"),("metadata",Object (fromList [("associated_ips",String "51.2.244.193")]))])])])]
 
 -- p4e2err = users &
 --   key "users"._Array.folded.key "name"._String .~ "<unknown>"
