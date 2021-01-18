@@ -1,5 +1,6 @@
-{-# LANGUAGE RankNTypes #-}
 -- https://www.seas.upenn.edu/~cis194/fall16/lectures/14-lenses.html
+
+{-# LANGUAGE RankNTypes #-}
 
 -- data Lens a b = LensCons {
 --     view :: a -> b,
