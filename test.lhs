@@ -15,10 +15,10 @@ Existential types
 data T = forall a. Show a => T a
 
 tList =
-    [ T 1
-    , T 'a'
-    , T True
-    ]
+  [ T 1
+  , T 'a'
+  , T True
+  ]
 
 printT = mapM_ (\(T x) -> print x) tList
 
@@ -240,18 +240,29 @@ _ =
 
 \begin{code}
 
-seqA :: (Applicative f) => 
+seqA :: Applicative f => 
   [f a] -> f [a]
 seqA [] = pure []
 seqA (x:xs) = (:) <$> x <*> seqA xs
--- seqA xs = foldr (\ x -> (<*>) ((:) <$> x)) (pure []) xs
+
 check = seqA [(+1)] 1
 check2 = ((:) <$> (+1) <*> pure []) 1
 check' =
   ( do
     x <- (+1)
-    y <- pure []
-    return $ (:) x y
+    y <- (+2)
+    return [x, y]
   ) 1
+  
+
+
+data List a = Cons a (List a) | Nil' deriving Show
+
+instance Foldable List where
+  foldr _ z Nil' = z
+  foldr f z (Cons x xs) = x `f` foldr f z xs
+
+seqA' :: (Foldable t, Applicative f) => t (f a) -> f (List a)
+seqA' xs = foldr (\ x -> (<*>) (Cons <$> x)) (pure Nil') xs
 
 \end{code}
