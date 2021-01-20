@@ -264,7 +264,7 @@ instance Foldable List where
   foldr f z (Cons x xs) = x `f` foldr f z xs
 
 seqA' :: (Foldable t, Applicative f) => t (f a) -> f (List a)
-seqA' xs = foldr (\ x -> (<*>) (Cons <$> x)) (pure Nil') xs
+seqA' xs = foldr (\x r -> Cons <$> x <*> r) (pure Nil') xs
 
 
 check'2 = do
