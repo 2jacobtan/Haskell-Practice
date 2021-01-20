@@ -236,3 +236,22 @@ _ =
   $ "    ////___aoeu"
 
 \end{code}
+
+
+\begin{code}
+
+seqA :: (Applicative f) => 
+  [f a] -> f [a]
+seqA [] = pure []
+seqA (x:xs) = (:) <$> x <*> seqA xs
+-- seqA xs = foldr (\ x -> (<*>) ((:) <$> x)) (pure []) xs
+check = seqA [(+1)] 1
+check2 = ((:) <$> (+1) <*> pure []) 1
+check' =
+  ( do
+    x <- (+1)
+    y <- pure []
+    return $ (:) x y
+  ) 1
+
+\end{code}
