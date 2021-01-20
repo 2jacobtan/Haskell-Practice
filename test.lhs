@@ -3,6 +3,7 @@ For testing purposes.
 \begin{code}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE ApplicativeDo #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 import Data.Function ((&))
 main = print "Hello world!"
@@ -272,12 +273,13 @@ check'2 = do
   pure $ x:y:[]
   $ 1
 
-sequenceA' :: (Foldable t, Applicative f) => t (f a) -> f [a]
-sequenceA' xs = foldr f (pure []) xs
+sequenceA' :: forall t f a . (Foldable t, Applicative f) =>
+              t (f a) -> f [a]
+sequenceA' xs = foldr g (pure []) xs  -- foldr deconstructs
   where
-    f x r = do
-      x' <- x
-      r' <- r
-      pure $ x':r'
+    g x r = do
+      x' <- (x :: f a)
+      r' <- (r :: f [a])
+      pure $ x':r'  -- reconstruct
 
 \end{code}
