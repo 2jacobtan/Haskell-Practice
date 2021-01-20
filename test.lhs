@@ -2,6 +2,7 @@ For testing purposes.
 
 \begin{code}
 {-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE ApplicativeDo #-}
 
 import Data.Function ((&))
 main = print "Hello world!"
@@ -247,12 +248,11 @@ seqA (x:xs) = (:) <$> x <*> seqA xs
 
 check = seqA [(+1)] 1
 check2 = ((:) <$> (+1) <*> pure []) 1
-check' =
-  ( do
-    x <- (+1)
-    y <- (+2)
-    return [x, y]
-  ) 1
+check' = do
+  x <- (+1)
+  y <- (+2)
+  pure [x, y]
+  $ 1
   
 
 
@@ -264,5 +264,20 @@ instance Foldable List where
 
 seqA' :: (Foldable t, Applicative f) => t (f a) -> f (List a)
 seqA' xs = foldr (\ x -> (<*>) (Cons <$> x)) (pure Nil') xs
+
+
+check'2 = do
+  x <- (+1)
+  y <- (+2)
+  pure $ x:y:[]
+  $ 1
+
+sequenceA' :: (Foldable t, Applicative f) => t (f a) -> f [a]
+sequenceA' xs = foldr f (pure []) xs
+  where
+    f x r = do
+      x' <- x
+      r' <- r
+      pure $ x':r'
 
 \end{code}
