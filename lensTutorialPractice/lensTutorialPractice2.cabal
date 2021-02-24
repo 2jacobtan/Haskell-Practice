@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 44ae9edbaa113c703e802447a9852109f6ba171557f1c4a2b8cf3d45ac801b1e
+-- hash: aa941c900353fbaf902c895f58bc8ac0279e41ddde1bb2ea20be797f857930f2
 
 name:           lensTutorialPractice2
 version:        0.1.0.0
@@ -29,7 +29,6 @@ library
   exposed-modules:
       Lib
       Practice
-      VowelBetweenConsonants
   other-modules:
       Paths_lensTutorialPractice2
   hs-source-dirs:
