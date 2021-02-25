@@ -33,6 +33,7 @@ infixr 7 </>
 -- phantom type
 -- I did not use Maybe in first try. Worked perfectly with Monad but Applicative had funny behaviour.
 -- Added Maybe and fixed Applicative behaviour.
+-- Update: removed Maybe. Empty list already suits the purppose.
 newtype MyVowels a = MkV {unV :: [String]}
   deriving (Show, Eq)
 
