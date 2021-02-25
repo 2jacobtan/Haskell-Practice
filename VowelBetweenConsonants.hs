@@ -33,12 +33,12 @@ infixr 7 </>
 -- phantom type
 -- I did not use Maybe in first try. Worked perfectly with Monad but Applicative had funny behaviour.
 -- Added Maybe and fixed Applicative behaviour.
-newtype MyVowels a = MkV {unV :: Maybe [String]}
+newtype MyVowels a = MkV {unV :: [String]}
   deriving (Show, Eq)
 
 -- overloaded strings
 instance IsString (MyVowels a) where
-  fromString string = MkV $ Just [string]
+  fromString string = MkV [string]
 
 -- basically, Functor and Applicative are derived from Monad
 instance Functor MyVowels where
@@ -53,17 +53,17 @@ instance Monad MyVowels where
   (>>=) (MkV mxss) f =
     let (MkV myss) = f undefined -- magic
      in case (mxss,myss) of
-        (Just xss, Just yss) -> MkV $ Just $
+        (_:_, _:_) -> MkV $
           [ xs ++ [vowel] ++ ys
-            | xs <- xss
+            | xs <- mxss
             , vowel <- "aeiou"
-            , ys <- yss
+            , ys <- myss
           ]
-        (Just xss, Nothing) -> MkV $ Just xss
-        (Nothing, Just yss) -> MkV $ Just yss
-        _ -> MkV Nothing
+        (_:_, []) -> MkV mxss
+        ([], _:_) -> MkV myss
+        _ -> MkV []
         
-  return _ = MkV Nothing
+  return _ = MkV []
 
 example :: MyVowels () = "x"
 -- >>> example
@@ -78,26 +78,27 @@ example2 :: MyVowels () = do
   "z"
 
 -- >>> example1
--- >>> fmap length $ unV example1
+-- >>> length $ unV example1
 -- >>> example2
--- >>> fmap length $ unV example2
--- MkV {unV = Just ["xay","xey","xiy","xoy","xuy"]}
--- Just 5
--- MkV {unV = Just ["xayaz","xayez","xayiz","xayoz","xayuz","xeyaz","xeyez","xeyiz","xeyoz","xeyuz","xiyaz","xiyez","xiyiz","xiyoz","xiyuz","xoyaz","xoyez","xoyiz","xoyoz","xoyuz","xuyaz","xuyez","xuyiz","xuyoz","xuyuz"]}
--- Just 25
+-- >>> length $ unV example2
+-- MkV {unV = ["xay","xey","xiy","xoy","xuy"]}
+-- 5
+-- MkV {unV = ["xayaz","xayez","xayiz","xayoz","xayuz","xeyaz","xeyez","xeyiz","xeyoz","xeyuz","xiyaz","xiyez","xiyiz","xiyoz","xiyuz","xoyaz","xoyez","xoyiz","xoyoz","xoyuz","xuyaz","xuyez","xuyiz","xuyoz","xuyuz"]}
+-- 25
+
 
 -- >>> "x" :: MyVowels ()
 -- >>> "x" <*> "y" :: MyVowels ()
 -- >>> "x" <*> "y" <*> "z" :: MyVowels ()
--- MkV {unV = Just ["x"]}
--- MkV {unV = Just ["xay","xey","xiy","xoy","xuy"]}
--- MkV {unV = Just ["xayaz","xayez","xayiz","xayoz","xayuz","xeyaz","xeyez","xeyiz","xeyoz","xeyuz","xiyaz","xiyez","xiyiz","xiyoz","xiyuz","xoyaz","xoyez","xoyiz","xoyoz","xoyuz","xuyaz","xuyez","xuyiz","xuyoz","xuyuz"]}
+-- MkV {unV = ["x"]}
+-- MkV {unV = ["xay","xey","xiy","xoy","xuy"]}
+-- MkV {unV = ["xayaz","xayez","xayiz","xayoz","xayuz","xeyaz","xeyez","xeyiz","xeyoz","xeyuz","xiyaz","xiyez","xiyiz","xiyoz","xiyuz","xoyaz","xoyez","xoyiz","xoyoz","xoyuz","xuyaz","xuyez","xuyiz","xuyoz","xuyuz"]}
 
 -- >>> sequence [] :: MyVowels [()]
 -- >>> sequence ["x" :: MyVowels ()]
 -- >>> sequence ["x" :: MyVowels (), "y"]
 -- >>> sequence ["x" :: MyVowels (), "y", "z"]
--- MkV {unV = Nothing}
--- MkV {unV = Just ["x"]}
--- MkV {unV = Just ["xay","xey","xiy","xoy","xuy"]}
--- MkV {unV = Just ["xayaz","xayez","xayiz","xayoz","xayuz","xeyaz","xeyez","xeyiz","xeyoz","xeyuz","xiyaz","xiyez","xiyiz","xiyoz","xiyuz","xoyaz","xoyez","xoyiz","xoyoz","xoyuz","xuyaz","xuyez","xuyiz","xuyoz","xuyuz"]}
+-- MkV {unV = []}
+-- MkV {unV = ["x"]}
+-- MkV {unV = ["xay","xey","xiy","xoy","xuy"]}
+-- MkV {unV = ["xayaz","xayez","xayiz","xayoz","xayuz","xeyaz","xeyez","xeyiz","xeyoz","xeyuz","xiyaz","xiyez","xiyiz","xiyoz","xiyuz","xoyaz","xoyez","xoyiz","xoyoz","xoyuz","xuyaz","xuyez","xuyiz","xuyoz","xuyuz"]}
