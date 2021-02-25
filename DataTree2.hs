@@ -52,6 +52,48 @@ main = do
 
 {-
 
+[1 of 1] Compiling DataTree2        ( /home/jt2/repos/Haskell-Practice/DataTree2.hs, interpreted )
+Ok, one module loaded.
+*DataTree2 PPrint> main
+I may order chocolate on Saturdays
+I may order strawberry on Saturdays
+I may order peanut butter and jelly on Saturdays
+MAY_
+|
++- I
+|
+`- ON_
+   |
+   +- ORDER_
+   |  |
+   |  `- chocolate
+   |
+   `- Saturdays
 
+MAY_
+|
++- I
+|
+`- ON_
+   |
+   +- ORDER_
+   |  |
+   |  `- strawberry
+   |
+   `- Saturdays
+
+MAY_
+|
++- I
+|
+`- ON_
+   |
+   +- ORDER_
+   |  |
+   |  `- peanut butter and jelly
+   |
+   `- Saturdays
+
+*DataTree2 PPrint>
 
 -}
