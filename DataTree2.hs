@@ -6,8 +6,12 @@ import Data.Tree
 import Data.Text ( unpack, Text )
 import Data.String (IsString)
 
--- “I may order (strawberry U chocolate) (ice cream U cake) on (Saturdays U Sundays)”
+{-
+Next evolution, I have a request to distinguish between U-lists and ∩-lists: you can order chocolate, strawberry, or peanut-butter-and-jelly.
 
+So we need to nest:
+Or [ Term chocolate, Term strawberry, And [ Term peanutButter, Term jelly ] ]
+-}
 
 example2 :: Tree [Text]
 example2 =
