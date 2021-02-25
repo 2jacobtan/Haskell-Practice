@@ -68,7 +68,7 @@ instance Monad MyVowels where
 
 example :: MyVowels () = "x"
 -- >>> example
--- MkV {unV = Just ["x"]}
+-- MkV {unV = ["x"]}
 
 example1 :: MyVowels () = do
   "x"
