@@ -6,6 +6,8 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE StandaloneDeriving #-}
 module TypeclassMetaprogramming where
 
 import Numeric.Natural (Natural)
@@ -120,14 +122,16 @@ main2 = do
 
 -- data HList as where
 --   HNil :: HList '[]
---   HCons :: a -> HList as -> HList (a ': as)
+--   HCons :: Show a => a -> HList as -> HList (a ': as)
+-- deriving instance Show (HList as)
 
 data family HList (as :: [*])
 data instance HList '[] = HNil deriving Show
 data instance HList (a ': as) = HCons a (HList as)
+deriving instance (Show a, Show (HList as)) => Show (HList (a ': as))
 
-instance (Show a, Show (HList as)) => Show (HList (a ': as)) where
-  show (HCons x xs) = "(" ++ show x ++ ") `HCons` (" ++ show xs ++ ")" 
+-- instance (Show a, Show (HList as)) => Show (HList (a ': as)) where
+--   show (HCons x xs) = "(" ++ show x ++ ") `HCons` (" ++ show xs ++ ")" 
 
 infixr 5 `HCons`
 
@@ -158,3 +162,40 @@ main3 :: IO ()
 main3 = do
   print $ pairUp HNil
   print $ pairUp (1 `HCons` True `HCons` HNil)
+
+
+-- Subtyping constraints
+
+data GQLKind
+  = Both
+  | Input
+  | Output
+
+-- data GQLType k where
+--   TScalar      :: GQLType 'Both
+--   TInputObject :: InputObjectInfo -> GQLType 'Input
+--   TIObject     :: ObjectInfo -> GQLType 'Output
+
+data SubKind k1 k2 where
+  KRefl :: SubKind k k
+  KBoth :: SubKind 'Both k
+
+class IsSubKind (k1 :: GQLKind) (k2 :: GQLKind) where
+  -- subKindProof :: SubKind k1 k2
+
+instance IsSubKind 'Both k where
+  -- subKindProof = KBoth
+
+instance (k ~ 'Input) => IsSubKind 'Input k where
+  -- subKindProof = KRefl
+
+instance (k ~ 'Output) => IsSubKind 'Output k where
+  -- subKindProof = KRefl
+
+data GQLParser (k :: GQLKind) a
+nullable :: IsSubKind k 'Input => GQLParser k a -> GQLParser k (Maybe a)
+nullable = undefined 
+
+_ = nullable (undefined :: GQLParser 'Both a)
+_ = nullable (undefined :: GQLParser 'Input a)
+-- _ = nullable (undefined :: GQLParser 'Output a) -- type error
