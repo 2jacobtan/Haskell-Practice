@@ -1,7 +1,11 @@
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE GADTs #-}
 module TypeclassMetaprogramming where
 
 import Numeric.Natural (Natural)
@@ -103,9 +107,54 @@ instance Generic Bool where
     False -> Left ()
     True -> Right ()
 
+main2 :: IO ()
 main2 = do
   print $ numFields $ AuthBasic "alyssa" "pass1234"
   print $ numFields $ AuthSSH "<key>"
   print $ numFields $ B ('a',True)
   print $ numFields True
   print $ numFields False
+
+
+-- Dependent Types
+
+-- data HList as where
+--   HNil :: HList '[]
+--   HCons :: a -> HList as -> HList (a ': as)
+
+data family HList (as :: [*])
+data instance HList '[] = HNil deriving Show
+data instance HList (a ': as) = HCons a (HList as)
+
+instance (Show a, Show (HList as)) => Show (HList (a ': as)) where
+  show (HCons x xs) = "(" ++ show x ++ ") `HCons` (" ++ show xs ++ ")" 
+
+infixr 5 `HCons`
+
+data Even as where
+  EvenNil  :: Even '[]
+  EvenCons :: Even as -> Even (a ': b ': as)
+
+type family PairUp as where
+  PairUp '[] = '[]
+  PairUp (a ': b ': as) = (a, b) ': PairUp as
+
+class IsEven as where
+  evenProof :: Even as
+
+instance IsEven '[] where
+  evenProof = EvenNil
+
+instance IsEven as => IsEven (a ': b ': as) where
+  evenProof = EvenCons evenProof
+
+pairUp :: IsEven as => HList as -> HList (PairUp as)
+pairUp = go evenProof where
+  go :: Even as -> HList as -> HList (PairUp as)
+  go EvenNil HNil = HNil
+  go (EvenCons even) (x `HCons` y `HCons` xs) = (x,y) `HCons` go even xs
+
+main3 :: IO ()
+main3 = do
+  print $ pairUp HNil
+  print $ pairUp (1 `HCons` True `HCons` HNil)
