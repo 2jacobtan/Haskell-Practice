@@ -9,8 +9,8 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeFamilies #-}
-
 {-# LANGUAGE TypeOperators #-}
+
 import Data.Kind (Type)
 import Prelude (Bool (..), Show, (&&))
 
