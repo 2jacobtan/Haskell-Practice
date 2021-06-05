@@ -1,14 +1,16 @@
 -- https://www.youtube.com/watch?v=PHS3Q-tRjFQ&list=PLyzwHTVJlRc9QcF_tdqc9RdxJED8Mvyh1&index=26
 -- @rae: How to program in types with length-indexed vectors: Part 1
+-- {-# OPTIONS_GHC -Wall #-}
+-- {-# OPTIONS_GHC -Wno-unticked-promoted-constructors #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
+{-# LANGUAGE TypeFamilies #-}
 
--- {-# OPTIONS_GHC -Wall #-}
--- {-# OPTIONS_GHC -Wno-unticked-promoted-constructors #-}
-
+{-# LANGUAGE TypeOperators #-}
 import Data.Kind (Type)
 import Prelude (Bool (..), Show, (&&))
 
@@ -50,3 +52,34 @@ length (_ :> xs) = SSucc (length xs)
 replicate :: SNat n -> a -> Vec n a
 replicate SZero _ = Nil
 replicate (SSucc n) x = x :> replicate n x
+
+type (+) :: Nat -> Nat -> Nat
+type family (+) n m where
+  (+) Zero m = m
+  (+) (Succ n) m = Succ (n + m)
+
+(++) :: Vec n a -> Vec m a -> Vec (n + m) a
+(++) Nil ys = ys
+(++) (x :> xs) ys = x :> (++) xs ys
+
+type Min :: Nat -> Nat -> Nat
+type family Min n m where
+  Min Zero _ = Zero
+  Min _ Zero = Zero
+  Min (Succ n) (Succ m) = Succ (Min n m)
+
+take :: SNat n -> Vec m a -> Vec (Min n m) a
+take SZero _ = Nil
+take _ Nil = Nil
+take (SSucc n) (x :> xs) = x :> take n xs
+
+type Drop :: Nat -> Nat -> Nat
+type family Drop n m where
+  Drop Zero m = m
+  Drop _ Zero = Zero
+  Drop (Succ n) (Succ m) = Drop n m
+
+drop :: SNat n -> Vec m a -> Vec (Drop n m) a
+drop SZero xs = xs
+drop _ Nil = Nil
+drop (SSucc n) (_ :> xs) = drop n xs
