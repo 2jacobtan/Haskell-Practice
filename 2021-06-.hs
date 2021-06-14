@@ -1,6 +1,9 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE EmptyDataDeriving #-}
+{-# LANGUAGE ExplicitForAll #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 import Data.Set (Set)
 import qualified Data.Set as Set
 
@@ -45,4 +48,29 @@ yy = Set.empty @Null
 -- yyy :: Set Null
 -- yyy = yy <> undefined
 
-------------
+
+
+----------------------------------------------------------------
+
+
+
+-- 2021-06-14
+
+foo :: forall a . (Show a, Num a) => a -> Int
+foo _ = length . show $ (1 :: (Show a, Num a) => a)
+
+bar :: String
+bar = if foo (0.0 :: Double) == 3
+  then "-XScopedTypeVariables"
+  else "-XNoScopedTypeVariables"
+
+---
+
+-- bazz :: a -> a
+-- bazz x = fizz
+--   where
+--     fizz :: forall . c
+--     fizz = x
+
+-- Cf. https://www.youtube.com/watch?v=ijicXvkipFI&t=9m48s
+--    "forall or nothing" rule
