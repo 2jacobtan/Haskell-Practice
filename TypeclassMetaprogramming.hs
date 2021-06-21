@@ -166,12 +166,23 @@ pairUp = go evenProof where
 -- idH (HCons y ys) = HCons y ys
 
 --- | works with data family
-class IdH as where
-  idH :: HList as -> HList as
-instance IdH '[] where
-  idH HNil = HNil
-instance IdH (a ': as) where
-  idH (HCons y ys) = HCons y ys
+-- class IdH as where
+--   idH :: HList as -> HList as
+-- instance IdH '[] where
+--   idH HNil = HNil
+-- instance IdH (a ': as) where
+--   idH (HCons y ys) = HCons y ys
+
+--- | also works with data family
+data InferH as where
+  InferNil :: InferH '[]
+  InferCons :: InferH (a ': as)
+idH :: InferH as -> HList as -> HList as
+idH InferNil HNil = HNil
+idH InferCons (HCons y ys) = HCons y ys
+
+--- ^ data family's index cannot be inferred by pattern matching on the data constructor
+--    see https://stackoverflow.com/a/52370623/11768202
 
 main3 :: IO ()
 main3 = do
