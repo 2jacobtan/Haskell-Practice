@@ -183,6 +183,7 @@ idH InferCons (HCons y ys) = HCons y ys
 
 --- ^ data family's index cannot be inferred by pattern matching on the data constructor
 --    see https://stackoverflow.com/a/52370623/11768202
+--      also https://downloads.haskell.org/ghc/latest/docs/html/users_guide/exts/type_families.html#data-families
 
 main3 :: IO ()
 main3 = do
