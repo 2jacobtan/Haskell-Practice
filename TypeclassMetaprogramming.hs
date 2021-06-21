@@ -158,12 +158,25 @@ pairUp :: IsEven as => HList as -> HList (PairUp as)
 pairUp = go evenProof where
   go :: Even as -> HList as -> HList (PairUp as)
   go EvenNil HNil = HNil
-  go (EvenCons even) (x `HCons` y `HCons` xs) = (x,y) `HCons` go even xs
+  go (EvenCons even_) (x `HCons` y `HCons` xs) = (x,y) `HCons` go even_ xs
+
+--- | works with GADT
+-- consH :: Show a => a -> HList as -> HList (a ': as)
+-- consH x HNil = HCons x HNil
+-- consH x (HCons y ys) = HCons x (HCons y ys)
+
+--- | works with data family
+class ConsH as where
+  consH :: Show a => a -> HList as -> HList (a ': as)
+instance ConsH '[] where
+  consH x HNil = HCons x HNil
+instance ConsH (a ': as) where
+  consH x (HCons y ys) = HCons x (HCons y ys)
 
 main3 :: IO ()
 main3 = do
   print $ pairUp HNil
-  print $ pairUp (1 `HCons` True `HCons` HNil)
+  print $ pairUp ((1 :: Int) `HCons` True `HCons` HNil)
 
 
 -- Subtyping constraints
