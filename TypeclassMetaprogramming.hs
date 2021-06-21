@@ -161,17 +161,17 @@ pairUp = go evenProof where
   go (EvenCons even_) (x `HCons` y `HCons` xs) = (x,y) `HCons` go even_ xs
 
 --- | works with GADT
--- consH :: Show a => a -> HList as -> HList (a ': as)
--- consH x HNil = HCons x HNil
--- consH x (HCons y ys) = HCons x (HCons y ys)
+-- idH :: HList as -> HList as
+-- idH HNil = HNil
+-- idH (HCons y ys) = HCons y ys
 
 --- | works with data family
-class ConsH as where
-  consH :: Show a => a -> HList as -> HList (a ': as)
-instance ConsH '[] where
-  consH x HNil = HCons x HNil
-instance ConsH (a ': as) where
-  consH x (HCons y ys) = HCons x (HCons y ys)
+class IdH as where
+  idH :: HList as -> HList as
+instance IdH '[] where
+  idH HNil = HNil
+instance IdH (a ': as) where
+  idH (HCons y ys) = HCons y ys
 
 main3 :: IO ()
 main3 = do
