@@ -74,3 +74,19 @@ bar = if foo (0.0 :: Double) == 3
 
 -- Cf. https://www.youtube.com/watch?v=ijicXvkipFI&t=9m48s
 --    "forall or nothing" rule
+
+---
+
+-- 2021-06-22
+
+-- Wingman: tactic metaprogramming
+-- https://www.youtube.com/watch?v=S0HvfXq3454H
+
+-- apMaybe :: Maybe (a -> b) -> Maybe a -> Maybe b
+-- apMaybe = [wingman|
+--   intros,
+--   destruct_all;
+--   (ctor Just,
+--   application,
+--   assumption) | obvious
+--   |]
