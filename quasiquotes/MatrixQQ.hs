@@ -4,9 +4,9 @@
 
 module MatrixQQ where
 
-import Data.Function
-import Language.Haskell.TH.Quote
-import Language.Haskell.TH.Syntax
+import Data.Function ( (&) )
+import Language.Haskell.TH.Quote ( QuasiQuoter(..) )
+import Language.Haskell.TH.Syntax ( Exp, Q, liftData )
 import Text.Read (readMaybe)
 
 matrix :: QuasiQuoter
