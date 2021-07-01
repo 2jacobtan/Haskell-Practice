@@ -2,11 +2,14 @@
 
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 
 module CalcQQ where
 
+-- import Language.Haskell.TH.Syntax
+--     ( Lift(lift, liftTyped), Exp, Q, location, Loc(loc_filename), liftData )
 import Language.Haskell.TH.Syntax
-    ( Lift(lift, liftTyped), Exp, Q, location, Loc(loc_filename) )
+    ( Exp, Q, location, Loc(loc_filename), liftData )
 import Language.Haskell.TH.Quote ( QuasiQuoter(QuasiQuoter) )
 
 import Text.Parsec ( eof, (<|>), parse, ParseError )
@@ -17,6 +20,7 @@ import qualified Text.Parsec.Expr as Ex
 import qualified Text.Parsec.Token as Tok
 
 import Control.Monad.Identity ( Identity )
+import Data.Data
 
 data Expr
   = Tr
@@ -24,15 +28,15 @@ data Expr
   | Zero
   | Succ Expr
   | Pred Expr
-  deriving (Eq, Show)
+  deriving (Eq, Show, Data)
 
-instance Lift Expr where
-  lift Tr         = [| Tr |]
-  lift Fl         = [| Tr |]
-  lift Zero       = [| Zero |]
-  lift (Succ a)   = [| Succ a |]
-  lift (Pred a)   = [| Pred a |]
-  liftTyped = error "not implemented"
+-- instance Lift Expr where
+--   lift Tr         = [| Tr |]
+--   lift Fl         = [| Tr |]
+--   lift Zero       = [| Zero |]
+--   lift (Succ a)   = [| Succ a |]
+--   lift (Pred a)   = [| Pred a |]
+--   liftTyped = error "not implemented"
 
 type Op = Ex.Operator String () Identity
 
@@ -97,7 +101,8 @@ calcExpr str = do
   filename <- loc_filename `fmap` location
   case parse (contents expr) filename str of
     Left err -> error (show err)
-    Right tag -> [| tag |]
+    -- Right tag -> [| tag |]
+    Right tag -> liftData tag
 
 calc :: QuasiQuoter
 calc = QuasiQuoter calcExpr err err err
