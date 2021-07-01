@@ -4,7 +4,7 @@
 
 module QuasiQuotesExample where
 
-import MatrixQQ
+import MatrixQQ ( matrix )
 
 numbers :: [[Int]]
 numbers =
