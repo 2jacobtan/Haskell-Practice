@@ -11,26 +11,20 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE LambdaCase #-}
-
--- https://www.youtube.com/watch?v=PHS3Q-tRjFQ&list=PLyzwHTVJlRc9QcF_tdqc9RdxJED8Mvyh1&index=26
--- @rae: How to program in types with length-indexed vectors: Part 1
--- {-# OPTIONS_GHC -Wall #-}
--- {-# OPTIONS_GHC -Wno-unticked-promoted-constructors #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE UndecidableSuperClasses #-}
+{-# LANGUAGE ExplicitForAll #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-unused-imports #-}
+
 import Data.Kind (Type, Constraint)
-import Prelude (Bool (..), Show, (&&), otherwise, ($), Eq ((==)), (||))
+import Prelude (Bool (..), Show, (&&), otherwise, ($), Eq ((==)), (||), undefined, (.))
+import Data.Type.Equality ( type (:~:) (Refl) )
+import Unsafe.Coerce (unsafeCoerce)
 
 data Nat = Zero | Succ Nat
 
@@ -145,3 +139,42 @@ union xs Nil = MkEVec xs
 union (x :> xs) ys
   | x `elem` ys = case xs `union` ys of MkEVec v -> MkEVec v
   | otherwise = case xs `union` ys of MkEVec v -> MkEVec $ x :> v
+
+
+-- https://www.youtube.com/watch?v=jPZciAJ0oaw&list=PLyzwHTVJlRc9QcF_tdqc9RdxJED8Mvyh1&index=31
+-- @rae: Using proofs to make functions faster over length-indexed vectors
+
+snoc :: Vec n a -> a -> Vec (Succ n) a
+snoc Nil y = y :> Nil
+snoc (x :> xs) y = x :> snoc xs y
+
+-- reverse :: Vec n a -> Vec n a
+-- reverse Nil = Nil
+-- reverse (x :> xs) = reverse xs `snoc` x
+
+trust :: (a :~: b) -> (a :~: b)
+trust _ = unsafeCoerce Refl
+-- ^ Even better, in GHC 9.2, instead of unsafeCoerce Refl, we could write
+-- trust _ = case unsafeEqualityProof @a @b of UnsafeRefl -> Refl
+-- which will optimize better than a use of unsafeCoerce.
+
+mPlusZero :: forall m. SNat m -> (m + Zero) :~: m
+mPlusZero = \case
+  SZero -> Refl @m
+  SSucc m' -> case mPlusZero m' of Refl -> Refl
+mPlusZeroT :: SNat b -> (b + 'Zero) :~: b
+mPlusZeroT m = trust (mPlusZero m)
+
+mPlusSucc :: forall m n. SNat m -> (m + Succ n) :~: Succ (m + n)
+mPlusSucc = \case
+  SZero -> Refl
+  SSucc m' -> case mPlusSucc @_ @n m' of Refl -> Refl
+mPlusSuccT :: forall m n. SNat m -> (m + 'Succ n) :~: 'Succ (m + n)
+mPlusSuccT m = trust (mPlusSucc @_ @n m)
+
+reverse :: Vec n a -> Vec n a
+reverse = go SZero Nil
+  where
+    go :: forall m p a. SNat m -> Vec m a -> Vec p a -> Vec (m + p) a
+    go m acc Nil = case mPlusZeroT @m m of Refl -> acc
+    go m acc (x :> (xs :: Vec p_pred a)) = case mPlusSuccT @m @p_pred m of Refl -> go (SSucc m) (x :> acc) xs
