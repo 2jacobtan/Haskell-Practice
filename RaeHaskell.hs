@@ -97,8 +97,10 @@ drop _ Nil = Nil
 drop (SSucc n) (_ :> xs) = drop n xs
 
 type EVec :: (Nat -> Constraint) -> Type -> Type
-data EVec c a where
-  MkEVec :: c n => Vec n a -> EVec c a
+-- data EVec c a where
+--   MkEVec :: c n => Vec n a -> EVec c a
+data EVec c a = forall n. c n => MkEVec (Vec n a)
+deriving instance Show a => Show (EVec c a)
 
 type KnowNothing :: Nat -> Constraint
 class KnowNothing n
@@ -113,9 +115,11 @@ instance {-# OVERLAPPABLE #-} m >= n => Succ m >= n
 
 filter :: (a -> Bool) -> Vec n a -> EVec ((>=) n) a
 filter _ Nil = MkEVec Nil
-filter p (x:>xs)
-  | p x = case filter p xs of MkEVec tail ->  MkEVec $ x :> tail
-  | otherwise = case filter p xs of MkEVec v -> MkEVec v
+-- filter p (x:>xs)
+  --- | p x = case filter p xs of MkEVec v ->  MkEVec $ x :> v
+  --- | otherwise = case filter p xs of MkEVec v -> MkEVec v
+filter p (x:>xs) =
+  case filter p xs of MkEVec v -> if p x then MkEVec (x :> v) else MkEVec v
 
 elem :: Eq a => a -> Vec n a -> Bool
 elem _ Nil = False
