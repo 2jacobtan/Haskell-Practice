@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7b8a196cc001d6719073a1f1f3de5a97f3b2226928d13608d21ba8e0502c2cd4
+-- hash: 37e99f1def7d6b892227be38db0f1678eba51c0b46c5bb15c19dd78145b638c4
 
 name:           ch24-parser-combinators
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Ex7
       Lib
   other-modules:
       Paths_ch24_parser_combinators
@@ -34,6 +35,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , megaparsec
   default-language: Haskell2010
 
 executable ch24-parser-combinators-exe
@@ -46,6 +48,7 @@ executable ch24-parser-combinators-exe
   build-depends:
       base >=4.7 && <5
     , ch24-parser-combinators
+    , megaparsec
   default-language: Haskell2010
 
 test-suite ch24-parser-combinators-test
@@ -59,4 +62,5 @@ test-suite ch24-parser-combinators-test
   build-depends:
       base >=4.7 && <5
     , ch24-parser-combinators
+    , megaparsec
   default-language: Haskell2010
