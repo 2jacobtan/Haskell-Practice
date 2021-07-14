@@ -49,20 +49,20 @@ data Label =
 
 -- import Data.Foldable (Foldable(foldl'))
 
-data Petri
+data Markings
 data Transition
 
 -- | trigger the transition on the petri net
-triggerPetri :: Petri -> Transition -> Petri
+triggerPetri :: Markings -> Transition -> Markings
 triggerPetri = undefined
 
-execPetri :: (Petri -> Transition -> Petri) -> Petri -> [Transition] -> Petri
+execPetri :: (Markings -> Transition -> Markings) -> Markings -> [Transition] -> Markings
 execPetri = foldl'
 
-execPetri2 :: Petri -> [Transition] -> Petri
+execPetri2 :: Markings -> [Transition] -> Markings
 execPetri2 petri stream = execState (foldr (>>) (pure ()) (fmap mkState_ stream)) petri
   where
-    mkState_ :: Transition -> State Petri ()
+    mkState_ :: Transition -> State Markings ()
     mkState_ transition = state (\s -> ((), triggerPetri s transition))
 
 ----------------------------------------------------------------
