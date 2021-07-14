@@ -4,7 +4,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE DerivingStrategies #-}
--- {-# OPTIONS_GHC -Wno-orphans#-}
 {-# LANGUAGE UndecidableInstances #-}
 module WitchTest where
 
@@ -13,7 +12,9 @@ import Data.Set (Set)
 
 -- https://hackage.haskell.org/package/witch-0.3.4.0/docs/Witch.html
 
-newtype List a = List [a] deriving newtype Functor deriving Show
+newtype List a = List [a]
+  deriving stock Show
+  deriving newtype Functor
 instance From (List a) [a]
 instance From [a] (List a)
 instance {-# OVERLAPPABLE #-} From [a] b => From (List a) b where
