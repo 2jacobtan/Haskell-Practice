@@ -40,10 +40,10 @@ y :: List Bool
 y = from [True]
 
 z :: Set Integer
-z = into . fmap (into @Integer) $ List [1,2,3 :: Int]
+z = into @(Set _) @(List _) . fmap (into @Integer @Int) $ List [1,2,3 :: Int]
 
 zz :: List Integer
-zz = into . Set.map (into @Integer) $ Set.fromList [1,2,3 :: Int]
+zz = into @(List _) @(Set _) . Set.map (into @Integer @Int) $ Set.fromList [1,2,3 :: Int]
 
 -- >>> x
 -- >>> y
