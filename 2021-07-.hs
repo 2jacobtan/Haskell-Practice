@@ -1,6 +1,9 @@
---- 2021-07-12 -- refactoring
-
 {-# LANGUAGE LambdaCase #-}
+
+import Data.Foldable (Foldable(foldl'))
+import Control.Monad.Trans.State.Strict (State, state, execState)
+
+--- 2021-07-12 -- refactoring
 
 {-
 termItem :: String -> Item -> Item
@@ -41,5 +44,25 @@ data Item =
 data Label =
     Pre String
   | PrePost String String
+
+----------------------------------------------------------------
+
+-- import Data.Foldable (Foldable(foldl'))
+
+data Petri
+data Transition
+
+-- | trigger the transition on the petri net
+triggerPetri :: Petri -> Transition -> Petri
+triggerPetri = undefined
+
+execPetri :: (Petri -> Transition -> Petri) -> Petri -> [Transition] -> Petri
+execPetri = foldl'
+
+execPetri2 :: Petri -> [Transition] -> Petri
+execPetri2 petri stream = execState (foldr (>>) (pure ()) (fmap mkState_ stream)) petri
+  where
+    mkState_ :: Transition -> State Petri ()
+    mkState_ transition = state (\s -> ((), triggerPetri s transition))
 
 ----------------------------------------------------------------
