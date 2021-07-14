@@ -17,7 +17,8 @@ newtype List a = List [a]
   deriving newtype Functor
 instance From (List a) [a]
 instance From [a] (List a)
-instance {-# OVERLAPPABLE #-} From [a] b => From (List a) b where
+instance {-# OVERLAPPABLE #-} From [a] b  -- undecidable instance
+  => From (List a) b where
   from = into . into @[a]
 
 newtype Integ = Integ Int deriving (Eq, Ord)
