@@ -144,6 +144,35 @@ union (x :> xs) ys
   | x `elem` ys = case xs `union` ys of MkEVec v -> MkEVec v
   | otherwise = case xs `union` ys of MkEVec v -> MkEVec $ x :> v
 
+-- https://www.youtube.com/watch?v=S5Oz_w9HDs0&list=PLyzwHTVJlRc9QcF_tdqc9RdxJED8Mvyh1&index=33
+-- @rae: Some functions on length-indexed vectors require custom GADTs
+
+type Fin :: Nat -> Type
+data Fin _n where  -- Fin n < n
+  FZero :: Fin (Succ n)
+  FSucc :: Fin n -> Fin (Succ n)
+
+(!!) :: Vec n a -> Fin n -> a
+(h :> _t) !! FZero = h
+(_h :> t) !! FSucc fin = t !! fin
+
+mPlusNZero :: (m + n ~ Zero) => SNat m -> (n :~: Zero)
+mPlusNZero SZero = Refl
+
+plusComm :: SNat m -> SNat n -> (m + n :~: n + m)
+plusComm SZero n = case mPlusZero n of Refl -> Refl
+plusComm (SSucc (m' :: SNat m')) n =
+  case mPlusSucc @_ @m' n of Refl -> case plusComm m' n of Refl -> Refl
+
+type PlusVec :: Nat -> Type -> Type
+data PlusVec _n _a where
+  MkPlusVec :: Vec m1 a -> Vec m2 a -> PlusVec (m1 + m2) a
+
+span :: (a -> Bool) -> Vec n a -> PlusVec n a
+span _p Nil = MkPlusVec Nil Nil
+span p (x :> xs)
+  | p x = case  span p xs of MkPlusVec yes rest -> MkPlusVec (x :> yes) rest
+  | otherwise = MkPlusVec Nil (x :> xs)
 
 -- https://www.youtube.com/watch?v=jPZciAJ0oaw&list=PLyzwHTVJlRc9QcF_tdqc9RdxJED8Mvyh1&index=31
 -- @rae: Using proofs to make functions faster over length-indexed vectors
