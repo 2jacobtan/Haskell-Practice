@@ -1,8 +1,9 @@
 {-# LANGUAGE PartialTypeSignatures #-}
 {-# LANGUAGE TupleSections #-}
+{-# LANGUAGE RankNTypes #-}
 module Lib
     ( someFunc
-    , x) where
+    , x, y) where
 import Data.Char (intToDigit)
 
 someFunc :: IO ()
@@ -16,4 +17,19 @@ x = foldr f ([],) [1..4] ""
     f l r acc =
       let (r',a') = r (intToDigit l : acc)
       in (l : r', a')  -- (right fold result, left fold result)
+
+-- | rank n types
+
+fa :: a -> a
+fa = id
+
+fe :: (forall a . a -> a) -> b -> (Int, b)
+fe fa' b = (fa' (1 :: Int), b)
+
+y :: (Int, Bool)
+y = fe fa True
+-- >>> fe id True
+-- (1,True)
+
+-- ----------------------
 
