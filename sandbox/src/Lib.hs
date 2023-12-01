@@ -69,7 +69,8 @@ anyInput = const ()
 
 pipeline :: (forall a . Show a => a -> b) -> [b]
 pipeline f = [f (to @AnInt), f (to @ABool) ]
--- >>> pipeline anyInput
+p1 = pipeline anyInput
+-- >>> p1
 -- [(),()]
 
 data ToBox = forall a . (Show a) => ToBox a 
