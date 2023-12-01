@@ -1,6 +1,12 @@
 {-# LANGUAGE PartialTypeSignatures #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE DataKinds #-}
+-- {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Lib
     ( someFunc
     , x, y) where
@@ -33,3 +39,30 @@ y = fe fa True
 
 -- ----------------------
 
+
+-------------------------------------------------------------------------------
+-- Mapping with ad-hoc polymorphic intermediate types
+-------------------------------------------------------------------------------
+
+data Selection = AnInt | ABool
+
+class To (s :: Selection) a | s -> a where
+  to :: forall s . a
+instance To AnInt Int where to = 1 :: Int
+instance To ABool Bool where to = True
+
+anInt = to @AnInt
+-- >>> anInt
+-- 1
+
+aBool = to @ABool
+-- >>> aBool
+-- True
+
+anyInput :: a -> ()
+anyInput = const ()
+
+pipeline :: (forall a . a -> b) -> [b]
+pipeline f = [f (to @AnInt), f (to @ABool) ]
+-- >>> pipeline anyInput
+-- [(),()]
