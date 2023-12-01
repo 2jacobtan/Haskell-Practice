@@ -7,6 +7,11 @@
 -- {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE ExistentialQuantification #-}
+-- {-# LANGUAGE FlexibleInstances #-}
+-- {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE StandaloneDeriving #-}
+-- {-# LANGUAGE TypeFamilies #-}
 module Lib
     ( someFunc
     , x, y) where
@@ -47,7 +52,7 @@ y = fe fa True
 data Selection = AnInt | ABool
 
 class To (s :: Selection) a | s -> a where
-  to :: forall s . a
+  to :: a
 instance To AnInt Int where to = 1 :: Int
 instance To ABool Bool where to = True
 
@@ -62,7 +67,18 @@ aBool = to @ABool
 anyInput :: a -> ()
 anyInput = const ()
 
-pipeline :: (forall a . a -> b) -> [b]
+pipeline :: (forall a . Show a => a -> b) -> [b]
 pipeline f = [f (to @AnInt), f (to @ABool) ]
 -- >>> pipeline anyInput
 -- [(),()]
+
+data ToBox = forall a . (Show a) => ToBox a 
+deriving instance Show ToBox
+hetList = [ToBox (to @AnInt), ToBox (to @ABool)]
+-- >>> hetList
+-- [ToBox 1,ToBox True]
+
+p2 :: [ToBox]
+p2 = pipeline ToBox
+-- >>> pipeline ToBox
+-- [ToBox 1,ToBox True]
