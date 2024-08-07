@@ -108,35 +108,47 @@ f x y = [x+y :: Int]
 g x y = Just (x + y :: Int)
 
 class Apply f i o | f -> i o where
-  (%%) :: f -> i -> o
+  (%) :: f -> i -> o
 instance Apply (i->o,i->p) i (o,p) where
-  (%%) :: (i -> o, i -> p) -> i -> (o, p)
-  (%%) (f,g) x = (f x, g x)
+  (%) :: (i -> o, i -> p) -> i -> (o, p)
+  (%) (f,g) x = (f x, g x)
 
 -- res :: (Int -> [Int], Int -> Maybe Int)
-res = (f,g) %% 1 -- :: (Int -> [Int], Int -> Maybe Int)
+res = (f,g) % 1 -- :: (Int -> [Int], Int -> Maybe Int)
 
-res2 = (f,g) %% 1 %% 2
+res2 = (f,g) % 1 % 2
 
 res2' =
   let go fg = fg (1 :: Int) (2 :: Int)
   in (go f, go g)
 
 class Apply2 f o | o -> f where
-  (%%%) :: f -> o
+  (%%) :: f -> o
 -- | requires UndecidableInstances
 instance (Apply2 (o1,o2) o) => Apply2 (i->o1,i->o2) (i -> o) where
-  (%%%) (f,g) x = (%%%) (f x, g x)
+  (%%) (f,g) x = (%%) (f x, g x)
 instance Apply2 (o1,o2) (o1,o2) where
-  (%%%) = id
+  (%%) = id
 
 rez :: ([Int], Maybe Int)
-rez = (%%%) (f,g) 1 2
+rez = (%%) (f,g) 1 2
 
 -- >>> rez
 -- ([3],Just 3)
 
 f' x y z = [x+y+z :: Int]
 g' x y z = Just (x + y + z :: Int)
-rez' :: ([Int], Maybe Int)
-rez' = (%%%) (f',g') 1 2 3
+-- rez' :: ([Int], Maybe Int)
+rez' = (%%) (f',g') 1 2 3
+
+(rez'1, rez'2) = rez'
+
+class Apply3 f o | o -> f where
+  (%%%) :: f -> o
+-- | requires UndecidableInstances
+instance (Apply3 (o1,o2) o) => Apply3 (i->o1,i->o2) (i -> o) where
+  (%%%) (f,g) x = (%%%) (f x, g x)
+-- instance Apply2 (o1,o2) (o1,o2) where
+--   (%%%) = id
+instance Apply3 (o1,o2) (() -> (o1,o2)) where
+  (%%%) = const
