@@ -12,6 +12,9 @@
 -- {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE StandaloneDeriving #-}
 -- {-# LANGUAGE TypeFamilies #-}
+
+{-# LANGUAGE DeriveFunctor #-}
+
 module Lib
     ( someFunc
     , x, y) where
@@ -83,3 +86,14 @@ p2 :: [ToBox]
 p2 = pipeline ToBox
 -- >>> pipeline ToBox
 -- [ToBox 1,ToBox True]
+
+data CSV a = CSV (() -> a) [a]
+  deriving Functor
+instance Show a => Show (CSV a) where
+  show (CSV x y) = "CSV " ++ show (x ()) ++ " " ++ show y
+
+csvX = CSV (const 2) (return 3)
+csvY = (*5) <$> csvX
+
+-- >>> csvY
+-- CSV 10 [15]
