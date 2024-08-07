@@ -19,7 +19,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE InstanceSigs #-}
--- {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Lib
     ( someFunc
@@ -147,14 +147,20 @@ res2' = (%%) (f',g') 1 2 3
 (rez2x, rez2y) = res2'
 -}
 
-class Apply3 f o where
+type family TypCon o where
+  TypCon (typCon a b) = typCon
+
+class Apply3 (t :: * -> * -> *) f o | o -> t where
   (%%%) :: f -> o
-instance (Apply3 (o1,o2) o, i~j) => Apply3 (i->o1,i->o2) (j -> o) where
+instance (Apply3 (TypCon o) (o1,o2) o, i~j) => Apply3 (->) (i->o1,i->o2) (j -> o) where
   (%%%) (f,g) x = (%%%) (f x, g x)
-instance ((o1,o2)~(p1,p2)) => Apply3 (o1,o2) (p1,p2) where
+instance ((o1,o2)~(p1,p2)) => Apply3 (,) (o1,o2) (p1,p2) where
   (%%%) = id
 -- instance (o ~ (o1,o2)) => Apply3 o (() -> (o1,o2)) where
 --   (%%%) = const
 
 rez3 :: ([Int], Maybe Int)
 rez3 = (%%%) (f',g') 1 2 3
+rez3' = id @(_,_) $ (%%%) (f',g') 1 2 3
+-- >>> rez3'
+-- ([6],Just 6)
