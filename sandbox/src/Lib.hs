@@ -2,7 +2,8 @@
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE KindSignatures #-}
+-- {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DataKinds #-}
 -- {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FunctionalDependencies #-}
@@ -18,7 +19,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE InstanceSigs #-}
-{-# LANGUAGE UndecidableInstances #-}
+-- {-# LANGUAGE UndecidableInstances #-}
 
 module Lib
     ( someFunc
@@ -107,6 +108,9 @@ csvY = (*5) <$> csvX
 f x y = [x+y :: Int]
 g x y = Just (x + y :: Int)
 
+f' x y z = [x+y+z :: Int]
+g' x y z = Just (x + y + z :: Int)
+
 class Apply f i o | f -> i o where
   (%) :: f -> i -> o
 instance Apply (i->o,i->p) i (o,p) where
@@ -116,39 +120,39 @@ instance Apply (i->o,i->p) i (o,p) where
 -- res :: (Int -> [Int], Int -> Maybe Int)
 res = (f,g) % 1 -- :: (Int -> [Int], Int -> Maybe Int)
 
-res2 = (f,g) % 1 % 2
+res1 = (f,g) % 1 % 2
 
-res2' =
+res1' =
   let go fg = fg (1 :: Int) (2 :: Int)
   in (go f, go g)
 
-class Apply2 f o | o -> f where
-  (%%) :: f -> o
--- | requires UndecidableInstances
-instance (Apply2 (o1,o2) o) => Apply2 (i->o1,i->o2) (i -> o) where
-  (%%) (f,g) x = (%%) (f x, g x)
-instance Apply2 (o1,o2) (o1,o2) where
-  (%%) = id
+-- class Apply2 f o | o -> f where
+--   (%%) :: f -> o
+-- -- | requires UndecidableInstances
+-- instance (Apply2 (o1,o2) o) => Apply2 (i->o1,i->o2) (i -> o) where
+--   (%%) (f,g) x = (%%) (f x, g x)
+-- instance Apply2 (o1,o2) (o1,o2) where
+--   (%%) = id
 
-rez :: ([Int], Maybe Int)
-rez = (%%) (f,g) 1 2
+-- res2 :: ([Int], Maybe Int)
+-- res2 = (%%) (f,g) 1 2
 
 -- >>> rez
 -- ([3],Just 3)
 
-f' x y z = [x+y+z :: Int]
-g' x y z = Just (x + y + z :: Int)
 -- rez' :: ([Int], Maybe Int)
-rez' = (%%) (f',g') 1 2 3
+-- res2' = (%%) (f',g') 1 2 3
 
-(rez'1, rez'2) = rez'
+-- (rez2x, rez2y) = res2'
 
-class Apply3 f o | o -> f where
+class Apply3 f o where
   (%%%) :: f -> o
--- | requires UndecidableInstances
-instance (Apply3 (o1,o2) o) => Apply3 (i->o1,i->o2) (i -> o) where
+instance (Apply3 (o1,o2) o, i~j) => Apply3 (i->o1,i->o2) (j -> o) where
   (%%%) (f,g) x = (%%%) (f x, g x)
--- instance Apply2 (o1,o2) (o1,o2) where
---   (%%%) = id
-instance Apply3 (o1,o2) (() -> (o1,o2)) where
-  (%%%) = const
+instance ((o1,o2)~(p1,p2)) => Apply3 (o1,o2) (p1,p2) where
+  (%%%) = id
+-- instance (o ~ (o1,o2)) => Apply3 o (() -> (o1,o2)) where
+--   (%%%) = const
+
+rez3 :: ([Int], Maybe Int)
+rez3 = (%%%) (f',g') 1 2 3
