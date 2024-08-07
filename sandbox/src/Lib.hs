@@ -18,6 +18,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Lib
     ( someFunc
@@ -120,3 +121,17 @@ res2 = (f,g) %% 1 %% 2
 res2' =
   let go fg = fg (1 :: Int) (2 :: Int)
   in (go f, go g)
+
+class Apply2 f o | o -> f where
+  (%%%) :: f -> o
+-- | requires UndecidableInstances
+instance (Apply2 (o1,o2) o) => Apply2 (i->o1,i->o2) (i -> o) where
+  (%%%) (f,g) x = (%%%) (f x, g x)
+instance Apply2 (o1,o2) (o1,o2) where
+  (%%%) = id
+
+rez :: ([Int], Maybe Int)
+rez = (%%%) (f,g) 1 2
+
+-- >>> rez
+-- ([3],Just 3)
