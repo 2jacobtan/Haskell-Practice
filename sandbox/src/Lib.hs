@@ -15,6 +15,9 @@
 
 {-# LANGUAGE DeriveFunctor #-}
 -- {-# LANGUAGE DatatypeContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE InstanceSigs #-}
 
 module Lib
     ( someFunc
@@ -88,16 +91,32 @@ p2 = pipeline ToBox
 -- >>> pipeline ToBox
 -- [ToBox 1,ToBox True]
 
-data CSV f a = CSV (() -> a) (f a)
+data MyFunctor f a = MyFunctor (() -> a) (f a)
   deriving Functor
-instance (Show a, Show (f a)) => Show (CSV f a) where
-  show (CSV x y) = "CSV (" ++ show (x ()) ++ ") (" ++ show y ++ ")"
+instance (Show a, Show (f a)) => Show (MyFunctor f a) where
+  show (MyFunctor x y) = "MyFunctor (" ++ show (x ()) ++ ") (" ++ show y ++ ")"
 
-newtype One a = One a
-
--- csvX = CSV (const 2) [3]
-csvX = CSV (const 2) (Just 3)
+-- csvX = MyFunctor (const 2) [3]
+csvX = MyFunctor (const 2) (Just 3)
 csvY = (*5) <$> csvX
 
 -- >>> csvY
--- CSV (10) (Just 15)
+-- MyFunctor (10) (Just 15)
+
+f x y = [x+y :: Int]
+g x y = Just (x + y :: Int)
+
+class Apply f i o | f -> i o where
+  (%%) :: f -> i -> o
+instance Apply (i->o,i->p) i (o,p) where
+  (%%) :: (i -> o, i -> p) -> i -> (o, p)
+  (%%) (f,g) x = (f x, g x)
+
+-- res :: (Int -> [Int], Int -> Maybe Int)
+res = (f,g) %% 1 -- :: (Int -> [Int], Int -> Maybe Int)
+
+res2 = (f,g) %% 1 %% 2
+
+res2' =
+  let go fg = fg (1 :: Int) (2 :: Int)
+  in (go f, go g)
