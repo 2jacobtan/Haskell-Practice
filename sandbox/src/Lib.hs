@@ -135,3 +135,8 @@ rez = (%%%) (f,g) 1 2
 
 -- >>> rez
 -- ([3],Just 3)
+
+f' x y z = [x+y+z :: Int]
+g' x y z = Just (x + y + z :: Int)
+rez' :: ([Int], Maybe Int)
+rez' = (%%%) (f',g') 1 2 3
