@@ -14,6 +14,7 @@
 -- {-# LANGUAGE TypeFamilies #-}
 
 {-# LANGUAGE DeriveFunctor #-}
+-- {-# LANGUAGE DatatypeContexts #-}
 
 module Lib
     ( someFunc
@@ -87,13 +88,16 @@ p2 = pipeline ToBox
 -- >>> pipeline ToBox
 -- [ToBox 1,ToBox True]
 
-data CSV a = CSV (() -> a) [a]
+data CSV f a = CSV (() -> a) (f a)
   deriving Functor
-instance Show a => Show (CSV a) where
-  show (CSV x y) = "CSV " ++ show (x ()) ++ " " ++ show y
+instance (Show a, Show (f a)) => Show (CSV f a) where
+  show (CSV x y) = "CSV (" ++ show (x ()) ++ ") (" ++ show y ++ ")"
 
-csvX = CSV (const 2) (return 3)
+newtype One a = One a
+
+-- csvX = CSV (const 2) [3]
+csvX = CSV (const 2) (Just 3)
 csvY = (*5) <$> csvX
 
 -- >>> csvY
--- CSV 10 [15]
+-- CSV (10) (Just 15)
