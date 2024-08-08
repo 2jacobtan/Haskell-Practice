@@ -19,7 +19,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE InstanceSigs #-}
--- {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Lib
     ( someFunc
@@ -160,4 +161,46 @@ rez3 :: ([Int], Maybe Int)
 rez3 = (%%%) (f',g') 1 2 3
 rez3' = id @(_,_) $ (%%%) (f',g') 1 2 3
 -- >>> rez3'
+-- ([6],Just 6)
+
+
+--------------------------------------------------------------------------------
+-- Advanced Overlapp
+-- https://wiki.haskell.org/GHC/AdvancedOverlap
+-- https://stackoverflow.com/questions/74479429/selecting-a-type-class-instance-based-on-the-context-once-again
+--------------------------------------------------------------------------------
+
+type family OType f o where
+  OType (i -> x, i -> y) o = o
+  OType (x,y) _ = (x,y)
+  OType x _ = x
+
+class Apply4 f o where
+  (%-%) :: f -> o
+instance (OType f o ~ p, Apply4'' p f o) => Apply4 f o where
+  (%-%) = (%%%%) (undefined :: p)
+-- class () => Apply4' f o where
+--   (%--%) :: o -> f -> o
+-- instance Apply4' f o where
+--   (%--%) _ = (%%%%) 
+class Apply4'' p f o where
+  (%%%%) :: p -> f -> o
+instance (Apply4 (o1,o2) o, i~j) => Apply4'' a (i->o1,i->o2) (j -> o) where
+  (%%%%) _ (f,g) x = (%-%) (f x, g x)
+instance ((o1,o2)~q) => Apply4'' (p1,p2) (o1,o2) q where
+  (%%%%) _ = id
+
+rez4 :: ([Int], Maybe Int)
+rez4 = (%-%) (f',g') 1 2 3
+rez4' = id @(_,_) $ (%-%) (f',g') 1 2 3
+-- >>> rez4'
+-- ([6],Just 6)
+
+rez4'' = (%-%) (f',g') 1 2 3
+-- >>> rez4''
+-- ([6],Just 6)
+
+rez4''' :: Int -> ([Int], Maybe Int)
+rez4''' = (%-%) (f',g') 1 2
+-- >>> rez4''' 3
 -- ([6],Just 6)
