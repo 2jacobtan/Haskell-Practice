@@ -162,6 +162,7 @@ rez3 = (%%%) (f',g') 1 2 3
 rez3' = id @(_,_) $ (%%%) (f',g') 1 2 3
 -- >>> rez3'
 -- ([6],Just 6)
+-- rez3'' = (%%%) (f',g') 1 2 3
 
 
 --------------------------------------------------------------------------------
@@ -173,21 +174,18 @@ rez3' = id @(_,_) $ (%%%) (f',g') 1 2 3
 type family OType f o where
   OType (i -> x, i -> y) o = o
   OType (x,y) _ = (x,y)
-  OType x _ = x
+  -- OType x _ = x
 
 class Apply4 f o where
   (%-%) :: f -> o
-instance (OType f o ~ p, Apply4'' p f o) => Apply4 f o where
+-- | requires UndecidableInstances
+instance (OType f o ~ p, Apply4' p f o) => Apply4 f o where
   (%-%) = (%%%%) (undefined :: p)
--- class () => Apply4' f o where
---   (%--%) :: o -> f -> o
--- instance Apply4' f o where
---   (%--%) _ = (%%%%) 
-class Apply4'' p f o where
+class Apply4' p f o where
   (%%%%) :: p -> f -> o
-instance (Apply4 (o1,o2) o, i~j) => Apply4'' a (i->o1,i->o2) (j -> o) where
+instance (Apply4 (o1,o2) o, i~j) => Apply4' _a (i->o1,i->o2) (j -> o) where
   (%%%%) _ (f,g) x = (%-%) (f x, g x)
-instance ((o1,o2)~q) => Apply4'' (p1,p2) (o1,o2) q where
+instance ((o1,o2)~q) => Apply4' (p1,p2) (o1,o2) q where
   (%%%%) _ = id
 
 rez4 :: ([Int], Maybe Int)
