@@ -224,3 +224,7 @@ instance ((o1,o2)~q) => Apply5' (p1,p2) (o1,o2) q where
 rez5 = (%--%) (f',g') 1 2
 -- >>> rez5 3
 -- ([6],Just 6)
+
+{-
+NOTE:  Apply6 (final form) is available in AdvancedOverlap.hs
+-}
