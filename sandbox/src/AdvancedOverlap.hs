@@ -2,13 +2,15 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+-- {-# LANGUAGE ScopedTypeVariables #-}
 
 type family OType f where
   OType (i -> x, i -> y) = i -> OType (x,y)
   OType (x,y) = (x,y)
 
--- | requires UndecidableInstances and ScopedTypeVariables in Haskell
+-- | Apply same arguments to two functions with different output types
+--
+-- requires UndecidableInstances in Haskell
 class ApplyTup f o where
   (%) :: f -> o
 instance (OType f ~ o, ApplyTup' f o) => ApplyTup f o where
@@ -24,7 +26,7 @@ f x y z = [x+y+z :: Int]
 g x y z = Just (x+y+z :: Int)
 g' x y z z' = Just (x+y+z+z' :: Int)
 
--- | type inference works
+-- | type inference works, with currying
 -- rez :: Int -> ([Int], Maybe Int)
 rez = (%) (f,g) 1 2
 -- >>> rez 3
@@ -34,6 +36,7 @@ rez' = (%) (f,g') 1 2
 -- >>> (\(x,y)->(x,y 4)) $ rez' 3
 -- ([6],Just 10)
 
+--- | also works with 3 or more functions
 rez'' = (%) (f, (%) (g,g'))
 -- >>> (\(x,(y,z)) -> (x,y,z 4)) $ rez'' 1 2 3
 -- ([6],Just 6,Just 10)
