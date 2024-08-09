@@ -226,5 +226,5 @@ rez5 = (%--%) (f',g') 1 2
 -- ([6],Just 6)
 
 {-
-NOTE:  Apply6 (final form) is available in AdvancedOverlap.hs
+NOTE:  ApplyTup (final form of Apply5) is available in AdvancedOverlap.hs
 -}

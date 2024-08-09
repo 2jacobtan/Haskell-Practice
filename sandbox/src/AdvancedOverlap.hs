@@ -4,34 +4,36 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-type family OType6 f where
-  OType6 (i -> x, i -> y) = i -> OType6 (x,y)
-  OType6 (x,y) = (x,y)
+type family OType f where
+  OType (i -> x, i -> y) = i -> OType (x,y)
+  OType (x,y) = (x,y)
 
 -- | requires UndecidableInstances and ScopedTypeVariables in Haskell
-class Apply6 f o where
-  (%--%) :: f -> o
-instance (OType6 f ~ o, Apply6' f o) => Apply6 f o where
-  (%--%) = (%%%%%)
-class Apply6' f o where
-  (%%%%%) :: f -> o
-instance (Apply6' (f,g) o) => Apply6' (i->f,i->g) (i->o) where
-  (%%%%%) (f,g) x = (%%%%%) (f x, g x)
-instance Apply6' (f,g) (f,g) where
-  (%%%%%) = id
+class ApplyTup f o where
+  (%) :: f -> o
+instance (OType f ~ o, ApplyTup' f o) => ApplyTup f o where
+  (%) = applyTup'
+class ApplyTup' f o where
+  applyTup' :: f -> o
+instance (ApplyTup' (f,g) o) => ApplyTup' (i->f,i->g) (i->o) where
+  applyTup' (f,g) x = applyTup' (f x, g x)
+instance ApplyTup' (f,g) (f,g) where
+  applyTup' = id
 
 f x y z = [x+y+z :: Int]
 g x y z = Just (x+y+z :: Int)
 g' x y z z' = Just (x+y+z+z' :: Int)
 
-rez6 = (%--%) (f,g) 1 2
--- >>> rez6 3
+-- | type inference works
+-- rez :: Int -> ([Int], Maybe Int)
+rez = (%) (f,g) 1 2
+-- >>> rez 3
 -- ([6],Just 6)
 
-rez6' = (%--%) (f,g') 1 2
--- >>> (\(x,y)->(x,y 4)) $ rez6' 3
+rez' = (%) (f,g') 1 2
+-- >>> (\(x,y)->(x,y 4)) $ rez' 3
 -- ([6],Just 10)
 
--- | type inference works
--- rez6'' :: Int -> Int -> Int -> ([Int], Int -> Maybe Int)
-rez6'' = (%--%) (f,g')
+rez'' = (%) (f, (%) (g,g'))
+-- >>> (\(x,(y,z)) -> (x,y,z 4)) $ rez'' 1 2 3
+-- ([6],Just 6,Just 10)
