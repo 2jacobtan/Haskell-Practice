@@ -15,9 +15,9 @@ instance (OType6 f ~ o, Apply6' f o) => Apply6 f o where
   (%--%) = (%%%%%)
 class Apply6' f o where
   (%%%%%) :: f -> o
-instance (Apply6' (o1,o2) o, i~j) => Apply6' (i->o1,i->o2) (j->o) where
+instance (Apply6' (f,g) o) => Apply6' (i->f,i->g) (i->o) where
   (%%%%%) (f,g) x = (%%%%%) (f x, g x)
-instance Apply6' (o1,o2) (o1,o2) where
+instance Apply6' (f,g) (f,g) where
   (%%%%%) = id
 
 f x y z = [x+y+z :: Int]
@@ -31,3 +31,7 @@ rez6 = (%--%) (f,g) 1 2
 rez6' = (%--%) (f,g') 1 2
 -- >>> (\(x,y)->(x,y 4)) $ rez6' 3
 -- ([6],Just 10)
+
+-- | type inference works
+-- rez6'' :: Int -> Int -> Int -> ([Int], Int -> Maybe Int)
+rez6'' = (%--%) (f,g')
