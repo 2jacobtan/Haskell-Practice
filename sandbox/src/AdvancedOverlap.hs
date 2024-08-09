@@ -7,7 +7,6 @@
 type family OType5 f where
   OType5 (i -> x, i -> y) = i -> OType5 (x,y)
   OType5 (x,y) = (x,y)
-  -- OType5 x = x
 
 -- | requires UndecidableInstances and ScopedTypeVariables in Haskell
 class Apply5 f o where
