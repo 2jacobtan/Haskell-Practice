@@ -202,3 +202,25 @@ rez4''' :: Int -> ([Int], Maybe Int)
 rez4''' = (%-%) (f',g') 1 2
 -- >>> rez4''' 3
 -- ([6],Just 6)
+
+
+type family OType5 f where
+  OType5 (i -> x, i -> y) = i -> OType5 (x,y)
+  OType5 (x,y) = (x,y)
+  -- OType5 x = x
+
+class Apply5 f o where
+  (%--%) :: f -> o
+-- | requires UndecidableInstances
+instance (OType5 f ~ p, Apply5' p f o) => Apply5 f o where
+  (%--%) = (%%%%%) (undefined :: p)
+class Apply5' p f o where
+  (%%%%%) :: p -> f -> o
+instance (Apply5 (o1,o2) o, i~j, p~(j->o)) => Apply5' p (i->o1,i->o2) (j->o) where
+  (%%%%%) _ (f,g) x = (%--%) (f x, g x)
+instance ((o1,o2)~q) => Apply5' (p1,p2) (o1,o2) q where
+  (%%%%%) _ = id
+
+rez5 = (%--%) (f',g') 1 2
+-- >>> rez5 3
+-- ([6],Just 6)
