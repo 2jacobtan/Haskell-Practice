@@ -2,6 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE TypeApplications #-}
 -- {-# LANGUAGE ScopedTypeVariables #-}
 
 type family OType f where
@@ -40,3 +41,14 @@ rez' = (%) (f,g') 1 2
 rez'' = (%) (f, (%) (g,g'))
 -- >>> (\(x,(y,z)) -> (x,y,z 4)) $ rez'' 1 2 3
 -- ([6],Just 6,Just 10)
+
+h :: (Num a) => a -> a -> [a]
+h x y = [1+2]
+h' :: (Num a) => a -> a -> Maybe a
+h' x y = Just (1+2)
+
+rez''' = (%) (h.typInt, (%) (h.typInt, h'.typInt))
+  where typInt = id :: Int -> Int
+rez'''' = (%) (h (1::Int), h' (1::Int))
+--- | Without type application, Haskell will reject the ambiguity in the parametric polymorphism.
+rez''''' = (%) (h @Int, h' @Int)
