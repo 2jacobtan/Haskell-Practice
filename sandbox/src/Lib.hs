@@ -216,8 +216,8 @@ instance (OType5 f ~ p, Apply5' p f o) => Apply5 f o where
   (%--%) = (%%%%%) (undefined :: p)
 class Apply5' p f o where
   (%%%%%) :: p -> f -> o
-instance (Apply5 (o1,o2) o, i~j, p~(j->o)) => Apply5' p (i->o1,i->o2) (j->o) where
-  (%%%%%) _ (f,g) x = (%--%) (f x, g x)
+instance (Apply5' o (o1,o2) o, i~j, p~(j->o)) => Apply5' p (i->o1,i->o2) (j->o) where
+  (%%%%%) _ (f,g) x = (%%%%%) (undefined :: o) (f x, g x)
 instance ((o1,o2)~q) => Apply5' (p1,p2) (o1,o2) q where
   (%%%%%) _ = id
 
