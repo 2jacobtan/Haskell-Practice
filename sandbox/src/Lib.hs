@@ -228,3 +228,21 @@ rez5 = (%--%) (f',g') 1 2
 {-
 NOTE:  ApplyTup (final form of Apply5) is available in AdvancedOverlap.hs
 -}
+
+
+--- | associated data family
+
+class Attached a where
+  type Attach a
+  data WithAttach a
+  getAttach :: WithAttach a -> Attach a
+
+instance Attached Bool where
+  type Attach Bool = Int
+  data WithAttach Bool = WithAttachBool Int Bool
+  getAttach (WithAttachBool x _) = x
+
+att = getAttach (WithAttachBool 1 True)
+
+-- >>> att
+-- 1
