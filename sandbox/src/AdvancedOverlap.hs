@@ -12,9 +12,9 @@ type family OType f where
 -- | Apply same arguments to two functions with different output types
 --
 -- requires UndecidableInstances in Haskell
-class ApplyTup f o where
-  (%) :: f -> o
-instance (OType f ~ o, ApplyTup' f o) => ApplyTup f o where
+class ApplyTup f where
+  (%) :: f -> OType f
+instance (ApplyTup' f (OType f)) => ApplyTup f where
   (%) = applyTup'
 class ApplyTup' f o where
   applyTup' :: f -> o
