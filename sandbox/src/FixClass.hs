@@ -1,5 +1,7 @@
-{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE TypeApplications #-}
 
 module FixClass where
 
@@ -19,7 +21,7 @@ sum' rec rest = case rest of
   [] -> 0
   x:xs -> x + rec xs
 
-x = fixDef @(  (S (S Z))) (const 0) sum' [1..3]
+x = fixDef @(   S (S Z) ) (const 0) sum' [1..3]
 y = fixDef @(S (S (S Z))) (const 0) sum' [1..3]
 
 fixDef' 0 d f = d
