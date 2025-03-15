@@ -5,6 +5,8 @@
 {-# LANGUAGE TypeApplications #-}
 -- {-# LANGUAGE ScopedTypeVariables #-}
 
+module AdvancedOverlap where
+
 type family OType f where
   OType (i -> x, i -> y) = i -> OType (x,y)
   OType (x,y) = (x,y)
