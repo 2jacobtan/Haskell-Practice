@@ -15,6 +15,8 @@ instance Fix Z where
 
 instance Fix n => Fix (S n) where
   fixDef d f = f (fixDef @n d f)
+                      --- ^ Haskell Language Server reports a suprious error here:
+                      --      Not in scope: type variable ‘n’
 
 sum' :: ([Int] -> Int) -> [Int] -> Int
 sum' rec rest = case rest of
