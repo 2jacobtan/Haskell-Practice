@@ -21,3 +21,8 @@ g x = x
 --- error: "Could not deduce (Fractional b) ..."
 -- h :: Num b => (forall a . Fractional a => a) -> b
 -- h x = x
+
+gx :: Double
+gx = g x
+-- >>> gx
+-- 1.0
