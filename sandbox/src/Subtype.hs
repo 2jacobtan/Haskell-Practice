@@ -7,7 +7,7 @@ x :: Num a => a
 x = 1
 
 y :: Fractional a => a
-y = 1
+y = 1.2
 
 f :: (forall a . Num a => a) -> Double
 f x = x
