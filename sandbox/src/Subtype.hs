@@ -33,7 +33,7 @@ g x = x
 
 -- | Liskov substitution: given a program `p` that takes any Num, 
 -- | you can also give it any Fractional.
--- | I.e. Fractional is a subtype of Num, since Fractional can be substituted for Num.
+-- | I.e. Fractional is a subtype of Num, since Fractional can substitute for Num.
 j :: (forall a . Num a        => a -> Int)
   -> (forall b . Fractional b => b -> Int)
 j p = p
