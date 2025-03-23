@@ -1,7 +1,11 @@
+{-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- | https://blog.jle.im/entry/sum-types-and-subtypes-and-unions.html
 module Subtype where
+
+import Data.Kind (Constraint)
 
 x :: forall a . Num a => a
 x = 1
@@ -9,14 +13,16 @@ x = 1
 y :: forall a . Fractional a => a
 y = 1.2
 
--- | If I can produce any Num, then I can produce a Double.
-f :: (forall a . Num a => a) -> Double
+type IsDouble a = (a ~ Double) :: Constraint
+
+-- | `Num` can substitute for `IsDouble`, since `Num` is a weaker precondition.
+f :: (forall a . Num a => a) -> (forall b . IsDouble b => b)
 f x = x
 
-f' :: (forall a . Fractional a => a) -> Double
+f' :: (forall a . Fractional a => a) -> (forall b . IsDouble b => b)
 f' x = x
 
--- | If I can produce any Num, then I can produce a Fractional.
+-- | `Num` can substitute for `Fractional`, since `Num` is a weaker precondition.
 g :: (forall a . Num a => a) -> (forall b . Fractional b => b)
 g x = x
 
